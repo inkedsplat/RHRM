@@ -158,7 +158,7 @@ function updateRemixOptions(dt)
     end
   end
   
-  if subCount == 1 then
+  if subcategory == "general" then
     for _,i in pairs(textinputs) do
       if i.name == "name" then
         data.options.name = i.text
@@ -182,7 +182,7 @@ function updateRemixOptions(dt)
         data.bpm = tonumber(i.text)
       end
     end
-  elseif subCount == 2 then
+  elseif subcategory == "karate man (GBA)" then
     for _,i in pairs(textinputs) do
       if i.name == "start value" then
         data.options.karateka.startFlow = tonumber(i.text)
@@ -195,7 +195,7 @@ function updateRemixOptions(dt)
         data.options.karateka.persistent = i.val
       end
     end
-  elseif subCount == 3 then
+  elseif subcategory == "lock step" then
     for _,i in pairs(textinputs) do
       if i.name == "BG (hex)" then
         data.options.lockStep.colors["bg"] = i.text

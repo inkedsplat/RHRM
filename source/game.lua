@@ -16,7 +16,7 @@ function loadGameInputs()
     perfectFail = 0
   end
   
-  minigame = 7
+  minigame = 1
   transition = 0
   endRemix = false
   endRemixTimer = 0
@@ -95,9 +95,11 @@ function love.keypressed(key,scancode,isRepeat)
     if key == "r" then
       gameSnd.music[ratingNote]:stop()
       for _,i in pairs(data.beatmap) do
-        for _,j in pairs(i) do
-          j.played = false
-          j.played2 = nil
+        if type(i) == "table" then
+          for _,j in pairs(i) do
+              j.played = false
+              j.played2 = nil
+          end
         end
       end
       data.music:stop()

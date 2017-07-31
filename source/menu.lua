@@ -1,6 +1,9 @@
 function loadMenu()
   menu = {
-    loadPhase = 0
+    loadPhase = 0,
+    remixIntro = love.audio.newSource("/resources/sfx/game/remixIntro.ogg"),
+    remixIntroImg = love.graphics.newImage("/resources/gfx/game/remix.png"),
+    remixIntroSize = 0.1
   }
 end
 
@@ -15,7 +18,14 @@ function updateMenu(dt)
       end
     end
   end
-  if menu.loadPhase == 3 then
+  if menu.loadPhase >= 3 and menu.loadPhase < 4 then
+    menu.loadPhase = menu.loadPhase+0.003
+    if menu.loadPhase < 3.5 and menu.remixIntroSize < 2 then
+      menu.remixIntroSize = menu.remixIntroSize*2
+    end
+    print(menu.loadPhase)
+  end
+  if menu.loadPhase >= 4 then
     loadGameInputs()
     screen = "game"
   end
@@ -39,6 +49,7 @@ function drawMenu()
       setColorHex("f0f0f0")
     end
     love.graphics.print("CREATE",64,256+32)
+    setColorHex("000000")
     love.graphics.setFont(font)
     love.graphics.print(version,8,view.height-16)
   else
@@ -53,6 +64,13 @@ function drawMenu()
       love.graphics.print("DROP A REMIX DATA FILE (.rhrm) ONTO THE WINDOW",view.width/2-256-96,view.height/2)
     elseif menu.loadPhase == 2 then
       love.graphics.print("DROP THE CORRESPONDING .ogg,.wav or .mp3 FILE ONTO THE WINDOW ",view.width/2-256-128-96,view.height/2)
+    elseif menu.loadPhase >= 3 and menu.loadPhase < 4 then
+      love.graphics.draw(menu.remixIntroImg,view.width/2,view.height/2,0,menu.remixIntroSize,menu.remixIntroSize,menu.remixIntroImg:getWidth()/2,menu.remixIntroImg:getHeight()/2)
+      
+      if menu.loadPhase > 3.5 then
+        setColorHex("000000",(menu.loadPhase-3.5)*255*3)
+        love.graphics.rectangle("fill",0,0,view.width,view.height)
+      end
     end
     
     love.graphics.setFont(font)
@@ -90,6 +108,8 @@ function filedroppedMenu(file)
     if string.lower(string.sub(filename,filename:len()-3)) == ".ogg" or string.lower(string.sub(filename,filename:len()-3)) == ".wav" or string.lower(string.sub(filename,filename:len()-3)) == ".mp3" then
       data.music = love.audio.newSource(file)
       data.music:setVolume(0.25)
+      menu.remixIntro:stop()
+      menu.remixIntro:play()
       menu.loadPhase = 3
     end
   end

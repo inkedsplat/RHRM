@@ -10,6 +10,7 @@ function loadEditor()
       blockOutline = "010317",
       blockOutlineLight = "5187ce",
       playhead = "3ddd77",
+      playheadInGame = "768aec",
       stop = "e53f3f",
       playtest = "ffffff"
     },
@@ -28,8 +29,10 @@ function loadEditor()
     gridheight = 64,
     viewX = 192,
     playhead = 0,
+    playheadInGame = 0,
     playheadStart = 0,
     beatStart = 0,
+    beatStartInGame = 0,
     playing = false,
     beats = 0,
     metronome = false,
@@ -37,6 +40,7 @@ function loadEditor()
     switch = 1,
     playTime = 0,
     minigameScroll = 0,
+    playHeadMove = 0,
     
     mouseOnGrid = {0,0},
     
@@ -103,6 +107,9 @@ function loadEditor()
             played = false,
             name = c.name
           }
+          if s.time < math.max(editor.playheadInGame,0) then
+            s.played = true
+          end
           table.insert(data.beatmap.sounds,s)
         end
       end
@@ -115,7 +122,10 @@ function loadEditor()
             sound = c.sound,
             name = c.name
           }
-          --print(s.input)
+          if s.time < math.max(editor.playheadInGame,0) then
+            s.played = true
+            s.played2 = true
+          end
           table.insert(data.beatmap.inputs,s)
         end  
       end
@@ -132,6 +142,10 @@ function loadEditor()
     
     --load game
     loadGameInputs()
+    
+    data.music:play()
+    data.music:seek(math.max(editor.playheadInGame,0))
+    print(editor.playheadInGame)
   end
   createButton(48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/playtest.png"),editor.scheme.playtest)
   
@@ -149,6 +163,46 @@ function loadEditor()
   end
   
   createButton(48*6,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/options.png"),editor.scheme.block)
+  
+  local function f()
+    editor.metronome = not editor.metronome
+  end
+  local b = createButton(view.width-48,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/metronome.png"),editor.scheme.block)
+  b.w = 24
+  b.h = 24
+  
+  local function f()
+    editor.gridwidth = editor.gridwidth*2
+  end
+  local b = createButton(view.width-24,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/gridUp.png"),editor.scheme.block)
+  b.w = 24
+  b.h = 24
+  
+  local function f()
+    editor.gridwidth = editor.gridwidth/2
+  end
+  local b = createButton(view.width-24,24,f,love.graphics.newImage("/resources/gfx/editor/buttons/gridDown.png"),editor.scheme.block)
+  b.w = 24
+  b.h = 24
+  
+  local function f()
+    editor.viewX = 192
+  end
+  local b = createButton(view.width-48,24,f,love.graphics.newImage("/resources/gfx/editor/buttons/backToStart.png"),editor.scheme.block)
+  b.w = 24
+  b.h = 24
+  
+  local function f(i)
+    editor.playHeadMove = 1-editor.playHeadMove
+    if editor.playHeadMove == 0 then
+      i.color = editor.scheme.playhead
+    elseif editor.playHeadMove == 1 then
+      i.color = editor.scheme.playheadInGame
+    end
+  end
+  local b = createButton(view.width-48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/lineSelect.png"),editor.scheme.playhead)
+  b.w = 48
+  b.h = 48
 end
 function love.wheelmoved(x,y)
   editor.minigameScroll = editor.minigameScroll-y*40
@@ -165,7 +219,7 @@ function updateEditor(dt)
       i.hover = true
       if mouse.button.pressed[1] then
         if i.func then
-          i.func()
+          i.func(i)
         end
       end
     else
@@ -226,7 +280,6 @@ function updateEditor(dt)
   --playhead
   if editor.playing then
     editor.playTime = editor.playTime+(dt/(data.bpm/60))
-    print(editor.playTime)
     
     editor.viewX = -editor.playhead+view.width/2
     
@@ -239,11 +292,11 @@ function updateEditor(dt)
         editor.snd.metronome:play()
       end
       editor.beats = editor.beats + 1
-      editor.playhead = editor.gridwidth*(editor.beats-1)
+      editor.playhead = 64*(editor.beats-1)
       
       createDebugDot(editor.playhead,64)
     end
-    editor.playhead = editor.playhead+((data.bpm/60000)*editor.gridwidth)*(16.5)
+    editor.playhead = editor.playhead+((data.bpm/60000)*64)*(20)*dt*50
     
     --editor.playhead = data.music:tell()*data.bpm
   end
@@ -309,9 +362,16 @@ function updateEditor(dt)
     end
     
     if mouse.button.pressed[3] then
-      editor.playheadStart = (((editor.mouseOnGrid[1]))*(60000/data.bpm))/1000
-      editor.beatStart = editor.mouseOnGrid[1]
-      print(editor.playheadStart)
+      local mx = editor.mouseOnGrid[1]*(editor.gridwidth/64)
+      if editor.playHeadMove == 0 then
+        --audio playhead
+        editor.playheadStart = (((mx))*(60000/data.bpm))/1000
+        editor.beatStart = mx
+      elseif editor.playHeadMove == 1 then
+        --in game playhead
+        editor.playheadInGame = (((mx))*(60000/data.bpm))/1000
+        editor.beatStartInGame = mx
+      end
     end
   end
 end
@@ -417,10 +477,20 @@ function drawEditor()
   love.graphics.setLineWidth(3)
   love.graphics.line(editor.viewX,editor.buttonSpace,editor.viewX,editor.buttonSpace+editor.gridspace)
   
-  setColorHex(pal.playhead)
-  --love.graphics.print(data.music:tell(),editor.playhead+editor.viewX,16)
-  love.graphics.setLineWidth(1)
+  local x = math.max(editor.playheadInGame,editor.beatStartInGame*64)
+  setColorHex(pal.grid)
+  love.graphics.setLineWidth(5)
+  love.graphics.line(x+editor.viewX,editor.buttonSpace,x+editor.viewX,editor.buttonSpace+editor.gridspace)
+  setColorHex(pal.playheadInGame)
+  love.graphics.setLineWidth(3)
+  love.graphics.line(x+editor.viewX,editor.buttonSpace,x+editor.viewX,editor.buttonSpace+editor.gridspace)
+  
   local x = math.max(editor.playhead,editor.beatStart*64)
+  setColorHex(pal.grid)
+  love.graphics.setLineWidth(5)
+  love.graphics.line(x+editor.viewX,editor.buttonSpace,x+editor.viewX,editor.buttonSpace+editor.gridspace)
+  love.graphics.setLineWidth(3)
+  setColorHex(pal.playhead)
   love.graphics.line(x+editor.viewX,editor.buttonSpace,x+editor.viewX,editor.buttonSpace+editor.gridspace)
   --PATTERN SELECT or however you would call that thing idk
   local mx,my = love.mouse.getPosition()

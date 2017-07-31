@@ -37,6 +37,20 @@ function animationGroup:addAnimation(id,x,y,w,h,frames,frameDuration)
   return a
 end
 
+function animationGroup:addFrame(animId,x,y,w,h,duration)
+  if self:animationExists(animId) then
+    for _,i in pairs(self.animations) do
+      if i.id == animId then
+        i[i.length] = {}
+        i[i.length].quad = love.graphics.newQuad(x,y,w,h,self.width,self.height)
+        i[i.length].duration = duration or 100
+        
+        i.length = i.length+1
+      end
+    end
+  end
+end
+
 function animationGroup:update(dt)
   if self.playing then 
     self.timer = self.timer + dt*1000

@@ -331,7 +331,7 @@ function love.load()
         },
       },
     },
-    [7] = {
+    --[[[7] = {
       name = "screw bots",
       img = love.graphics.newImage("/resources/gfx/editor/icons/screwbot.png"),
       blocks = {
@@ -349,7 +349,7 @@ function love.load()
           }
         },
       },
-    },
+    },]]
   }
   
   for _,i in pairs(minigames) do
@@ -373,7 +373,7 @@ function love.load()
   end
   
   minigame = 0
-  screen = "editor"
+  screen = "menu"
   loadMenu()
   
   local w,h = love.graphics.getDimensions()

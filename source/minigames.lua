@@ -1272,17 +1272,37 @@ function loadMinigames()
         [0] = love.graphics.newQuad(112,0,64,80,img.sheet:getWidth(),img.sheet:getHeight()),
       },
     }
+    anim = {
+      conveyerBelt = newAnimationGroup(img.sheet)
+    }
+    anim.conveyerBelt:addAnimation("normal",0,80*4,592,80,1,100)
+    anim.conveyerBelt:addFrame("normal",0,80*3,592,80,100)
+    anim.conveyerBelt:addFrame("normal",0,80*2,592,80,100)
+    anim.conveyerBelt:addFrame("normal",0,80,592,80,100)
+    
+    
+    craneLengthBase = 128
+    craneLengthAdd = 0
   end
   
   function uminigame(dt)
     
+    anim.conveyerBelt:update(dt)
+    
+    if input["pressAB"] then
+      craneLengthAdd = craneLengthAdd+((256-64)^2)
+    elseif craneLengthAdd > 0 then
+      craneLengthAdd = craneLengthAdd/2
+    end
   end
   
   function dminigame()
     setColorHex("ffffff")
     love.graphics.rectangle("fill",0,0,view.width,view.height)
     
-    local craneLength = 128*1.25
+    anim.conveyerBelt:draw(128,view.height-128)
+    
+    local craneLength = craneLengthBase+math.sqrt(craneLengthAdd)
     local craneRotation = 25
     love.graphics.draw(img.sheet,quad.craneCable,view.width/2,0,0,1,craneLength/16,8,0)
     
