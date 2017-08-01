@@ -112,6 +112,9 @@ function loadEditor()
             played = false,
             name = c.name
           }
+          if c.pitchToBpm then
+            s.sound:setPitch((data.bpm/120))
+          end
           if s.time < math.max(editor.playheadInGame,0) then
             s.played = true
           end
@@ -127,6 +130,9 @@ function loadEditor()
             sound = c.sound,
             name = c.name
           }
+          if c.pitchToBpm then
+            s.sound:setPitch((data.bpm/120))
+          end
           if s.time < math.max(editor.playheadInGame,0) then
             s.played = true
             s.played2 = true

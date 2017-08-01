@@ -41,8 +41,11 @@ function initializeCues()
   cue["LockStepHm"] = newSource("/resources/sfx/Lock step/hm.ogg")
   cue["ScrewBotsCrane1"] = newSource("/resources/sfx/screw bots/crane1.ogg")
   cue["ScrewBotsCrane2"] = newSource("/resources/sfx/screw bots/crane2.ogg")
+  cue["ScrewBotsCraneWhite"] = newSource("/resources/sfx/screw bots/craneWhite.ogg")
   cue["ScrewBotsBlackDrop"] = newSource("/resources/sfx/screw bots/blackDrop.ogg")
   cue["ScrewBotsBlackScrew"] = newSource("/resources/sfx/screw bots/blackScrew.ogg")
+  cue["ScrewBotsWhiteDrop"] = newSource("/resources/sfx/screw bots/whiteDrop.ogg")
+  cue["ScrewBotsWhiteScrew"] = newSource("/resources/sfx/screw bots/whiteScrew.ogg")
   cue["ScrewBotsComplete"] = newSource("/resources/sfx/screw bots/complete.ogg")
 end
 

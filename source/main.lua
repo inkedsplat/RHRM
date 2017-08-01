@@ -199,7 +199,7 @@ function love.load()
           length = 128+32,
           cues = {
             {name = "flick",x = 0,cueId = "ForkLifterFlick" },
-            {name = "zoom",x = 128-32,cueId = "ForkLifterZoom"}
+            {name = "zoom",x = 128-32,cueId = "ForkLifterZoom",pitchToBpm = true}
           },
           hits = {{name = "stab",x = 128,cueId = "ForkLifterStab",input = "pressA"}}
         },
@@ -338,15 +338,30 @@ function love.load()
       blocks = {
         {
           name = "black bot",
-          length = 256*2-64,
+          length = 256*2,
           cues = {
             {name = "cBlack1",x = 0,cueId = "ScrewBotsCrane1"},
             {name = "cBlack2",x = 32,cueId = "ScrewBotsCrane2"},
             {name = "dBlack",x = 128,cueId = "ScrewBotsBlackDrop"},
           },
           hits = {
-            {name = "sBlack",x = 128+64,cueId = "ScrewBotsBlackScrew",input = "pressAB"},
-            {name = "compBlack",x = 256+64,cueId = "ScrewBotsComplete",input = "releaseAB"},
+            {name = "sBlack",x = 128+64+64,cueId = "ScrewBotsBlackScrew",input = "pressAB",pitchToBpm = true},
+            {name = "compBlack",x = 256+64+64,cueId = "ScrewBotsComplete",input = "releaseAB"},
+          }
+        },
+        {
+          name = "white bot",
+          length = 256*2-64,
+          cues = {
+            {name = "cWhite1",x = 0,cueId = "ScrewBotsCrane1"},
+            {name = "cWhite2",x = 32,cueId = "ScrewBotsCrane2"},
+            {name = "",x = 0,cueId = "ScrewBotsCraneWhite"},
+            {name = "",x = 32,cueId = "ScrewBotsCraneWhite"},
+            {name = "dWhite",x = 128,cueId = "ScrewBotsWhiteDrop"},
+          },
+          hits = {
+            {name = "sWhite",x = 128+64+64,cueId = "ScrewBotsWhiteScrew",input = "pressAB",pitchToBpm = true},
+            {name = "compWhite",x = 256+64,cueId = "ScrewBotsComplete",input = "releaseAB"},
           }
         },
       },
