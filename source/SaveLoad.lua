@@ -19,10 +19,10 @@ function drawSavescreen()
   setColorHex(editor.scheme.grid)
   love.graphics.rectangle("line",view.width/2-256,view.height/2-256,256*2,256*2)
   love.graphics.setFont(fontBig)
-  love.graphics.print("SAVE REMIX",view.width/2-64,32)
+  printNew("SAVE REMIX",view.width/2-64,32)
   love.graphics.setFont(font)
   
-  love.graphics.print(entry,view.width/2-128,64)
+  printNew(entry,view.width/2-128,64)
   
   local k = 0
   local mx, my = love.mouse.getPosition()
@@ -35,7 +35,7 @@ function drawSavescreen()
         setColorHex("000000")
       end
       
-      love.graphics.print(i,view.width/2-128,96+24*k)
+      printNew(i,view.width/2-128,96+24*k)
       k = k+1
     end
   end
@@ -95,7 +95,8 @@ function loadRemixOptions()
   subcategories = {
     [1] = "general",
     [2] = "karate man (GBA)",
-    [3] = "lock step",
+    [3] = "clappy trio (WII)",
+    [4] = "lock step",
   }
   subCount = 1
   subcategory = "general"
@@ -193,6 +194,8 @@ function updateRemixOptions(dt)
         data.options.karateka.flow = i.val
       elseif i.name == "persistent" then
         data.options.karateka.persistent = i.val
+      elseif i.name == "extreme bob" then
+        data.options.karateka.extremeBob = i.val
       end
     end
   elseif subcategory == "lock step" then
@@ -205,13 +208,21 @@ function updateRemixOptions(dt)
         data.options.lockStep.colors["marcher1"] = i.text
       elseif i.name == "stepper right (hex)" then
         data.options.lockStep.colors["marcher2"] = i.text
+      elseif i.name == "use palette swap" then
+        data.options.lockStep.paletteSwap = i.text
+      end
+    end
+  elseif subcategory == "clappy trio (WII)" then
+    for _,i in pairs(toggleButtons) do
+      if i.name == "head bob" then
+        data.options.clappyTrio.headBeat = i.val
       end
     end
   end
 end
 
 --[[
-createTextInput(view.width/2-256+16,128+32,256,16,"BPM",data.options.bpm)
+createToggleButton(view.width/2-256+16,128,"head bob",data.options.clappyTrio.headBeat)
 ]]
 
 function drawRemixOptions()
@@ -222,9 +233,9 @@ function drawRemixOptions()
   setColorHex(editor.scheme.grid)
   love.graphics.rectangle("line",view.width/2-256,view.height/2-256,256*2,256*2)
   love.graphics.setFont(fontBig)
-  love.graphics.print("REMIX OPTIONS",view.width/2-96,32)
+  printNew("REMIX OPTIONS",view.width/2-96,32)
   love.graphics.setFont(font)
-  love.graphics.print(subcategory,view.width/2-32,64)
+  printNew(subcategory,view.width/2-32,64)
   
   love.graphics.setFont(fontBig)
   
@@ -232,13 +243,13 @@ function drawRemixOptions()
   if mx > view.width/2-128-8 and mx < view.width/2-128+16 and my > 60-8 and my < 60+16 then
     setColorHex("ffffff")
   end
-  love.graphics.print("<",view.width/2-128,60)
+  printNew("<",view.width/2-128,60)
   
   setColorHex("000000")
   if mx > view.width/2+128-8 and mx < view.width/2+128+16 and my > 60-8 and my < 60+16 then
     setColorHex("ffffff")
   end
-  love.graphics.print(">",view.width/2+128,60)
+  printNew(">",view.width/2+128,60)
   love.graphics.setFont(font)
   
   for _,i in pairs(textinputs) do
@@ -249,8 +260,8 @@ function drawRemixOptions()
     end
     love.graphics.rectangle("fill",i.x+128+64,i.y,i.w,i.h)
     setColorHex("000000")
-    love.graphics.print(i.text,i.x+4+128+64,i.y+3)
-    love.graphics.print(i.name,i.x,i.y+3)
+    printNew(i.text,i.x+4+128+64,i.y+3)
+    printNew(i.name,i.x,i.y+3)
   end
   
   for _,i in pairs(toggleButtons) do
@@ -265,7 +276,7 @@ function drawRemixOptions()
       love.graphics.rectangle("fill",i.x+128+64+2,i.y+2,12,12)
     end
     setColorHex("000000")
-    love.graphics.print(i.name,i.x,i.y+3)
+    printNew(i.name,i.x,i.y+3)
   end
 end
 
@@ -334,7 +345,7 @@ function createToggleButton(x,y,name,val)
 end
 
 function createOptionsTextinputs(subcat)
-  if subcat == 1 then
+  if subcategory == "general" then
     createTextInput(view.width/2-256+16,128,256,16,"name",data.options.name)
     createTextInput(view.width/2-256+16,128+32,256,16,"BPM",tostring(data.bpm),true)
     createTextInput(view.width/2-256+16,128+32+32,256,16,"header",data.options.header)
@@ -345,14 +356,23 @@ function createOptionsTextinputs(subcat)
     createTextInput(view.width/2-256+16,128+32+32+32+24*3+32,256,16,"misses for try again",tostring(data.options.tryAgainRating),true)
     createTextInput(view.width/2-256+16,128+32+32+32+24*4+32+12,256,16,"end fade out time",tostring(data.options.endFadeOutTime),true)
     createTextInput(view.width/2-256+16,128+32+32+32+24*5+32+12,256,16,"minigame fade time",tostring(data.options.minigameFadeTime),true)
-  elseif subcat == 2 then
+  elseif subcategory == "karate man (GBA)" then
     createToggleButton(view.width/2-256+16,128,"flow",data.options.karateka.flow)
     createToggleButton(view.width/2-256+16,128+24,"persistent",data.options.karateka.persistent)
+    createToggleButton(view.width/2-256+16,128+24*2+32,"extreme bob",data.options.karateka.extremeBob)
     createTextInput(view.width/2-256+16,128+24*2,256,16,"start value",tostring(data.options.karateka.startFlow),true)
-  elseif subcat == 3 then
+  elseif subcategory == "lock step" then
     createTextInput(view.width/2-256+16,128,256,16,"BG (hex)",data.options.lockStep.colors["bg"])
     createTextInput(view.width/2-256+16,128+24,256,16,"stepper outline (hex)",data.options.lockStep.colors["marcher0"])
     createTextInput(view.width/2-256+16,128+24*2,256,16,"stepper left (hex)",data.options.lockStep.colors["marcher1"])
     createTextInput(view.width/2-256+16,128+24*3,256,16,"stepper right (hex)",data.options.lockStep.colors["marcher2"])
+    createTextInput(view.width/2-256+16,128+24*3+32,256,16,"use palette swap",data.options.lockStep.paletteSwap)
+  elseif subcategory == "clappy trio (WII)" then
+    createToggleButton(view.width/2-256+16,128,"head bob",data.options.clappyTrio.headBeat)
   end
 end
+--[[
+elseif i.name == "extreme bob" then
+        data.options.karateka.extremeBob = i.val
+      end
+]]

@@ -223,10 +223,17 @@ function loadMinigames()
     
     love.graphics.draw(img.lowerbody,128-32,view.height/2+16,0,2,2)
     
-    anim.leftArm:draw(128+48+offsetx/2,view.height/2-64+beat/4-(surprised),0,2,2)
-    anim.upperBody:draw(128-16+offsetx/2,view.height/2-64+beat/4-(surprised),0,2,2)
-    
-    anim.head:draw(128+offsetx*1.5,view.height/2-128+beat/2-(surprised*2),0,2,2)
+    if data.options.karateka.extremeBob then
+      anim.leftArm:draw(128+48+offsetx/2,view.height/2-64+beat*10-(surprised),0,2,2)--
+      anim.upperBody:draw(128-16+offsetx/2,view.height/2-64+beat*10-(surprised),0,2,2)--
+      
+      anim.head:draw(128+offsetx*1.5,view.height/2-128+beat*20-(surprised*2),0,2,2)--
+    else
+      anim.leftArm:draw(128+48+offsetx/2,view.height/2-64+beat/4-(surprised),0,2,2)
+      anim.upperBody:draw(128-16+offsetx/2,view.height/2-64+beat/4-(surprised),0,2,2)
+      
+      anim.head:draw(128+offsetx*1.5,view.height/2-128+beat/2-(surprised*2),0,2,2)
+    end
     
     for _,i in pairs(pots) do
       love.graphics.draw(img.objects,i.quad,view.width/2+i.x-32,view.height/2-i.y,i.rot,1+i.z,math.max(1+i.z,0),16,16)
@@ -1049,12 +1056,18 @@ function loadMinigames()
       elseif i.phase == 2 then
         bodyY = -8
       end
+      local headY = 0
+      if data.options.clappyTrio.headBeat then
+        headY = beat
+      end
+
       
       love.graphics.draw(img.sheet,quad.tail,view.width/2-dist+dist*k,view.height-96-8+yoff+bodyY,0,i.xscale,2-i.xscale,64)
       i.LegsAnim:draw(view.width/2-dist+dist*k,view.height-64+yoff,0,1,1,80/2,80/2)
       love.graphics.draw(img.sheet,quad.body,view.width/2-dist+dist*k,view.height-96-8+yoff+bodyY,0,i.xscale,2-i.xscale,48/2,32/2)
-      i.headAnim:draw(view.width/2-dist+dist*k,view.height-128+yoff+bodyY,0,1,1,80/2,80/2)
-      love.graphics.draw(img.sheet,quad.hair,view.width/2-dist+dist*k,view.height-128-24+yoff+bodyY,0,i.xscale,2-i.xscale,112/2,80/2)
+      
+      i.headAnim:draw(view.width/2-dist+dist*k,view.height-128+yoff+bodyY+headY,0,1,1,80/2,80/2)
+      love.graphics.draw(img.sheet,quad.hair,view.width/2-dist+dist*k,view.height-128-24+yoff+bodyY+headY,0,i.xscale,2-i.xscale,112/2,80/2)
       
       if i.phase == 2 then
         i.ArmsAnim:draw(view.width/2-dist+dist*k,view.height-96-4+yoff+bodyY,0,i.xscale,2-i.xscale,64/2,112)
@@ -1093,9 +1106,11 @@ function loadMinigames()
       on = love.audio.newSource("/resources/sfx/Lock step/stepOn.ogg"),
       off = love.audio.newSource("/resources/sfx/Lock step/stepOff.ogg")
     }
-    shaders = {
-      palSwap = love.graphics.newShader("/resources/shaders/paletteSwap.fs")
-    }
+    if data.options.lockStep.paletteSwap == "yes" then
+      shaders = {
+        palSwap = love.graphics.newShader("/resources/shaders/paletteSwap.fs")
+      }
+    end
     snd.on:setVolume(0.5)
     snd.off:setVolume(0.5)
     zoom = 2
@@ -1242,13 +1257,15 @@ function loadMinigames()
     love.graphics.setCanvas(view.canvas)
     
     --set shader 
-    local col = data.options.lockStep.colors
-    local colTable = {}
-    for k,i in pairs(col) do
-      colTable[k] = hex2rgb(i,true)
+    if data.options.lockStep.paletteSwap == "yes" then
+      local col = data.options.lockStep.colors
+      local colTable = {}
+      for k,i in pairs(col) do
+        colTable[k] = hex2rgb(i,true)
+      end
+      shaders.palSwap:sendColor("_colors",colTable["bg"],colTable["marcher0"],colTable["marcher1"],colTable["marcher2"],colTable["marcher2"])
+      love.graphics.setShader(shaders.palSwap)
     end
-    shaders.palSwap:sendColor("_colors",colTable["bg"],colTable["marcher0"],colTable["marcher1"],colTable["marcher2"],colTable["marcher2"])
-    love.graphics.setShader(shaders.palSwap)
     
     love.graphics.draw(img.canv,view.width/2,view.height/2,0,zoom,zoom,view.width/2,view.height/2)
     --reset shader
@@ -1265,12 +1282,14 @@ function loadMinigames()
       sheet = love.graphics.newImage("/resources/gfx/screw bots/sheet.png")
     }
     quad = {
-      craneTop = love.graphics.newQuad(0,0,64,64,img.sheet:getWidth(),img.sheet:getHeight()),
-      craneBottom = love.graphics.newQuad(64,0,48,48,img.sheet:getWidth(),img.sheet:getHeight()),
-      craneCable = love.graphics.newQuad(64,48,16,16,img.sheet:getWidth(),img.sheet:getHeight()),
+      clawTop = love.graphics.newQuad(0,0,64,64,img.sheet:getWidth(),img.sheet:getHeight()),
+      clawBottom = love.graphics.newQuad(64,0,48,48,img.sheet:getWidth(),img.sheet:getHeight()),
+      clawCable = love.graphics.newQuad(64,48,16,16,img.sheet:getWidth(),img.sheet:getHeight()),
       claw = {
         [0] = love.graphics.newQuad(112,0,64,80,img.sheet:getWidth(),img.sheet:getHeight()),
       },
+      craneTop = love.graphics.newQuad(176,0,64,32,img.sheet:getWidth(),img.sheet:getHeight()),
+      craneBottom = love.graphics.newQuad(0,400,336,64,img.sheet:getWidth(),img.sheet:getHeight()),
     }
     anim = {
       conveyerBelt = newAnimationGroup(img.sheet)
@@ -1281,8 +1300,8 @@ function loadMinigames()
     anim.conveyerBelt:addFrame("normal",0,80,592,80,100)
     
     
-    craneLengthBase = 128
-    craneLengthAdd = 0
+    clawLengthBase = 128
+    clawLengthAdd = 0
   end
   
   function uminigame(dt)
@@ -1290,9 +1309,9 @@ function loadMinigames()
     anim.conveyerBelt:update(dt)
     
     if input["pressAB"] then
-      craneLengthAdd = craneLengthAdd+((256-64)^2)
-    elseif craneLengthAdd > 0 then
-      craneLengthAdd = craneLengthAdd/2
+      clawLengthAdd = clawLengthAdd+((256-64)^2)
+    elseif clawLengthAdd > 0 then
+      clawLengthAdd = clawLengthAdd/2
     end
   end
   
@@ -1302,16 +1321,19 @@ function loadMinigames()
     
     anim.conveyerBelt:draw(128,view.height-128)
     
-    local craneLength = craneLengthBase+math.sqrt(craneLengthAdd)
-    local craneRotation = 25
-    love.graphics.draw(img.sheet,quad.craneCable,view.width/2,0,0,1,craneLength/16,8,0)
+    local rot = 45
+    love.graphics.draw(img.sheet,quad.craneBottom,view.width,(view.height/4)*3,math.rad(rot),1,1,296,32)
     
-    love.graphics.draw(img.sheet,quad.craneTop,view.width/2,0,math.rad(-90),1,1,64,32)
+    local clawLength = clawLengthBase+math.sqrt(clawLengthAdd)
+    local clawRotation = 25
+    love.graphics.draw(img.sheet,quad.clawCable,view.width/2,0,0,1,clawLength/16,8,0)
     
-    love.graphics.draw(img.sheet,quad.claw[0],view.width/2-10,craneLength+32,math.rad(craneRotation),1,1,48,16)
-    love.graphics.draw(img.sheet,quad.claw[0],view.width/2+10,craneLength+32,math.rad(-craneRotation),-1,1,48,16)
+    love.graphics.draw(img.sheet,quad.clawTop,view.width/2,0,math.rad(-90),1,1,64,32)
     
-    love.graphics.draw(img.sheet,quad.craneBottom,view.width/2,craneLength,math.rad(90),1,1,0,48/2)
+    love.graphics.draw(img.sheet,quad.claw[0],view.width/2-10,clawLength+32,math.rad(clawRotation),1,1,48,16)
+    love.graphics.draw(img.sheet,quad.claw[0],view.width/2+10,clawLength+32,math.rad(-clawRotation),-1,1,48,16)
+    
+    love.graphics.draw(img.sheet,quad.clawBottom,view.width/2,clawLength,math.rad(90),1,1,0,48/2)
   end
   
   loadMinigame[7] = lminigame

@@ -8,16 +8,17 @@ require("soundDatabase")
 json = require("json")
 
 function love.load()
-  font = love.graphics.newFont("/resources/font.ttf",20)
-  fontBig = love.graphics.newFont("/resources/font.ttf",40)
+  font = love.graphics.newFont("/resources/rodin.otf",17)
+  fontBig = love.graphics.newFont("/resources/rodin.otf",35)
   
   userImg = {}
   
+  love.filesystem.setIdentity("RhythmHeavenRemixMaker")
   if not love.filesystem.exists("/remixes") then
     love.filesystem.createDirectory("/remixes")
   end
   
-  version = "0.0.2"
+  version = "0.3.0"
   initializeData()
   initializeCues()
   
@@ -331,7 +332,7 @@ function love.load()
         },
       },
     },
-    --[[[7] = {
+    [7] = {
       name = "screw bots",
       img = love.graphics.newImage("/resources/gfx/editor/icons/screwbot.png"),
       blocks = {
@@ -349,7 +350,7 @@ function love.load()
           }
         },
       },
-    },]]
+    },
   }
   
   for _,i in pairs(minigames) do
@@ -373,7 +374,7 @@ function love.load()
   end
   
   minigame = 0
-  screen = "menu"
+  screen = "editor"
   loadMenu()
   
   local w,h = love.graphics.getDimensions()
@@ -398,6 +399,7 @@ function initializeData()
     bpm = 119,
     music = newSource("/resources/music/karate man (GBA).ogg"),
     blocks = {},
+    tempoChanges = {},
     version = version,
     options = {
       name = "REMIX",
@@ -422,7 +424,11 @@ function initializeData()
           ["marcher0"] = "982860",
           ["marcher1"] = "707070",
           ["marcher2"] = "f8d8e8"
-        }
+        },
+        paletteSwap = "yes"
+      },
+      clappyTrio = {
+        headBeat = false,
       }
     }
   }
@@ -461,6 +467,10 @@ function love.filedropped(file)
             end
           end
         end
+      end
+    elseif string.lower(string.sub(filename,filename:len()-3)) == ".zip" then
+      if file:open("r") then
+        local d = file:read()
       end
     end
   elseif screen == "menu" then
@@ -621,4 +631,10 @@ function cycleTable(t)
     end
   end
   return t
+end
+
+function printNew(str,x,y,r,sx,sy,ox,oy,kx,ky)
+  local fnt = love.graphics.getFont()
+  local y = y or 0
+  love.graphics.print(str,x,y-(fnt:getHeight()/2),r,sx,sy,ox,oy,kx,ky)
 end

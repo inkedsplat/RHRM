@@ -16,7 +16,7 @@ function loadGameInputs()
     perfectFail = 0
   end
   
-  minigame = 1
+  minigame = 7
   transition = 0
   endRemix = false
   endRemixTimer = 0
@@ -401,7 +401,7 @@ end
 
 function drawGameInputs()
   if not rating then
-    love.graphics.print(data.music:tell())
+    printNew(data.music:tell())
     
     if drawMinigame[minigame] then
       drawMinigame[minigame]()
@@ -427,18 +427,18 @@ function drawGameInputs()
     setColorHex("000000")
     love.graphics.rectangle("fill",0,0,view.width,view.height)
     setColorHex("ffffff")
-    --love.graphics.print(ratingTimer)
+    --printNew(ratingTimer)
     
     love.graphics.setFont(fontBig)
     if ratingPhase >= 1 then
-      love.graphics.print(data.options.header,64,64)
+      printNew(data.options.header,64,64)
     end
     if ratingPhase >= 2 then
       local r = ratingNote
       if r == "perfect" then
         r = "superb"
       end
-      love.graphics.print(data.options.rating[r],128,256)
+      printNew(data.options.rating[r],128,256)
     end
     if ratingPhase >= 4 then
       love.graphics.draw(gameImg.rating,gameQuad.rating[ratingNote],view.width-272-32,view.height-96-32,0,math.max(1,500^1.2-ratingTimer^1.2),math.max(1,500^1.2-ratingTimer^1.2),272/2,96/2)

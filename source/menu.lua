@@ -42,28 +42,28 @@ function drawMenu()
     if my > 256-4 and my < 256+16 then
       setColorHex("f0f0f0")
     end
-    love.graphics.print("PLAY",64,256)
+    printNew("PLAY",64,256)
     
     setColorHex("000000")
     if my > 256+32-4 and my < 256+16+32 then
       setColorHex("f0f0f0")
     end
-    love.graphics.print("CREATE",64,256+32)
+    printNew("CREATE",64,256+32)
     setColorHex("000000")
     love.graphics.setFont(font)
-    love.graphics.print(version,8,view.height-16)
+    printNew(version,8,view.height-16)
   else
     love.graphics.setFont(fontBig)
     setColorHex("000000")
     love.graphics.rectangle("fill",0,0,view.width,view.height)
     setColorHex("ffffff")
     
-    love.graphics.print("press escape to cancel",16,view.height-32)
+    printNew("press escape to cancel",16,view.height-32)
     
     if menu.loadPhase == 1 then
-      love.graphics.print("DROP A REMIX DATA FILE (.rhrm) ONTO THE WINDOW",view.width/2-256-96,view.height/2)
+      printNew("DROP A REMIX DATA FILE (.rhrm) ONTO THE WINDOW",view.width/2-256-96,view.height/2)
     elseif menu.loadPhase == 2 then
-      love.graphics.print("DROP THE CORRESPONDING .ogg,.wav or .mp3 FILE ONTO THE WINDOW ",view.width/2-256-128-96,view.height/2)
+      printNew("DROP THE CORRESPONDING .ogg,.wav or .mp3 FILE ONTO THE WINDOW ",view.width/2-256-128-96,view.height/2)
     elseif menu.loadPhase >= 3 and menu.loadPhase < 4 then
       love.graphics.draw(menu.remixIntroImg,view.width/2,view.height/2,0,menu.remixIntroSize,menu.remixIntroSize,menu.remixIntroImg:getWidth()/2,menu.remixIntroImg:getHeight()/2)
       

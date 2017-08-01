@@ -12,7 +12,8 @@ function loadEditor()
       playhead = "3ddd77",
       playheadInGame = "768aec",
       stop = "e53f3f",
-      playtest = "ffffff"
+      playtest = "ffffff",
+      tempoChanges=  "c0a0ff"
     },
     snd = {
       metronome = love.audio.newSource("/resources/sfx/metronome.ogg"),
@@ -41,6 +42,7 @@ function loadEditor()
     playTime = 0,
     minigameScroll = 0,
     playHeadMove = 0,
+    placeTempoChange = false,
     
     mouseOnGrid = {0,0},
     
@@ -55,13 +57,16 @@ function loadEditor()
     editor.beats = editor.beatStart
     editor.playhead = editor.beatStart*64
   end
-  createButton(0,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/play.png"),editor.scheme.playhead)
+  createButton(0,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/play.png"),editor.scheme.playhead,true)
   
   local function f()
     editor.playing = false
     editor.beats = 0
     editor.playhead = 0
     data.music:stop()
+    for _,i in pairs(data.tempoChanges) do
+      i.played = nil
+    end
     for _,i in pairs(data.blocks) do
       if i.cues then
         for _,c in pairs(i.cues) do
@@ -85,7 +90,7 @@ function loadEditor()
       end
     end
   end
-  createButton(48,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/stop.png"),editor.scheme.stop)
+  createButton(48,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/stop.png"),editor.scheme.stop,true)
   
   local function f()
     screen = "game"
@@ -147,7 +152,7 @@ function loadEditor()
     data.music:seek(math.max(editor.playheadInGame,0))
     print(editor.playheadInGame)
   end
-  createButton(48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/playtest.png"),editor.scheme.playtest)
+  createButton(48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/playtest.png"),editor.scheme.playtest,true)
   
   local function f()
     --SAVE THE DATA FILE
@@ -155,40 +160,40 @@ function loadEditor()
     entry = ""
     files = love.filesystem.getDirectoryItems("/remixes/")
   end
-  createButton(48*5,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/save.png"),editor.scheme.block)
+  createButton(48*6,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/save.png"),editor.scheme.block,true)
   
   local function f()
     screen = "remixOptions"
     loadRemixOptions()
   end
   
-  createButton(48*6,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/options.png"),editor.scheme.block)
+  createButton(48*7,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/options.png"),editor.scheme.block,true)
   
   local function f()
     editor.metronome = not editor.metronome
   end
-  local b = createButton(view.width-48,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/metronome.png"),editor.scheme.block)
+  local b = createButton(view.width-48,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/metronome.png"),editor.scheme.block,true)
   b.w = 24
   b.h = 24
   
   local function f()
     editor.gridwidth = editor.gridwidth*2
   end
-  local b = createButton(view.width-24,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/gridUp.png"),editor.scheme.block)
+  local b = createButton(view.width-24,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/gridUp.png"),editor.scheme.block,true)
   b.w = 24
   b.h = 24
   
   local function f()
     editor.gridwidth = editor.gridwidth/2
   end
-  local b = createButton(view.width-24,24,f,love.graphics.newImage("/resources/gfx/editor/buttons/gridDown.png"),editor.scheme.block)
+  local b = createButton(view.width-24,24,f,love.graphics.newImage("/resources/gfx/editor/buttons/gridDown.png"),editor.scheme.block,true)
   b.w = 24
   b.h = 24
   
   local function f()
     editor.viewX = 192
   end
-  local b = createButton(view.width-48,24,f,love.graphics.newImage("/resources/gfx/editor/buttons/backToStart.png"),editor.scheme.block)
+  local b = createButton(view.width-48,24,f,love.graphics.newImage("/resources/gfx/editor/buttons/backToStart.png"),editor.scheme.block,true)
   b.w = 24
   b.h = 24
   
@@ -200,10 +205,34 @@ function loadEditor()
       i.color = editor.scheme.playheadInGame
     end
   end
-  local b = createButton(view.width-48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/lineSelect.png"),editor.scheme.playhead)
+  local b = createButton(view.width-48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/lineSelect.png"),editor.scheme.playhead,true)
   b.w = 48
   b.h = 48
+  
+  
+  local function f(i)
+    editor.minigameScroll = editor.minigameScroll - 40
+    if editor.minigameScroll < 0 then
+      editor.minigameScroll = 0
+    end
+  end
+  local b = createButton(6,editor.gridspace+editor.buttonSpace+8,f,love.graphics.newImage("/resources/gfx/editor/buttons/up.png"),editor.scheme.playtest)
+  b.w = 16
+  b.h = 16
+  
+  local function f(i)
+    editor.minigameScroll = editor.minigameScroll + 40
+  end
+  local b = createButton(6,editor.gridspace+editor.buttonSpace+8+24,f,love.graphics.newImage("/resources/gfx/editor/buttons/down.png"),editor.scheme.playtest)
+  b.w = 16
+  b.h = 16
+  
+  --[[local function f(i)
+    editor.placeTempoChange = not editor.placeTempoChange
+  end
+  local b = createButton(view.width-48*3,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/tempoChange.png"),editor.scheme.playtest,true)]]
 end
+
 function love.wheelmoved(x,y)
   editor.minigameScroll = editor.minigameScroll-y*40
   if editor.minigameScroll < 0 then
@@ -233,7 +262,7 @@ function updateEditor(dt)
     --  print(k.." "..i.name.." "..8+editor.buttonSpace+editor.gridspace+40*(k).." "..my.." "..(8+editor.buttonSpace+editor.gridspace+40*(k)+32))
     --end
     --print(my,editor.gridspace+editor.buttonSpace)
-    if my > editor.gridspace+editor.buttonSpace and mx > 0 and mx < view.width/2 and my > 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll and my < 8+editor.buttonSpace+editor.gridspace+40*(k)+32-editor.minigameScroll then
+    if my > editor.gridspace+editor.buttonSpace and mx > 24 and mx < view.width/2 and my > 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll and my < 8+editor.buttonSpace+editor.gridspace+40*(k)+32-editor.minigameScroll then
       if mouse.button.pressed[1] then
         editor.selectedMinigame = k
         if k > 0 then
@@ -252,6 +281,25 @@ function updateEditor(dt)
             editor.block.hits = b.hits
             editor.switch = false
           end
+        end
+      end
+    end
+  end
+  --TEMPO CHANGES
+  if editor.playing then
+    for _,i in pairs(data.tempoChanges) do
+      if not i.played then
+        if editor.playhead >= i.x then
+          print("SWITCH")
+          print((60000/data.bpm)*editor.beats/1000,data.music:tell())
+          data.bpm = i.bpm
+          local b = editor.beats
+          editor.beats = i.x/64
+          print("BEATS:",editor.beats,b)
+          print((60000/data.bpm)*editor.beats/1000,data.music:tell())
+          i.played = true
+          
+          print("SWITCH END")
         end
       end
     end
@@ -292,6 +340,7 @@ function updateEditor(dt)
         editor.snd.metronome:play()
       end
       editor.beats = editor.beats + 1
+      print(editor.beats)
       editor.playhead = 64*(editor.beats-1)
       
       createDebugDot(editor.playhead,64)
@@ -345,18 +394,27 @@ function updateEditor(dt)
   if my > editor.buttonSpace and my < editor.buttonSpace+editor.gridspace then
     if not onBlock then
       if mouse.button.pressed[1] then
-        if editor.switch then
+        if editor.placeTempoChange then
           local s = {
-            switch = true,
-            x = editor.mouseOnGrid[1]*editor.gridwidth,
-            y = editor.mouseOnGrid[2]*editor.gridheight,
-            length = 64,
-            name = "switch to "..minigames[editor.switch].name,
-            minigame = editor.switch
+            bpm = data.bpm,
+            x = editor.mouseOnGrid[1]*editor.gridwidth
           }
-          table.insert(data.blocks,s)
+          table.insert(data.tempoChanges,s)
+          editor.placeTempoChange = false
         else
-          createBlock(editor.block.name,editor.mouseOnGrid[1]*editor.gridwidth,editor.mouseOnGrid[2]*editor.gridheight,editor.block.length,deepcopy(editor.block.cues),deepcopy(editor.block.hits))
+          if editor.switch then
+            local s = {
+              switch = true,
+              x = editor.mouseOnGrid[1]*editor.gridwidth,
+              y = editor.mouseOnGrid[2]*editor.gridheight,
+              length = 64,
+              name = "switch to "..minigames[editor.switch].name,
+              minigame = editor.switch
+            }
+            table.insert(data.blocks,s)
+          else
+            createBlock(editor.block.name,editor.mouseOnGrid[1]*editor.gridwidth,editor.mouseOnGrid[2]*editor.gridheight,editor.block.length,deepcopy(editor.block.cues),deepcopy(editor.block.hits))
+          end
         end
       end
     end
@@ -409,7 +467,7 @@ function drawEditor()
         end
         setColorHex(pal.blockOutline)
         love.graphics.rectangle("line",i.x+editor.viewX,i.y+editor.buttonSpace,i.length,editor.gridheight)
-        love.graphics.print(i.name,i.x+editor.viewX+4,i.y+editor.buttonSpace+4)
+        printNew(i.name,i.x+editor.viewX+4,i.y+editor.buttonSpace+4)
         
         if i.hits then
           for _,h in pairs(i.hits) do
@@ -426,7 +484,7 @@ function drawEditor()
             setColorHex(pal.blockOutlineLight)
             love.graphics.line(i.x+editor.viewX+h.x,i.y+editor.buttonSpace,i.x+editor.viewX+h.x,i.y+editor.gridheight+editor.buttonSpace)
             setColorHex(pal.blockOutline)
-            love.graphics.print(h.name,i.x+editor.viewX+4+h.x,i.y+editor.buttonSpace+32+4)
+            printNew(h.name,i.x+editor.viewX+4+h.x,i.y+editor.buttonSpace+32+4)
             
             --print("hit "..math.floor(editor.playhead).." "..i.x+h.x.." "..tostring(h.played).." "..k)
             if editor.playhead > i.x+h.x and editor.playing then
@@ -454,7 +512,7 @@ function drawEditor()
             setColorHex(pal.blockOutlineLight)
             love.graphics.line(i.x+editor.viewX+c.x,i.y+editor.buttonSpace,i.x+editor.viewX+c.x,i.y+editor.gridheight+editor.buttonSpace)
             setColorHex(pal.blockOutline)
-            love.graphics.print(c.name,i.x+editor.viewX+4+c.x,i.y+editor.buttonSpace+16+4)
+            printNew(c.name,i.x+editor.viewX+4+c.x,i.y+editor.buttonSpace+16+4)
             
             if editor.playhead > i.x+c.x and editor.playing then
               if not c.played then
@@ -468,6 +526,25 @@ function drawEditor()
           end
         end
       end
+    end
+  end
+  --TEMPO CHANGES
+  for _,i in pairs(data.tempoChanges) do
+    if editor.viewX > -i.x and editor.viewX < -i.x+view.width then      
+      love.graphics.setLineWidth(5)
+      setColorHex(pal.grid)
+      love.graphics.line(i.x+editor.viewX,editor.buttonSpace,i.x+editor.viewX,editor.buttonSpace+editor.gridspace)
+      love.graphics.setLineWidth(3)
+      setColorHex(pal.tempoChanges)
+      love.graphics.line(i.x+editor.viewX,editor.buttonSpace,i.x+editor.viewX,editor.buttonSpace+editor.gridspace)
+      
+      setColorHex(pal.grid)
+      printNew(i.bpm,i.x+8+editor.viewX+1,editor.buttonSpace+8)
+      printNew(i.bpm,i.x+8+editor.viewX-1,editor.buttonSpace+8)
+      printNew(i.bpm,i.x+8+editor.viewX,editor.buttonSpace+8+1)
+      printNew(i.bpm,i.x+8+editor.viewX,editor.buttonSpace+8-1)
+      setColorHex(pal.tempoChanges)
+      printNew(i.bpm,i.x+8+editor.viewX,editor.buttonSpace+8)
     end
   end
   --DRAW PLAYHEAD AND OTHER INDICATORS
@@ -495,7 +572,7 @@ function drawEditor()
   --PATTERN SELECT or however you would call that thing idk
   local mx,my = love.mouse.getPosition()
   for k,i in pairs(minigames) do
-    if mx > 0 and mx < view.width/2 and my > 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll and my < 8+editor.buttonSpace+editor.gridspace+40*(k)+32-editor.minigameScroll then
+    if mx > 24 and mx < view.width/2 and my > 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll and my < 8+editor.buttonSpace+editor.gridspace+40*(k)+32-editor.minigameScroll then
       setColorHex(pal.block)
     else
       if editor.selectedMinigame == k then
@@ -505,10 +582,10 @@ function drawEditor()
       end
     end
     if 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll > editor.gridspace+40 then
-      love.graphics.print(i.name,16+32,20+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll)
-      love.graphics.rectangle("line",8,8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll,32,32)
+      printNew(i.name,16+32+24,20+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll)
+      love.graphics.rectangle("line",8+24,8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll,32,32)
       setColorHex("ffffff")
-      love.graphics.draw((i.img or imgUnknownMinigame),8,8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll)
+      love.graphics.draw((i.img or imgUnknownMinigame),8+24,8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll)
     end
     if editor.selectedMinigame == k then
       for n,b in pairs(i.blocks) do
@@ -517,7 +594,7 @@ function drawEditor()
         else
           setColorHex(pal.grid)
         end
-        love.graphics.print(b.name,view.width/2+8,8+editor.buttonSpace+editor.gridspace+24*(n-1))
+        printNew(b.name,view.width/2+8,8+editor.buttonSpace+editor.gridspace+24*(n-1))
       end
     end
     
@@ -532,7 +609,9 @@ function drawEditor()
     end
     love.graphics.rectangle("fill",i.x,i.y,i.w,i.h)
     setColorHex(pal.grid)
-    love.graphics.rectangle("line",i.x,i.y,i.w,i.h)
+    if i.outline then
+      love.graphics.rectangle("line",i.x,i.y,i.w,i.h)
+    end
     if i.img then
       if i.color then setColorHex(i.color) end
       love.graphics.draw(i.img,i.x,i.y)
@@ -540,8 +619,8 @@ function drawEditor()
   end
   setColorHex("000000")
   if data.music then
-    love.graphics.print("BPM : "..tostring(data.bpm),48*3+8,8)
-    love.graphics.print("TIME : "..string.sub(tostring(data.music:tell()),1,5),48*3+8,8+16)
+    printNew("BPM : "..tostring(data.bpm),48*3+8,8)
+    printNew("TIME : "..string.sub(tostring(data.music:tell()),1,5),48*3+8,8+22)
   end
   --DRAW DEBUG DOTS
   --[[for _,i in pairs(debugDots) do
@@ -579,7 +658,7 @@ function createBlock(name,x,y,length,cues,hits)
   return b
 end
 
-function createButton(x,y,func,img,color)
+function createButton(x,y,func,img,color,outline)
   local b = {
     x = x,
     y = y,
@@ -588,6 +667,7 @@ function createButton(x,y,func,img,color)
     func = func,
     img = img,
     color = color,
+    outline = outline
   }
   table.insert(editor.buttons,b)
   return b
