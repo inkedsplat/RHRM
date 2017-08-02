@@ -61,9 +61,9 @@ function drawMenu()
     printNew("press escape to cancel",16,view.height-32)
     
     if menu.loadPhase == 1 then
-      printNew("DROP A REMIX DATA FILE (.rhrm) ONTO THE WINDOW",view.width/2-256-96,view.height/2)
+      printNew("DROP A REMIX DATA FILE (.rhrm)\nONTO THE WINDOW",32,view.height/2,0,1,1)
     elseif menu.loadPhase == 2 then
-      printNew("DROP THE CORRESPONDING .ogg,.wav or .mp3 FILE ONTO THE WINDOW ",view.width/2-256-128-96,view.height/2)
+      printNew("DROP THE CORRESPONDING .ogg,.wav or .mp3 FILE\nONTO THE WINDOW ",32,view.height/2)
     elseif menu.loadPhase >= 3 and menu.loadPhase < 4 then
       love.graphics.draw(menu.remixIntroImg,view.width/2,view.height/2,0,menu.remixIntroSize,menu.remixIntroSize,menu.remixIntroImg:getWidth()/2,menu.remixIntroImg:getHeight()/2)
       

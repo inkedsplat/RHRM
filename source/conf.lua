@@ -3,4 +3,5 @@ function love.conf(t)
   t.window.height = 1080/2
   t.console = true
   t.window.fullscreen = false
+  t.window.title = "RHRE - ???"
 end

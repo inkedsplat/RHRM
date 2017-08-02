@@ -48,6 +48,15 @@ function initializeCues()
   cue["ScrewBotsWhiteDrop"] = newSource("/resources/sfx/screw bots/whiteDrop.ogg")
   cue["ScrewBotsWhiteScrew"] = newSource("/resources/sfx/screw bots/whiteScrew.ogg")
   cue["ScrewBotsComplete"] = newSource("/resources/sfx/screw bots/complete.ogg")
+  cue["MoaiDooLStart"] = newSource("/resources/sfx/moai doo woop/dooLStart.ogg")
+  cue["MoaiDooL"] = newSource("/resources/sfx/moai doo woop/dooL.ogg")
+  cue["MoaiWopL"] = newSource("/resources/sfx/moai doo woop/woopL.ogg")
+  cue["MoaiPahL"] = newSource("/resources/sfx/moai doo woop/pahL.ogg")
+  cue["MoaiSwitch"] = newSource("/resources/sfx/moai doo woop/switch.ogg")
+  cue["MoaiDooRStart"] = newSource("/resources/sfx/moai doo woop/dooRStart.ogg")
+  cue["MoaiDooR"] = newSource("/resources/sfx/moai doo woop/dooR.ogg")
+  cue["MoaiWopR"] = newSource("/resources/sfx/moai doo woop/woopR.ogg")
+  cue["MoaiPahR"] = newSource("/resources/sfx/moai doo woop/pahR.ogg")
 end
 
 

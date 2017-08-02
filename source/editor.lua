@@ -110,10 +110,15 @@ function loadEditor()
             time = (((i.x+c.x)/64)*(60000/data.bpm))/1000,
             sound = c.sound,
             played = false,
-            name = c.name
+            name = c.name,
+            loop = c.loop,
+            silent = c.silent
           }
           if c.pitchToBpm then
             s.sound:setPitch((data.bpm/120))
+          end
+          if s.loop then
+            s.loopEnd = (((i.x+i.length)/64)*(60000/data.bpm))/1000
           end
           if s.time < math.max(editor.playheadInGame,0) then
             s.played = true
@@ -128,7 +133,8 @@ function loadEditor()
             input = c.input,
             played = false,
             sound = c.sound,
-            name = c.name
+            name = c.name,
+            silent = c.silent
           }
           if c.pitchToBpm then
             s.sound:setPitch((data.bpm/120))
@@ -247,7 +253,45 @@ function love.wheelmoved(x,y)
 end
 
 function updateEditor(dt)
-  local mx,my = love.mouse.getPosition()
+    --RESIZE PATTERNS
+  local mx, my = love.mouse.getPosition()
+  
+  for k,i in pairs(data.blocks) do
+    if i.resizable then
+      --print(,my)
+      if my > i.y+editor.buttonSpace and my < i.y+editor.buttonSpace+editor.gridheight and mx > i.x+i.length-4+editor.viewX and mx < i.x+i.length+4+editor.viewX then
+        curs = love.mouse.getSystemCursor("sizewe")
+        love.mouse.setCursor(curs)
+        if mouse.button.pressed[1] then
+          editor.blocked = true
+          i.resizeGrab = true
+          i.originalLength = i.length
+        end
+      else
+        if k == 1 then
+          curs = love.mouse.getSystemCursor("arrow")
+          love.mouse.setCursor(curs)
+        end
+      end
+      
+      if i.resizeGrab then
+        i.length = math.floor((mx-editor.viewX)/editor.gridwidth)*editor.gridwidth-(i.x)
+        
+        curs = love.mouse.getSystemCursor("sizewe")
+        love.mouse.setCursor(curs)
+        
+        if mouse.button.released[1] then
+          editor.blocked = false
+          i.resizeGrab = nil
+          if i.length <= 0 then
+            i.length = i.originalLength
+          end
+          i.originalLength = nil
+        end
+      end
+    end
+  end
+  
   --buttons
   for _,i in pairs(editor.buttons) do
     if mx > i.x and mx < i.x+i.w and my > i.y and my < i.y+i.h then
@@ -285,6 +329,7 @@ function updateEditor(dt)
             editor.block.length = b.length
             editor.block.cues = b.cues
             editor.block.hits = b.hits
+            editor.block.resizable = b.resizable
             editor.switch = false
           end
         end
@@ -357,7 +402,7 @@ function updateEditor(dt)
   end
   --moving pieces around
   local onBlock = false
-  if data.blocks then
+  if data.blocks and not editor.blocked then
     for k,i in pairs(data.blocks) do
       if mx > i.x+editor.viewX and mx < i.x+i.length+editor.viewX and my > i.y+editor.buttonSpace and my < i.y+editor.gridheight+editor.buttonSpace then
         onBlock = true
@@ -399,7 +444,7 @@ function updateEditor(dt)
   
   if my > editor.buttonSpace and my < editor.buttonSpace+editor.gridspace then
     if not onBlock then
-      if mouse.button.pressed[1] then
+      if mouse.button.pressed[1] and not editor.blocked then
         if editor.placeTempoChange then
           local s = {
             bpm = data.bpm,
@@ -419,7 +464,7 @@ function updateEditor(dt)
             }
             table.insert(data.blocks,s)
           else
-            createBlock(editor.block.name,editor.mouseOnGrid[1]*editor.gridwidth,editor.mouseOnGrid[2]*editor.gridheight,editor.block.length,deepcopy(editor.block.cues),deepcopy(editor.block.hits))
+            createBlock(editor.block.name,editor.mouseOnGrid[1]*editor.gridwidth,editor.mouseOnGrid[2]*editor.gridheight,editor.block.length,deepcopy(editor.block.cues),deepcopy(editor.block.hits),editor.block.resizable)
           end
         end
       end
@@ -520,14 +565,25 @@ function drawEditor()
             setColorHex(pal.blockOutline)
             printNew(c.name,i.x+editor.viewX+4+c.x,i.y+editor.buttonSpace+16+4)
             
-            if editor.playhead > i.x+c.x and editor.playing then
-              if not c.played then
-                if c.sound then
-                  c.sound:stop()
+            if c.loop then
+              if editor.playhead > i.x+c.x and editor.playing then
+                if editor.playhead < i.x+i.length then
                   c.sound:play()
+                elseif not c.played then
+                  c.sound:stop()
+                  c.played = true
                 end
-                c.played = true
-              end 
+              end
+            else
+              if editor.playhead > i.x+c.x and editor.playing then
+                if not c.played then
+                  if c.sound then
+                    c.sound:stop()
+                    c.sound:play()
+                  end
+                  c.played = true
+                end 
+              end
             end
           end
         end
@@ -651,14 +707,15 @@ HITS: (table of tables)
   sound,
   input
 ]]
-function createBlock(name,x,y,length,cues,hits)
+function createBlock(name,x,y,length,cues,hits,resizable)
   local b = {
     name = name,
     x = x,
     y = y,
     length = length,
     cues = cues,
-    hits = hits
+    hits = hits,
+    resizable = resizable
   }
   table.insert(data.blocks,b)
   return b
@@ -673,7 +730,7 @@ function createButton(x,y,func,img,color,outline)
     func = func,
     img = img,
     color = color,
-    outline = outline
+    outline = outline,
   }
   table.insert(editor.buttons,b)
   return b

@@ -19,6 +19,7 @@ function love.load()
   end
   
   version = "0.3.0"
+  love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()
   
@@ -366,10 +367,69 @@ function love.load()
         },
       },
     },
-    [7] = {
-      name = "moai doop woop",
+    [8] = {
+      name = "moai doo-wop",
       blocks = {
-        
+        {
+          name = "left doo",
+          length = 64,
+          resizable = true,
+          cues = {
+            {name = "dooLStart",x = 0,cueId = "MoaiDooLStart"},
+            {name = "dooL",x = 0,cueId = "MoaiDooL",loop = true},
+          }
+        },
+        {
+          name = "left wop",
+          length = 32,
+          resizable = true,
+          cues = {
+            {name = "wopL",x = 0,cueId = "MoaiWopL"},
+          }
+        },
+        {
+          name = "left pah",
+          length = 32,
+          resizable = true,
+          cues = {
+            {name = "pahL",x = 0,cueId = "MoaiPahL"},
+          }
+        },
+        {
+          name = "switch",
+          length = 64,
+          resizable = true,
+          cues = {
+            {name = "switch",x = 0,cueId = "MoaiSwitch"},
+          }
+        },
+        {
+          name = "right doo",
+          length = 64,
+          resizable = true,
+          cues = {
+            {name = "dooR",x = 0,cueId = "MoaiDooR",loop = true,silent = true},
+          },
+          hits = {
+            {name = "dooRStart",x = 0,cueId = "MoaiDooRStart",input = "pressA",silent = true},
+          }
+        },
+        {
+          name = "right wop",
+          length = 32,
+          resizable = true,
+          hits = {
+            {name = "wopR",x = 0,cueId = "MoaiWopR",input = "releaseA",silent = true},
+          }
+        },
+        {
+          name = "right pah",
+          length = 32,
+          resizable = true,
+          hits = {
+            {name = "pahR",x = 0,cueId = "MoaiPahR",input = "pressB",silent = true},
+          }
+        },
       }
     }
   }
@@ -395,7 +455,7 @@ function love.load()
   end
   
   minigame = 0
-  screen = "editor"
+  screen = "menu"
   loadMenu()
   
   local w,h = love.graphics.getDimensions()

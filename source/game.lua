@@ -16,7 +16,7 @@ function loadGameInputs()
     perfectFail = 0
   end
   
-  minigame = 7
+  minigame = 1
   transition = 0
   endRemix = false
   endRemixTimer = 0
@@ -233,12 +233,35 @@ function updateGameInputs(dt)
     end 
     --handle sounds
     for _,s in pairs(data.beatmap.sounds) do
-      if data.music:tell() >= s.time and not s.played then
-        s.sound:stop()
-        s.sound:play()
-        s.played = true
-        table.insert(currentSounds,{name = s.name,time = s.time})
-        --print(s.name)
+      if not s.silent then
+        if s.loop then
+          if data.music:tell() >= s.time and not s.played then
+            s.sound:stop()
+            s.sound:play()
+            table.insert(currentSounds,{name = s.name,time = s.time})
+            s.played = true
+          end
+          if not s.played2 and s.played then
+            s.sound:play()
+            if data.music:tell() >= s.loopEnd then
+              s.played2 = true
+              s.sound:stop()
+              table.insert(currentSounds,{name = s.name.."LoopEnd",time = s.time})
+            end
+          end
+        else
+          if data.music:tell() >= s.time and not s.played then
+            s.sound:stop()
+            s.sound:play()
+            s.played = true
+            table.insert(currentSounds,{name = s.name,time = s.time})
+            --print(s.name)
+          end
+        end
+      else
+        if data.music:tell() >= s.time and not s.played then
+          s.played = true
+        end
       end
     end 
     --handle gameplay
@@ -246,8 +269,10 @@ function updateGameInputs(dt)
       if s.input:find("hold") then
         if data.music:tell() > s.time and not s.played then
           if input[s.input] then
-            s.sound:stop()
-            s.sound:play()
+            if not s.silent then
+              s.sound:stop()
+              s.sound:play()
+            end
             hit = 10
             print("HIT")
           else
@@ -260,8 +285,10 @@ function updateGameInputs(dt)
       else
         if data.music:tell() > s.time-margin and data.music:tell() < s.time+margin then
           if input[s.input] and not s.played then
-            s.sound:stop()
-            s.sound:play()
+            if not s.silent then
+              s.sound:stop()
+              s.sound:play()
+            end
             s.played = true
             hit = 10
             print("HIT WITH A MARGIN OF "..data.music:tell()-s.time)
