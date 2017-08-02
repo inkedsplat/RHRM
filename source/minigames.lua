@@ -1329,6 +1329,8 @@ function loadMinigames()
           [8] = love.graphics.newQuad(336+64*4,400+96,64,48,img.sheet:getWidth(),img.sheet:getHeight()),
         },
         screw = love.graphics.newQuad(608,112+16,32,64,img.sheet:getWidth(),img.sheet:getHeight()),
+        arm = love.graphics.newQuad(448,0,16,32,img.sheet:getWidth(),img.sheet:getHeight()),
+        hand = love.graphics.newQuad(464,0,32,32,img.sheet:getWidth(),img.sheet:getHeight()),
       },
       whiteBot = {
         body = love.graphics.newQuad(592-16,64,64,64,img.sheet:getWidth(),img.sheet:getHeight()),
@@ -1344,6 +1346,8 @@ function loadMinigames()
           [8] = love.graphics.newQuad(336+64*4,400,64,48,img.sheet:getWidth(),img.sheet:getHeight()),
         },
         screw = love.graphics.newQuad(576,112+16,32,64,img.sheet:getWidth(),img.sheet:getHeight()),
+        arm = love.graphics.newQuad(496,0,16,32,img.sheet:getWidth(),img.sheet:getHeight()),
+        hand = love.graphics.newQuad(512,0,32,32,img.sheet:getWidth(),img.sheet:getHeight()),
       }
     }
     anim = {
@@ -1354,14 +1358,22 @@ function loadMinigames()
     anim.conveyerBelt:addFrame("normal",0,80*2,576,80,100)
     anim.conveyerBelt:addFrame("normal",0,80,576,80,100)
     
+    snd = {
+      oh = love.audio.newSource("/resources/sfx/screw bots/oh.ogg"),
+      yea = love.audio.newSource("/resources/sfx/screw bots/yea.ogg"),
+      lets = love.audio.newSource("/resources/sfx/screw bots/lets.ogg"),
+      go = love.audio.newSource("/resources/sfx/screw bots/go.ogg") 
+    }
+    
     crane = {
-      phase = 2,
+      phase = 0,
       rot = 45,
       rot1 = (-45/2),
       rot2 = (-45/1.5),
-      rot3 = 45
+      rot3 = 45,
+      bot = "nil"
     }
-    crane.maxPhase = crane.phase
+    --crane.maxPhase = crane.phase
 
     claw = {
       spin = false,
@@ -1370,6 +1382,8 @@ function loadMinigames()
       f = 0
     }
     
+    sounds = {}
+    
     bots = {}
     
     clawLengthBase = 128
@@ -1377,35 +1391,60 @@ function loadMinigames()
   end
   
   function uminigame(dt)
+    for k,i in pairs(sounds) do
+      if data.music:tell() > i.time then
+        i.sound:stop()
+        i.sound:play()
+        table.remove(sounds,k)
+      end
+    end
     
     for _,i in pairs(currentSounds) do
       if i.name == "cBlack1" or i.name == "cWhite1" then
         crane.phase = 1
+        if i.name == "cBlack1" then
+          crane.bot = "black"
+        end
+        if i.name == "cWhite1" then
+          crane.bot = "white"
+        end
       end
       if i.name == "cBlack2" or i.name == "cWhite2" then
         crane.phase = 2
       end
       if i.name == "dBlack" then
+        claw.prepare = true
+        
+        crane.bot = nil
         crane.phase = 0
         local b = {
           color = "black",
-          x = 128+592-64-32,
+          x = 128+592-64-32-24,
           moving = true,
-          time = i.time+(2)*(60000/data.bpm)/1000, 
+          time = i.time+(1)*(60000/data.bpm)/1000, 
           headHeight = 40,
           f = 0,
+          bounce = 20,
+          complete = false,
+          armRot = 0
         }
         table.insert(bots,b)
       end
       if i.name == "dWhite" then
+        claw.prepare = trues
+        
+        crane.bot = nil
         crane.phase = 0
         local b = {
           color = "white",
-          x = 128+592-64-32,
+          x = 128+592-64-32-24,
           moving = true,
-          time = i.time+(2)*(60000/data.bpm)/1000, 
+          time = i.time+(1)*(60000/data.bpm)/1000, 
           headHeight = 15,
           f = 0,
+          bounce = 20,
+          complete = false,
+          armRot = 0
         }
         table.insert(bots,b)
       end
@@ -1414,12 +1453,12 @@ function loadMinigames()
     
     anim.conveyerBelt:update(dt)
     
-    if mouse.button.pressed[1] then
+    --[[if mouse.button.pressed[1] then
       crane.phase = crane.phase+1
       if crane.phase > crane.maxPhase then
         crane.phase = 0
       end
-    end
+    end]]
     
     if crane.phase == 0 then
       crane.rot = (crane.rot+45)/2
@@ -1434,28 +1473,32 @@ function loadMinigames()
     elseif crane.phase == 2 then
       crane.rot = (crane.rot+45)/2
       crane.rot1 = (crane.rot1+(-45/2))/2
-      crane.rot2 = (crane.rot2+(-45/1.5))/2
+      crane.rot2 = (crane.rot2+(-45/1.10))/2
       crane.rot3 = (crane.rot3+45)/2
     end
     
     local hit = 0
     local time = 0
     local col = "red"
+    local bearly = false
     for _,i in pairs(currentHits) do
       if i.name == "sBlack" or i.name == "sWhite" then
         hit = 1
         time = i.time
         col = "black"
+        bearly = i.bearly
       end
       if i.name == "compBlack" or i.name == "compWhite" then
         hit = 2
         time = i.time
         col = "white"
+        bearly = i.bearly
       end
     end
     
     if input["pressAB"] and hit == 1 then
         claw.spin = true
+        claw.prepare = false
     end
     if input["releaseAB"] and hit == 2 then
         claw.spin = false
@@ -1467,17 +1510,20 @@ function loadMinigames()
     --  claw.f = 0
     --end
     
-    
-    if not claw.spin then
-      clawLengthAdd = 0
-      claw.rot = 25
+    if claw.prepare then
+      claw.rot = (claw.rot+45)/2
+      clawLengthAdd = (clawLengthAdd-64)/2
+    elseif not claw.spin then
+      clawLengthAdd = (clawLengthAdd+0)/2
+      claw.rot = (claw.rot+25)/2
     else
       claw.rot = 0
+
     end
     
     for _,i in pairs(bots) do
-      local spd = 2450
-      local headSpd = 490
+      local spd = 5300
+      local headSpd = 480
     
       if i.moving then
         i.x = i.x-spd*(data.bpm/60000)
@@ -1491,7 +1537,7 @@ function loadMinigames()
         if input["holdAB"] then
           i.headHeight = i.headHeight-headSpd*(data.bpm/60000)
           
-          clawLengthAdd = -i.headHeight+128+8
+          clawLengthAdd = -i.headHeight+128
           
           i.f = i.f+0.5
           if i.f > 7 then
@@ -1502,16 +1548,56 @@ function loadMinigames()
         end
       end
       if i.color == "black" then
-        if time > i.time+(2)*(60000/data.bpm)/1000-margin and time < i.time+(2)*(60000/data.bpm)/1000+margin and hit == 2 then
+        if time > i.time+(2)*(60000/data.bpm)/1000-margin and time < i.time+(2)*(60000/data.bpm)/1000+margin and hit == 2 and not bearly then
+          i.armRot = 90-45+90
+          
           i.moving = true
           i.f = 8
           claw.f = 0
+          i.headHeight = -16
+          i.complete = true
+          
+          local s = {
+            time = i.time+(2.5)*(60000/data.bpm)/1000,
+            sound = snd.oh
+          }
+          table.insert(sounds,s)
+          local s = {
+            time = i.time+(3)*(60000/data.bpm)/1000 ,
+            sound = snd.yea
+          }
+          table.insert(sounds,s)
+        end
+        if data.music:tell() > i.time+(2)*(60000/data.bpm)/1000+bearlyMargin then
+          i.moving = true
+          claw.f = 0
+          claw.spin = false
         end
       else
-        if time > i.time+(1)*(60000/data.bpm)/1000-margin and time < i.time+(1)*(60000/data.bpm)/1000+margin and hit == 2 then
+        if time > i.time+(1)*(60000/data.bpm)/1000-margin and time < i.time+(1)*(60000/data.bpm)/1000+margin and hit == 2 and not bearly then
+          i.armRot = 90-45+90
+          
           i.moving = true
           i.f = 8
           claw.f = 0
+          i.headHeight = -16
+          i.complete = true
+          
+          local s = {
+            time = i.time+(1.5)*(60000/data.bpm)/1000,
+            sound = snd.lets
+          }
+          table.insert(sounds,s)
+          local s = {
+            time = i.time+(2)*(60000/data.bpm)/1000 ,
+            sound = snd.go
+          }
+          table.insert(sounds,s)
+        end
+        if data.music:tell() > i.time+(1)*(60000/data.bpm)/1000+bearlyMargin then
+          i.moving = true
+          claw.f = 0
+          claw.spin = false
         end
       end
     end
@@ -1523,18 +1609,39 @@ function loadMinigames()
     
     --draw back claw
     local clawLength = clawLengthBase+clawLengthAdd
-    local clawRotation = 0--claw.rot
+    local clawRotation = claw.rot
     love.graphics.draw(img.sheet,quad.claw[math.floor(claw.f)],view.width/3+8,clawLength+32+6,math.rad(clawRotation),1,1,144/2,18)
     
     for _,i in pairs(bots) do
+      if i.complete then
+        i.bounce = beat
+      end
+      local bounce = i.bounce
+      if i.bounce > 0 then
+        i.bounce = i.bounce-1
+      end
       if i.color == "black" then
-        love.graphics.draw(img.sheet,quad.blackBot.screw,i.x,view.height-64-128-i.headHeight-5,0,1,1,32/2,0)
+        love.graphics.draw(img.sheet,quad.blackBot.screw,i.x,view.height-64-128-i.headHeight-5+bounce/2,0,1,1,32/2,0)
+        
+        love.graphics.draw(img.sheet,quad.blackBot.arm,i.x-20,view.height-32-16-128+bounce/2,math.rad(i.armRot),1,1,16/2,0)
+        love.graphics.draw(img.sheet,quad.blackBot.hand,i.x-20+math.cos(math.rad(i.armRot+90))*30,view.height-32-16-128+bounce/2+math.sin(math.rad(i.armRot+90))*30,math.rad(i.armRot),1,1,16,16)
+        
+        love.graphics.draw(img.sheet,quad.blackBot.arm,i.x+20,view.height-32-16-128+bounce/2,math.rad(-i.armRot),1,1,16/2,0)
+        love.graphics.draw(img.sheet,quad.blackBot.hand,i.x+20-math.cos(math.rad(-i.armRot+270))*30,view.height-32-16-128+bounce/2-math.sin(math.rad(-i.armRot+270))*30,math.rad(-i.armRot),1,1,16,16)
+        
         love.graphics.draw(img.sheet,quad.blackBot.body,i.x,view.height-128+10,0,1,1,64/2,64)
-        love.graphics.draw(img.sheet,quad.blackBot.head[math.floor(i.f)],i.x,view.height-64-128-i.headHeight+10,0,1,1,64/2,48)
+        love.graphics.draw(img.sheet,quad.blackBot.head[math.floor(i.f)],i.x,view.height-64-128-i.headHeight+10+bounce,0,1,1,64/2,48)
       elseif i.color == "white" then
-        love.graphics.draw(img.sheet,quad.whiteBot.screw,i.x,view.height-64-128-i.headHeight-5,0,1,1,32/2,0)
+        love.graphics.draw(img.sheet,quad.whiteBot.screw,i.x,view.height-64-128-i.headHeight-5+bounce/2,0,1,1,32/2,0)
+        
+        love.graphics.draw(img.sheet,quad.whiteBot.arm,i.x-20,view.height-32-16-128+bounce/2,math.rad(i.armRot),1,1,16/2,0)
+        love.graphics.draw(img.sheet,quad.whiteBot.hand,i.x-20+math.cos(math.rad(i.armRot+90))*30,view.height-32-16-128+bounce/2+math.sin(math.rad(i.armRot+90))*30,math.rad(i.armRot),1,1,16,16)
+        
+        love.graphics.draw(img.sheet,quad.whiteBot.arm,i.x+20,view.height-32-16-128+bounce/2,math.rad(-i.armRot),1,1,16/2,0)
+        love.graphics.draw(img.sheet,quad.whiteBot.hand,i.x+20-math.cos(math.rad(-i.armRot+270))*30,view.height-32-16-128+bounce/2-math.sin(math.rad(-i.armRot+270))*30,math.rad(-i.armRot),1,1,16,16)
+        
         love.graphics.draw(img.sheet,quad.whiteBot.body,i.x,view.height-128+10,0,1,1,64/2,64)
-        love.graphics.draw(img.sheet,quad.whiteBot.head[math.floor(i.f)],i.x,view.height-64-128-i.headHeight+10,0,1,1,64/2,48)
+        love.graphics.draw(img.sheet,quad.whiteBot.head[math.floor(i.f)],i.x,view.height-64-128-i.headHeight+10+bounce,0,1,1,64/2,48)
       end
     end
     
@@ -1575,7 +1682,43 @@ function loadMinigames()
     love.graphics.draw(img.sheet,quad.craneClaw4,xTop+xAdd-48/2+8-math.cos(math.rad(craneClawRot))*dist2,yTop+yAdd+craneClawY-math.sin(math.rad(craneClawRot))*dist2,math.rad(craneClawRot+craneClawRot1),1,1,8,12)
     love.graphics.draw(img.sheet,quad.craneClaw4,xTop+xAdd+48/2+8+math.cos(math.rad(craneClawRot))*dist2-16,yTop+yAdd+craneClawY-math.sin(math.rad(craneClawRot))*dist2,-math.rad(craneClawRot+craneClawRot1),-1,1,8,12)
     
-      --setColorHex("ff0000")
+    if crane.bot == "black" then
+        local x = xTop+xAdd
+        local y = yTop+yAdd
+        local headHeight = 40
+        
+        y = y+128+96-16
+        
+        love.graphics.draw(img.sheet,quad.blackBot.screw,x,y-64-headHeight-5,0,1,1,32/2,0)
+        
+        love.graphics.draw(img.sheet,quad.blackBot.arm,x-20,y-32-16,math.rad(0),1,1,16/2,0)
+        love.graphics.draw(img.sheet,quad.blackBot.hand,x-20+math.cos(math.rad(0+90))*30,y-32-16+math.sin(math.rad(0+90))*30,math.rad(0),1,1,16,16)
+        
+        love.graphics.draw(img.sheet,quad.blackBot.arm,x+20,y-32-16,math.rad(0),1,1,16/2,0)
+        love.graphics.draw(img.sheet,quad.blackBot.hand,x+20-math.cos(math.rad(0+270))*30,y-32-16-math.sin(math.rad(0+270))*30,math.rad(0),1,1,16,16)        
+      
+        love.graphics.draw(img.sheet,quad.blackBot.body,x,y+10,0,1,1,64/2,64)
+        love.graphics.draw(img.sheet,quad.blackBot.head[0],x,y-64-headHeight+10,0,1,1,64/2,48)
+    elseif crane.bot == "white" then
+        local x = xTop+xAdd
+        local y = yTop+yAdd
+        local headHeight = 40
+        
+        y = y+128+96-16
+        
+        love.graphics.draw(img.sheet,quad.whiteBot.screw,x,y-64-headHeight-5,0,1,1,32/2,0)
+        
+        love.graphics.draw(img.sheet,quad.whiteBot.arm,x-20,y-32-16,math.rad(0),1,1,16/2,0)
+        love.graphics.draw(img.sheet,quad.whiteBot.hand,x-20+math.cos(math.rad(0+90))*30,y-32-16+math.sin(math.rad(0+90))*30,math.rad(0),1,1,16,16)
+        
+        love.graphics.draw(img.sheet,quad.whiteBot.arm,x+20,y-32-16,math.rad(0),1,1,16/2,0)
+        love.graphics.draw(img.sheet,quad.whiteBot.hand,x+20-math.cos(math.rad(0+270))*30,y-32-16-math.sin(math.rad(0+270))*30,math.rad(0),1,1,16,16)   
+        
+        love.graphics.draw(img.sheet,quad.whiteBot.body,x,y-16,0,1,1,64/2,64)
+        love.graphics.draw(img.sheet,quad.whiteBot.head[0],x,y-64-headHeight+10,0,1,1,64/2,48)
+    end
+    
+    --setColorHex("ff0000")
       --love.graphics.circle("fill",xTop+xAdd-craneClawX+math.cos(craneClawRot)*dist2,yTop+yAdd+craneClawY+math.sin(craneClawRot)*dist2-5,3)
       --setColorHex("ffffff")
     
@@ -1593,8 +1736,11 @@ function loadMinigames()
     
     love.graphics.draw(img.sheet,quad.clawTop,view.width/3,0,math.rad(-90),1,1,64,32)
     
-    
-    love.graphics.draw(img.sheet,quad.clawR[math.floor(claw.f)],view.width/3,clawLength+8,math.rad(-clawRotation),1,1,144/2,18)
+    if claw.f == 0 then
+      love.graphics.draw(img.sheet,quad.clawR[math.floor(claw.f)],view.width/3,clawLength+8,math.rad(-clawRotation),1,1,88,28)
+    else
+      love.graphics.draw(img.sheet,quad.clawR[math.floor(claw.f)],view.width/3,clawLength+8,math.rad(-clawRotation),1,1,144/2,18)
+    end
     --love.graphics.draw(img.sheet,quad.claw[0],view.width/3+10,clawLength+32,math.rad(-clawRotation),-1,1,48,16)
     
     if math.floor(claw.f) == 0 then
@@ -1605,4 +1751,20 @@ function loadMinigames()
   loadMinigame[7] = lminigame
   updateMinigame[7] = uminigame
   drawMinigame[7] = dminigame
+  
+  function lminigame()
+    
+  end
+  
+  function uminigame(dt)
+    
+  end
+  
+  function dminigame()
+    
+  end
+  
+  loadMinigame[8] = lminigame
+  updateMinigame[8] = uminigame
+  drawMinigame[8] = dminigame
 end

@@ -296,9 +296,9 @@ function love.load()
           length = 128+32,
           cues = {
             {name = "hm",x = 0,cueId = "LockStepHm"},
-            {name = "ha",x = 32,cueId = "LockStepHaiOff"},
+            {name = "ha",x = 32,cueId = "LockStepHaOff"},
             {name = "hm",x = 64,cueId = "LockStepHm"},
-            {name = "ha",x = 96,cueId = "LockStepHaiOff"},
+            {name = "ha",x = 96,cueId = "LockStepHaOff"},
             {name = "switch",x = 128,cueId = "LockStepHai"},
           }
         },
@@ -345,8 +345,8 @@ function love.load()
             {name = "dBlack",x = 128,cueId = "ScrewBotsBlackDrop"},
           },
           hits = {
-            {name = "sBlack",x = 128+64+64,cueId = "ScrewBotsBlackScrew",input = "pressAB",pitchToBpm = true},
-            {name = "compBlack",x = 256+64+64,cueId = "ScrewBotsComplete",input = "releaseAB"},
+            {name = "sBlack",x = 128+64,cueId = "ScrewBotsBlackScrew",input = "pressAB",pitchToBpm = true},
+            {name = "compBlack",x = 256+64,cueId = "ScrewBotsComplete",input = "releaseAB"},
           }
         },
         {
@@ -360,12 +360,18 @@ function love.load()
             {name = "dWhite",x = 128,cueId = "ScrewBotsWhiteDrop"},
           },
           hits = {
-            {name = "sWhite",x = 128+64+64,cueId = "ScrewBotsWhiteScrew",input = "pressAB",pitchToBpm = true},
-            {name = "compWhite",x = 256+64,cueId = "ScrewBotsComplete",input = "releaseAB"},
+            {name = "sWhite",x = 128+64,cueId = "ScrewBotsWhiteScrew",input = "pressAB",pitchToBpm = true},
+            {name = "compWhite",x = 256,cueId = "ScrewBotsComplete",input = "releaseAB"},
           }
         },
       },
     },
+    [7] = {
+      name = "moai doop woop",
+      blocks = {
+        
+      }
+    }
   }
   
   for _,i in pairs(minigames) do
