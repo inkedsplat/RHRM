@@ -41,6 +41,7 @@ function loadEditor()
     switch = 1,
     playTime = 0,
     minigameScroll = 0,
+    patternScroll = 0,
     playHeadMove = 0,
     placeTempoChange = false,
     
@@ -115,7 +116,7 @@ function loadEditor()
             silent = c.silent
           }
           if c.pitchToBpm then
-            s.sound:setPitch((data.bpm/120))
+            s.sound:setPitch((data.bpm/(c.originalBpm or 120)))
           end
           if s.loop then
             s.loopEnd = (((i.x+i.length)/64)*(60000/data.bpm))/1000
@@ -137,7 +138,7 @@ function loadEditor()
             silent = c.silent
           }
           if c.pitchToBpm then
-            s.sound:setPitch((data.bpm/120))
+            s.sound:setPitch((data.bpm/(c.originalBpm or 120)))
           end
           if s.time < math.max(editor.playheadInGame,0) then
             s.played = true
@@ -246,9 +247,20 @@ function loadEditor()
 end
 
 function love.wheelmoved(x,y)
-  editor.minigameScroll = editor.minigameScroll-y*40
-  if editor.minigameScroll < 0 then
-    editor.minigameScroll = 0
+  local mx,my = love.mouse.getPosition()
+  
+  if my > editor.buttonSpace+editor.gridspace then
+    if mx < view.width/2 then
+      editor.minigameScroll = editor.minigameScroll-y*40
+      if editor.minigameScroll < 0 then
+        editor.minigameScroll = 0
+      end
+    else
+      editor.patternScroll = editor.patternScroll-y*24
+      if editor.patternScroll < 0 then
+        editor.patternScroll = 0
+      end
+    end
   end
 end
 
@@ -258,7 +270,6 @@ function updateEditor(dt)
   
   for k,i in pairs(data.blocks) do
     if i.resizable then
-      --print(,my)
       if my > i.y+editor.buttonSpace and my < i.y+editor.buttonSpace+editor.gridheight and mx > i.x+i.length-4+editor.viewX and mx < i.x+i.length+4+editor.viewX then
         curs = love.mouse.getSystemCursor("sizewe")
         love.mouse.setCursor(curs)
@@ -323,7 +334,7 @@ function updateEditor(dt)
     end
     if k == editor.selectedMinigame then
       for n,b in pairs(i.blocks) do
-        if mx > view.width/2 and mx < view.width and my > 8+editor.buttonSpace+editor.gridspace+24*(n-1) and my < 8+editor.buttonSpace+editor.gridspace+24*(n-1)+16 then
+        if mx > view.width/2 and mx < view.width and my > 8+editor.buttonSpace+editor.gridspace+24*(n-1)-editor.patternScroll and my < 8+editor.buttonSpace+editor.gridspace+24*(n-1)+16-editor.patternScroll then
           if mouse.button.pressed[1] then
             editor.block.name = b.name
             editor.block.length = b.length
@@ -651,12 +662,15 @@ function drawEditor()
     end
     if editor.selectedMinigame == k then
       for n,b in pairs(i.blocks) do
-        if mx > view.width/2 and mx < view.width and my > 8+editor.buttonSpace+editor.gridspace+24*(n-1) and my < 8+editor.buttonSpace+editor.gridspace+24*(n-1)+16 then
+        if mx > view.width/2 and mx < view.width and my > 8+editor.buttonSpace+editor.gridspace+24*(n-1)-editor.patternScroll and my < 8+editor.buttonSpace+editor.gridspace+24*(n-1)+16-editor.patternScroll then
           setColorHex(pal.block)
         else
           setColorHex(pal.grid)
         end
-        printNew(b.name,view.width/2+8,8+editor.buttonSpace+editor.gridspace+24*(n-1))
+        
+        if 8+editor.buttonSpace+editor.gridspace+24*(n)-editor.patternScroll > editor.gridspace+64 then
+          printNew(b.name,view.width/2+8,8+editor.buttonSpace+editor.gridspace+24*(n-1)-editor.patternScroll)
+        end
       end
     end
     

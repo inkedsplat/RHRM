@@ -16,7 +16,7 @@ function loadGameInputs()
     perfectFail = 0
   end
   
-  minigame = 1
+  minigame = 9
   transition = 0
   endRemix = false
   endRemixTimer = 0

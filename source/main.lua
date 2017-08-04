@@ -18,7 +18,7 @@ function love.load()
     love.filesystem.createDirectory("/remixes")
   end
   
-  version = "0.3.0"
+  version = "0.4.0"
   love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()
@@ -311,6 +311,13 @@ function love.load()
           }
         },
         {
+          name = "countIn",
+          length = 64,
+          cues = {
+            {name = "countIn",x = 0,cueId = "silence"},
+          }
+        },
+        {
           name = "set zoom 2",
           length = 64,
           cues = {
@@ -369,6 +376,7 @@ function love.load()
     },
     [8] = {
       name = "moai doo-wop",
+      img = love.graphics.newImage("/resources/gfx/editor/icons/moaiDooWop.png"),
       blocks = {
         {
           name = "left doo",
@@ -431,6 +439,48 @@ function love.load()
           }
         },
       }
+    },
+    [9] = {
+      name = "cheer readers",
+      blocks = {
+        {
+          name = "1 2 3",
+          length = 128+64,
+          cues = {
+            {name = "one",x = 0,cueId = "cheerReadersOneAll"},
+            {name = "two",x = 64,cueId = "cheerReadersTwoAll"},
+          },
+          hits = {
+            {name = "three",x = 128,cueId = "cheerReadersThreeAll",input = "pressA"},
+          },
+        },
+        {
+          name = "it's up to you",
+          length = 128+64,
+          cues = {
+            {name = "its",x = 0,cueId = "cheerReadersItsAll"},
+            {name = "up",x = (64/4)*3,cueId = "cheerReadersUpAll"},
+            {name = "to",x = 64+32,cueId = "cheerReadersToAll"},
+          },
+          hits = {
+            {name = "you",x = 128,cueId = "cheerReadersYouAll",input = "pressA"},
+          },
+        },
+        {
+          name = "okay it's on!",
+          length = 128+128,
+          cues = {
+            {name = "o",x = 0,cueId = "cheerReadersOAll"},
+            {name = "kay",x = 64,cueId = "cheerReadersKayAll"},
+            {name = "kay",x = 64,cueId = "cheerReadersKayAll"},
+            {name = "zoomReset",x = 128+64+32,cueId = "silence"},
+          },
+          hits = {
+            {name = "its2",x = 128,cueId = "cheerReadersItsAll2",input = "pressAB",pitchToBpm = true,originalBpm = 124},
+            {name = "on",x = 128+64,cueId = "cheerReadersOnAll",input = "releaseAB"},
+          },
+        }
+      }
     }
   }
   
@@ -455,7 +505,7 @@ function love.load()
   end
   
   minigame = 0
-  screen = "menu"
+  screen = "editor"
   loadMenu()
   
   local w,h = love.graphics.getDimensions()

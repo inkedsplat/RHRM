@@ -57,6 +57,17 @@ function initializeCues()
   cue["MoaiDooR"] = newSource("/resources/sfx/moai doo woop/dooR.ogg")
   cue["MoaiWopR"] = newSource("/resources/sfx/moai doo woop/woopR.ogg")
   cue["MoaiPahR"] = newSource("/resources/sfx/moai doo woop/pahR.ogg")
+  cue["cheerReadersOneAll"] = newSource("/resources/sfx/cheer readers/oneAll.ogg")
+  cue["cheerReadersTwoAll"] = newSource("/resources/sfx/cheer readers/twoAll.ogg")
+  cue["cheerReadersThreeAll"] = newSource("/resources/sfx/cheer readers/threeAll.ogg")
+  cue["cheerReadersItsAll"] = newSource("/resources/sfx/cheer readers/itsAll.ogg")
+  cue["cheerReadersUpAll"] = newSource("/resources/sfx/cheer readers/upAll.ogg")
+  cue["cheerReadersToAll"] = newSource("/resources/sfx/cheer readers/toAll.ogg")
+  cue["cheerReadersYouAll"] = newSource("/resources/sfx/cheer readers/youAll.ogg")
+  cue["cheerReadersOAll"] = newSource("/resources/sfx/cheer readers/oAll.ogg")
+  cue["cheerReadersKayAll"] = newSource("/resources/sfx/cheer readers/kayAll.ogg")
+  cue["cheerReadersItsAll2"] = newSource("/resources/sfx/cheer readers/itsAll2.ogg")
+  cue["cheerReadersOnAll"] = newSource("/resources/sfx/cheer readers/onAll.ogg")
 end
 
 

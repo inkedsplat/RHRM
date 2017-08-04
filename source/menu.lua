@@ -128,8 +128,19 @@ function createBeatmap()
           time = (((i.x+c.x)/64)*(60000/data.bpm))/1000,
           sound = c.sound,
           played = false,
-          name = c.name
+          name = c.name,
+          loop = c.loop,
+          silent = c.silent
         }
+        if c.pitchToBpm then
+          s.sound:setPitch((data.bpm/(c.originalBpm or 120)))
+        end
+        if s.loop then
+          s.loopEnd = (((i.x+i.length)/64)*(60000/data.bpm))/1000
+        end
+        if s.time < math.max(editor.playheadInGame,0) then
+          s.played = true
+        end
         table.insert(data.beatmap.sounds,s)
       end
     end
@@ -140,9 +151,16 @@ function createBeatmap()
           input = c.input,
           played = false,
           sound = c.sound,
-          name = c.name
+          name = c.name,
+          silent = c.silent
         }
-        --print(s.input)
+        if c.pitchToBpm then
+          s.sound:setPitch((data.bpm/(c.originalBpm or 120)))
+        end
+        if s.time < math.max(editor.playheadInGame,0) then
+          s.played = true
+          s.played2 = true
+        end
         table.insert(data.beatmap.inputs,s)
       end  
     end
