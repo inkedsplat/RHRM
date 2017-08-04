@@ -372,6 +372,34 @@ function love.load()
             {name = "compWhite",x = 256,cueId = "ScrewBotsComplete",input = "releaseAB"},
           }
         },
+        {
+          name = "black bot quick",
+          length = 256*2-64,
+          cues = {
+            {name = "cBlack1",x = 0,cueId = "ScrewBotsCrane1"},
+            {name = "cBlack2",x = 32,cueId = "ScrewBotsCrane2"},
+            {name = "dBlack",x = 128-64,cueId = "ScrewBotsBlackDrop"},
+          },
+          hits = {
+            {name = "sBlack",x = 128,cueId = "ScrewBotsBlackScrew",input = "pressAB",pitchToBpm = true},
+            {name = "compBlack",x = 256,cueId = "ScrewBotsComplete",input = "releaseAB"},
+          }
+        },
+        {
+          name = "white bot quick",
+          length = 256*2-128,
+          cues = {
+            {name = "cWhite1",x = 0,cueId = "ScrewBotsCrane1"},
+            {name = "cWhite2",x = 32,cueId = "ScrewBotsCrane2"},
+            {name = "",x = 0,cueId = "ScrewBotsCraneWhite"},
+            {name = "",x = 32,cueId = "ScrewBotsCraneWhite"},
+            {name = "dWhite",x = 128-64,cueId = "ScrewBotsWhiteDrop"},
+          },
+          hits = {
+            {name = "sWhite",x = 128+64-64,cueId = "ScrewBotsWhiteScrew",input = "pressAB",pitchToBpm = true},
+            {name = "compWhite",x = 256-64,cueId = "ScrewBotsComplete",input = "releaseAB"},
+          }
+        },
       },
     },
     [8] = {
@@ -442,42 +470,57 @@ function love.load()
     },
     [9] = {
       name = "cheer readers",
+      img = love.graphics.newImage("/resources/gfx/editor/icons/cheerReaders.png"),
       blocks = {
         {
           name = "1 2 3",
           length = 128+64,
           cues = {
-            {name = "one",x = 0,cueId = "cheerReadersOneAll"},
-            {name = "two",x = 64,cueId = "cheerReadersTwoAll"},
+            {name = "one",x = 0,cueId = "cheerReadersOneSolo"},
+            {name = "two",x = 64,cueId = "cheerReadersTwoSolo"},
+
+            {name = "one",x = 0,cueId = "cheerReadersOneGirls"},
+            {name = "two",x = 64,cueId = "cheerReadersTwoGirls"},
+            {name = "three",x = 128,cueId = "cheerReadersThreeGirls"}
           },
           hits = {
-            {name = "three",x = 128,cueId = "cheerReadersThreeAll",input = "pressA"},
+            {name = "three",x = 128,cueId = "cheerReadersThreeSolo",input = "pressA"},
           },
         },
         {
           name = "it's up to you",
           length = 128+64,
           cues = {
-            {name = "its",x = 0,cueId = "cheerReadersItsAll"},
-            {name = "up",x = (64/4)*3,cueId = "cheerReadersUpAll"},
-            {name = "to",x = 64+32,cueId = "cheerReadersToAll"},
+            {name = "its",x = 0,cueId = "cheerReadersItsSolo"},
+            {name = "up",x = (64/4)*3,cueId = "cheerReadersUpSolo"},
+            {name = "to",x = 64+32,cueId = "cheerReadersToSolo"},
+          
+            {name = "its",x = 0,cueId = "cheerReadersItsGirls"},
+            {name = "up",x = (64/4)*3,cueId = "cheerReadersUpGirls"},
+            {name = "to",x = 64+32,cueId = "cheerReadersToGirls"},
+            {name = "you",x = 128,cueId = "cheerReadersYouGirls"}
           },
           hits = {
-            {name = "you",x = 128,cueId = "cheerReadersYouAll",input = "pressA"},
+            {name = "you",x = 128,cueId = "cheerReadersYouSolo",input = "pressA"},
           },
         },
         {
           name = "okay it's on!",
           length = 128+128,
           cues = {
-            {name = "o",x = 0,cueId = "cheerReadersOAll"},
-            {name = "kay",x = 64,cueId = "cheerReadersKayAll"},
-            {name = "kay",x = 64,cueId = "cheerReadersKayAll"},
+            {name = "o",x = 0,cueId = "cheerReadersOSolo"},
+            {name = "kay",x = 64,cueId = "cheerReadersKaySolo"},
+            
+            {name = "o",x = 0,cueId = "cheerReadersOGirls"},
+            {name = "kay",x = 64,cueId = "cheerReadersKayGirls"},
+            {name = "its2",x = 128,cueId = "cheerReadersItsGirls2",pitchToBpm = true,originalBpm = 124},
+            {name = "on",x = 128+64,cueId = "cheerReadersOnGirls"},
+            
             {name = "zoomReset",x = 128+64+32,cueId = "silence"},
           },
           hits = {
-            {name = "its2",x = 128,cueId = "cheerReadersItsAll2",input = "pressAB",pitchToBpm = true,originalBpm = 124},
-            {name = "on",x = 128+64,cueId = "cheerReadersOnAll",input = "releaseAB"},
+            {name = "its2",x = 128,cueId = "cheerReadersItsSolo2",input = "pressAB",pitchToBpm = true,originalBpm = 124},
+            {name = "on",x = 128+64,cueId = "cheerReadersOnSolo",input = "releaseAB"},
           },
         }
       }

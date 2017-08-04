@@ -232,7 +232,7 @@ function loadMinigames()
       anim.leftArm:draw(128+48+offsetx/2,view.height/2-64+beat/4-(surprised),0,2,2)
       anim.upperBody:draw(128-16+offsetx/2,view.height/2-64+beat/4-(surprised),0,2,2)
       
-      anim.head:draw(128+offsetx*1.5,view.height/2-128+beat/2-(surprised*2),0,2,2)
+      anim.head:draw(128+offsetx*1.5+beat/5,view.height/2-128+beat/2-(surprised*2),0,2,2)
     end
     
     for _,i in pairs(pots) do
@@ -1442,7 +1442,8 @@ function loadMinigames()
           f = 0,
           bounce = 20,
           complete = false,
-          armRot = 0
+          armRot = 0,
+          released = i.time+(500)*(60000/data.bpm)/1000, 
         }
         table.insert(bots,b)
       end
@@ -1460,7 +1461,8 @@ function loadMinigames()
           f = 0,
           bounce = 20,
           complete = false,
-          armRot = 0
+          armRot = 0,
+          released = i.time+(500)*(60000/data.bpm)/1000, 
         }
         table.insert(bots,b)
       end
@@ -1562,9 +1564,16 @@ function loadMinigames()
           
           claw.f = math.floor(i.f)
         end
+        if input["releaseAB"] then
+          i.released = data.music:tell()
+          i.moving = true 
+          claw.f = 0
+          claw.spin = false
+          misses = misses +1
+        end
       end
       if i.color == "black" then
-        if time > i.time+(2)*(60000/data.bpm)/1000-margin and time < i.time+(2)*(60000/data.bpm)/1000+margin and hit == 2 and not bearly then
+        if time > i.time+(2)*(60000/data.bpm)/1000-margin and time < i.time+(2)*(60000/data.bpm)/1000+margin and hit == 2 and not bearly and not (i.released < i.time+(2)*(60000/data.bpm)/1000-margin) then
           i.armRot = 90-45+90
           
           i.moving = true
@@ -1590,7 +1599,7 @@ function loadMinigames()
           claw.spin = false
         end
       else
-        if time > i.time+(1)*(60000/data.bpm)/1000-margin and time < i.time+(1)*(60000/data.bpm)/1000+margin and hit == 2 and not bearly then
+        if time > i.time+(1)*(60000/data.bpm)/1000-margin and time < i.time+(1)*(60000/data.bpm)/1000+margin and hit == 2 and not bearly and not (i.released < i.time+(1)*(60000/data.bpm)/1000-margin)  then
           i.armRot = 90-45+90
           
           i.moving = true
@@ -2113,6 +2122,9 @@ function loadMinigames()
         [13] = love.graphics.newQuad(144*4,0,144,96,img.sheet:getWidth(),img.showOff[0]:getHeight()), 
       }
     }
+    snd = {
+      bearly = love.audio.newSource("/resources/sfx/game/bearlyHit.ogg")
+    }
     
     --if not girls then
     
@@ -2244,9 +2256,9 @@ function loadMinigames()
     local bearly = false
     for _,i in pairs(currentHits) do
       if i.name == "its2" then
-        for _,i in pairs(girls) do
-          if i.player then
-            i.failAdd = 0
+        for _,p in pairs(girls) do
+          if p.player then
+            p.failAdd = 0
           end
         end
         hit = 1
@@ -2260,6 +2272,9 @@ function loadMinigames()
           bearly = true
         end
       end
+      if i.bearly then
+        bearly = true
+      end
     end
     
     if hit == 1 and bearly then
@@ -2268,6 +2283,11 @@ function loadMinigames()
           i.failAdd = 1
         end
       end
+    end
+    
+    if bearly then
+      snd.bearly:stop()
+      snd.bearly:play()
     end
     
     if input["pressA"] then
