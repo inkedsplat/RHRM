@@ -106,6 +106,18 @@ function animationGroup:getCurrentFrame()
   return self.frame
 end
 
+function animationGroup:getLength(id)
+  for _,i in pairs(self.animations) do
+    if i.id == id then
+      return i.length
+    end
+  end
+end
+
+function animationGroup:getCurrentAnimation(id)
+  return self.currentAnimation.id
+end
+
 function animationGroup:setFrame(frame)
   self.frame = frame
   self.timer = 0

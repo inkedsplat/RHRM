@@ -349,6 +349,7 @@ function love.load()
           length = 256*2,
           cues = {
             {name = "cBlack1",x = 0,cueId = "ScrewBotsCrane1"},
+            {name = "c1.5",x = 16,cueId = "silence"},
             {name = "cBlack2",x = 32,cueId = "ScrewBotsCrane2"},
             {name = "dBlack",x = 128,cueId = "ScrewBotsBlackDrop"},
           },
@@ -362,6 +363,7 @@ function love.load()
           length = 256*2-64,
           cues = {
             {name = "cWhite1",x = 0,cueId = "ScrewBotsCrane1"},
+            {name = "c1.5",x = 16,cueId = "silence"},
             {name = "cWhite2",x = 32,cueId = "ScrewBotsCrane2"},
             {name = "",x = 0,cueId = "ScrewBotsCraneWhite"},
             {name = "",x = 32,cueId = "ScrewBotsCraneWhite"},
@@ -377,6 +379,7 @@ function love.load()
           length = 256*2-64,
           cues = {
             {name = "cBlack1",x = 0,cueId = "ScrewBotsCrane1"},
+            {name = "c1.5",x = 16,cueId = "silence"},
             {name = "cBlack2",x = 32,cueId = "ScrewBotsCrane2"},
             {name = "dBlack",x = 128-64,cueId = "ScrewBotsBlackDrop"},
           },
@@ -390,6 +393,7 @@ function love.load()
           length = 256*2-128,
           cues = {
             {name = "cWhite1",x = 0,cueId = "ScrewBotsCrane1"},
+            {name = "c1.5",x = 16,cueId = "silence"},
             {name = "cWhite2",x = 32,cueId = "ScrewBotsCrane2"},
             {name = "",x = 0,cueId = "ScrewBotsCraneWhite"},
             {name = "",x = 32,cueId = "ScrewBotsCraneWhite"},
@@ -505,6 +509,50 @@ function love.load()
           },
         },
         {
+          name = "ra ra sis boom ba BOOM",
+          length = 128+64,
+          cues = {
+            {name = "ra",x = 0,cueId = "cheerReadersRaSolo"},
+            {name = "ra2",x = 32,cueId = "cheerReadersRaSolo2"},
+            {name = "sis",x = 64,cueId = "cheerReadersSisSolo"},
+            {name = "boom",x = 64+32,cueId = "cheerReadersBoomSolo"},
+            {name = "ba",x = 128,cueId = "cheerReadersBaSolo"},
+            
+            {name = "ra",x = 0,cueId = "cheerReadersRaGirls"},
+            {name = "ra2",x = 32,cueId = "cheerReadersRaGirls2"},
+            {name = "sis",x = 64,cueId = "cheerReadersSisGirls"},
+            {name = "boom",x = 64+32,cueId = "cheerReadersBoomGirls"},
+            {name = "ba",x = 128,cueId = "cheerReadersBaGirls"},
+            {name = "BOOM",x = 128+32,cueId = "cheerReadersBoomGirls2"},
+          },
+          hits = {
+            {name = "BOOM",x = 128+32,cueId = "cheerReadersBoomSolo2",input = "pressA"},
+          },
+        },
+        {
+          name = "let's go read a buncha books",
+          length = 128+64,
+          cues = {
+            {name = "lets",x = 0,cueId = "cheerReadersLetsSolo"},
+            {name = "go",x = 64-16,cueId = "cheerReadersGoSolo"},
+            {name = "read",x = 64,cueId = "cheerReadersReadSolo"},
+            {name = "a",x = 64+16,cueId = "cheerReadersASolo"},
+            {name = "bunch",x = 64+32,cueId = "cheerReadersBunchSolo"},
+            {name = "of",x = 64+48,cueId = "cheerReadersOfSolo"},
+            
+            {name = "lets",x = 0,cueId = "cheerReadersLetsGirls"},
+            {name = "go",x = 64-16,cueId = "cheerReadersGoGirls"},
+            {name = "read",x = 64,cueId = "cheerReadersReadGirls"},
+            {name = "a",x = 64+16,cueId = "cheerReadersAGirls"},
+            {name = "bunch",x = 64+32,cueId = "cheerReadersBunchGirls"},
+            {name = "of",x = 64+48,cueId = "cheerReadersOfGirls"},
+            {name = "books",x = 128,cueId = "cheerReadersBooksGirls"},
+          },
+          hits = {
+            {name = "books",x = 128,cueId = "cheerReadersBooksSolo",input = "pressA"},
+          },
+        },
+        {
           name = "okay it's on!",
           length = 128+128,
           cues = {
@@ -524,6 +572,52 @@ function love.load()
           },
         }
       }
+    },
+    [10] = {
+      name = "glee club",
+      img = love.graphics.newImage("/resources/gfx/editor/icons/gleeClub.png"),
+      blocks = {
+        {
+          name = "sing",
+          length = 64,
+          resizable = true,
+          pitchShift = true,
+          cues = {
+            {name = "sing",x = 0,cueId = "gleeClubSing",loop = true,pitch = 1},
+          }
+        },
+        {
+          name = "stop",
+          length = 32,
+          cues = {
+            {name = "stop",x = 0,cueId = "gleeClubStop"},
+          }
+        },
+        {
+          name = "sing player",
+          length = 64,
+          resizable = true,
+          pitchShift = true,
+          pitch = 1,
+          hits = {
+            {name = "singp",x = 0,cueId = "gleeClubSing",loop = true,input = "releaseA"},
+          }
+        },
+        {
+          name = "stop player",
+          length = 32,
+          hits = {
+            {name = "stopp",x = 0,cueId = "gleeClubStop",input = "pressA"},
+          }
+        }
+      }
+    },
+    [11] = {
+      name = "manzai birds",
+      --ORIGINAL BPM = 95
+      blocks = {
+        
+      }
     }
   }
   
@@ -533,14 +627,14 @@ function love.load()
       if j.cues then
         for _,h in pairs(j.cues) do
           if not h.sound then
-            h.sound = cue[h.cueId]
+            h.sound = cue[h.cueId]()
           end
         end
       end
       if j.hits then
         for _,h in pairs(j.hits) do
           if not h.sound then
-            h.sound = cue[h.cueId]
+            h.sound = cue[h.cueId]()
           end
         end
       end

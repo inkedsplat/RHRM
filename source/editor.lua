@@ -57,6 +57,21 @@ function loadEditor()
     editor.playTime = math.max(editor.playheadStart,0)
     editor.beats = editor.beatStart
     editor.playhead = editor.beatStart*64
+    
+    for _,i in pairs(data.blocks) do
+      if i.pitchShift then
+        if i.cues then
+          for _,j in pairs(i.cues) do
+            j.sound:setPitch(i.pitch)
+          end
+        end
+        if i.hits then
+          for _,j in pairs(i.hits) do
+            j.sound:setPitch(i.pitch)
+          end
+        end
+      end
+    end
   end
   createButton(0,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/play.png"),editor.scheme.playhead,true)
   
@@ -105,6 +120,19 @@ function loadEditor()
       editor = true,
     }
     for _,i in pairs(data.blocks) do
+      if i.pitchShift then
+        if i.cues then
+          for _,j in pairs(i.cues) do
+            j.sound:setPitch(i.pitch)
+          end
+        end
+        if i.hits then
+          for _,j in pairs(i.hits) do
+            j.sound:setPitch(i.pitch)
+          end
+        end
+      end
+      
       if i.cues then
         for _,c in pairs(i.cues) do
           local s = {
@@ -240,10 +268,10 @@ function loadEditor()
   b.w = 16
   b.h = 16
   
-  --[[local function f(i)
+  local function f(i)
     editor.placeTempoChange = not editor.placeTempoChange
   end
-  local b = createButton(view.width-48*3,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/tempoChange.png"),editor.scheme.playtest,true)]]
+  local b = createButton(view.width-48*3,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/tempoChange.png"),editor.scheme.playtest,true)
 end
 
 function love.wheelmoved(x,y)
@@ -262,11 +290,22 @@ function love.wheelmoved(x,y)
       end
     end
   end
+  
+  for k,i in pairs(data.blocks) do
+    if i.pitchShift then
+      if my > i.y+editor.buttonSpace and my < i.y+editor.buttonSpace+editor.gridheight and mx > i.x+editor.viewX and mx < i.x+i.length+editor.viewX then
+        i.pitch = i.pitch+(y/12)
+      end
+    end
+  end
 end
 
 function updateEditor(dt)
     --RESIZE PATTERNS
   local mx, my = love.mouse.getPosition()
+  
+  curs = love.mouse.getSystemCursor("arrow")
+  love.mouse.setCursor(curs)
   
   for k,i in pairs(data.blocks) do
     if i.resizable then
@@ -277,11 +316,6 @@ function updateEditor(dt)
           editor.blocked = true
           i.resizeGrab = true
           i.originalLength = i.length
-        end
-      else
-        if k == 1 then
-          curs = love.mouse.getSystemCursor("arrow")
-          love.mouse.setCursor(curs)
         end
       end
       
@@ -341,6 +375,7 @@ function updateEditor(dt)
             editor.block.cues = b.cues
             editor.block.hits = b.hits
             editor.block.resizable = b.resizable
+            editor.block.pitchShift = b.pitchShift
             editor.switch = false
           end
         end
@@ -475,7 +510,19 @@ function updateEditor(dt)
             }
             table.insert(data.blocks,s)
           else
-            createBlock(editor.block.name,editor.mouseOnGrid[1]*editor.gridwidth,editor.mouseOnGrid[2]*editor.gridheight,editor.block.length,deepcopy(editor.block.cues),deepcopy(editor.block.hits),editor.block.resizable)
+            local b = createBlock(editor.block.name,editor.mouseOnGrid[1]*editor.gridwidth,editor.mouseOnGrid[2]*editor.gridheight,editor.block.length,deepcopy(editor.block.cues),deepcopy(editor.block.hits),editor.block.resizable,editor.block.pitchShift)
+            if b.cues then
+              for _,i in pairs(b.cues) do
+                i.sound = nil
+                i.sound = cue[i.cueId]()
+              end
+            end
+            if b.hits then
+              for _,i in pairs(b.hits) do
+                i.sound = nil
+                i.sound = cue[i.cueId]()
+              end
+            end
           end
         end
       end
@@ -530,6 +577,10 @@ function drawEditor()
         setColorHex(pal.blockOutline)
         love.graphics.rectangle("line",i.x+editor.viewX,i.y+editor.buttonSpace,i.length,editor.gridheight)
         printNew(i.name,i.x+editor.viewX+4,i.y+editor.buttonSpace+4)
+        
+        if i.pitchShift then
+          printNew(string.sub(i.pitch,1,5),i.x+editor.viewX+4,i.y+editor.buttonSpace+52)
+        end
         
         if i.hits then
           for _,h in pairs(i.hits) do
@@ -721,7 +772,7 @@ HITS: (table of tables)
   sound,
   input
 ]]
-function createBlock(name,x,y,length,cues,hits,resizable)
+function createBlock(name,x,y,length,cues,hits,resizable,pitchShift)
   local b = {
     name = name,
     x = x,
@@ -729,8 +780,12 @@ function createBlock(name,x,y,length,cues,hits,resizable)
     length = length,
     cues = cues,
     hits = hits,
-    resizable = resizable
+    resizable = resizable,
+    pitchShift = pitchShift
   }
+  if b.pitchShift then
+    b.pitch = 1
+  end
   table.insert(data.blocks,b)
   return b
 end

@@ -1428,6 +1428,9 @@ function loadMinigames()
       if i.name == "cBlack2" or i.name == "cWhite2" then
         crane.phase = 2
       end
+      if i.name == "c1.5" then
+        crane.phase = 1.5
+      end
       if i.name == "dBlack" then
         claw.prepare = true
         
@@ -1488,6 +1491,11 @@ function loadMinigames()
       crane.rot1 = (crane.rot1+(-90))/2
       crane.rot2 = (crane.rot2+(-45/1.5))/2
       crane.rot3 = (crane.rot3+45)/2
+    elseif crane.phase == 1.5 then
+      crane.rot = (crane.rot+(70))/2
+      crane.rot1 = (crane.rot1+(-70))/2
+      crane.rot2 = (crane.rot2+(-45/1.5))/2
+      crane.rot3 = (crane.rot3+45)/2
     elseif crane.phase == 2 then
       crane.rot = (crane.rot+45)/2
       crane.rot1 = (crane.rot1+(-45/2))/2
@@ -1536,7 +1544,10 @@ function loadMinigames()
       claw.rot = (claw.rot+25)/2
     else
       claw.rot = 0
-
+    end
+    
+    if input["pressAB"] then
+      clawLengthAdd = 220
     end
     
     for _,i in pairs(bots) do
@@ -2072,9 +2083,6 @@ function loadMinigames()
       eyes = {
         [0] = love.graphics.newQuad(512,160,48,32,img.sheet:getWidth(),img.sheet:getHeight()),
       } ,
-      mouth = {
-        [0] = love.graphics.newQuad(512,192,16,16,img.sheet:getWidth(),img.sheet:getHeight()),
-      },
       hair = {
         [0] = love.graphics.newQuad(0,224,80,80,img.sheet:getWidth(),img.sheet:getHeight()),
         [1] = love.graphics.newQuad(80,224,80,80,img.sheet:getWidth(),img.sheet:getHeight()),
@@ -2125,6 +2133,17 @@ function loadMinigames()
     snd = {
       bearly = love.audio.newSource("/resources/sfx/game/bearlyHit.ogg")
     }
+    anim = {
+      mouth = newAnimationGroup(img.sheet)
+    }
+    anim.mouth:addAnimation("idle",512,192,16,16,1,100)
+    
+    anim.mouth:addAnimation("one",560,160,16,16,5,50)
+    anim.mouth:addAnimation("two",560,160+16,16,16,6,50)
+    anim.mouth:addAnimation("three",560,160+32,16,16,5,50)
+    anim.mouth:addAnimation("up",560,160+48,16,16,5,50)
+    anim.mouth:addAnimation("ra",640,160,16,16,5,50)
+
     
     --if not girls then
     
@@ -2167,7 +2186,7 @@ function loadMinigames()
         table.insert(girls,g)
       end
     --end
-    flip = 0
+    flip = {}
     zoom = 1
     zoomTarget = 1
   end
@@ -2177,37 +2196,121 @@ function loadMinigames()
     
     for _,i in pairs(currentSounds) do
       if i.name == "one" then
-        flip = 3840
+        flip[1] = true
+        flip[2] = true
+        flip[3] = true
+        flip[4] = true
+        anim.mouth:setAnimation("one")
       end
       if i.name == "two" then
-        flip = 240
+        flip[5] = true
+        flip[6] = true
+        flip[7] = true
+        flip[8] = true
+        anim.mouth:setAnimation("two")
       end
       if i.name == "three" then
-        flip = 15
+        flip[9] = true
+        flip[10] = true
+        flip[11] = true
+        anim.mouth:setAnimation("three")
       end
       
       if i.name == "its" then
-        flip = 2184
+        flip[1] = true
+        flip[5] = true
+        flip[9] = true
+        anim.mouth:setAnimation("three")
       end
       if i.name == "up" then
-        flip = 1092
+        flip[2] = true
+        flip[6] = true
+        flip[10] = true
+        anim.mouth:setAnimation("up")
       end
       if i.name == "to" then
-        flip = 546
+        flip[3] = true
+        flip[7] = true
+        flip[11] = true
+        anim.mouth:setAnimation("two")
       end
       if i.name == "you" then
-        flip = 273
+        flip[4] = true
+        flip[8] = true
+        anim.mouth:setAnimation("two")
+      end
+      
+      if i.name == "ra" then
+        flip[1] = true
+        anim.mouth:setAnimation("ra")
+      end
+      if i.name == "ra2" then
+        flip[2] = true
+        flip[5] = true
+        anim.mouth:setAnimation("ra")
+      end
+      if i.name == "sis" then
+        flip[3] = true
+        flip[6] = true
+        flip[9] = true
+        anim.mouth:setAnimation("three")
+      end
+      if i.name == "boom" then
+        flip[4] = true
+        flip[7] = true
+        flip[10] = true
+        anim.mouth:setAnimation("ra")
+      end
+      if i.name == "ba" then
+        flip[8] = true
+        flip[11] = true
+        anim.mouth:setAnimation("ra")
+      end
+      if i.name == "BOOM" then
+        anim.mouth:setAnimation("ra")
+      end
+      
+      if i.name == "go" then
+        flip[1] = true
+        anim.mouth:setAnimation("one")
+      end
+      if i.name == "read" then
+        flip[2] = true
+        flip[5] = true
+        anim.mouth:setAnimation("three")
+      end
+      if i.name == "a" then
+        flip[3] = true
+        flip[6] = true
+        flip[9] = true
+        anim.mouth:setAnimation("ra")
+      end
+      if i.name == "bunch" then
+        flip[4] = true
+        flip[7] = true
+        flip[10] = true
+        anim.mouth:setAnimation("up")
+      end
+      if i.name == "of" then
+        flip[8] = true
+        flip[11] = true
+        anim.mouth:setAnimation("one")
+      end
+      if i.name == "books" then
+        anim.mouth:setAnimation("one")
       end
       
       if i.name == "o" then
         for _,i in pairs(girls) do
           i.bounce = 5
         end
+        anim.mouth:setAnimation("one")
       end
       if i.name == "kay" then
         for _,i in pairs(girls) do
           i.bounce = 5
         end
+        anim.mouth:setAnimation("three")
       end
       
       if i.name == "its2" then
@@ -2219,6 +2322,7 @@ function loadMinigames()
           i.fastSpin = true
         end
         zoomTarget = 0.8
+        anim.mouth:setAnimation("three")
       end
       if i.name == "on" then
         local showOffNum = love.math.random(0,2)
@@ -2228,6 +2332,7 @@ function loadMinigames()
           i.showOffNum = showOffNum
         end
         zoomTarget = 1.5
+        anim.mouth:setAnimation("one")
       end
       if i.name == "zoomReset" then
         zoomTarget = 1
@@ -2236,10 +2341,10 @@ function loadMinigames()
     end
     
     for _,i in pairs(girls) do
-      if flip >= i.id then
-        flip = flip - i.id
+      if flip[i.n] then
+        flip[i.n] = nil
         i.bounce = 5
-        print("flip",flip,i.id,flip+i.id)
+        --print("flip",flip,i.id,flip+i.id)
         if not i.player then
           i.showOff = false
           if i.countIn then
@@ -2304,7 +2409,11 @@ function loadMinigames()
         end
       end
     end
-    
+    --mouth animation
+    anim.mouth:update(dt)
+    if anim.mouth:getCurrentFrame() == anim.mouth:getLength(anim.mouth:getCurrentAnimation())-1 then
+      anim.mouth:setAnimation("idle")
+    end
   end
   
   function dminigame()
@@ -2384,7 +2493,7 @@ function loadMinigames()
       
       --face
       love.graphics.draw(img.sheet,quad.eyes[0],i.x-4*body,i.y-180+bounce,0,1,1,48/2,32/2)
-      love.graphics.draw(img.sheet,quad.mouth[0],i.x-4*body,i.y-165+bounce,0,1,1,16/2,16/2)
+      anim.mouth:draw(i.x-4*body,i.y-165+bounce,0,1,1,anim.mouth:getWidth()/2,anim.mouth:getHeight()/2)--love.graphics.draw(img.sheet,quad.mouth[0],i.x-4*body,i.y-165+bounce,0,1,1,16/2,16/2)
       love.graphics.draw(img.sheet,quad.glasses[i.glasses],i.x-4*body,i.y-180+bounce,0,1,1,48/2,32/2)
       
       love.graphics.draw(img.sheet,quad.hair[i.hair],i.x-4*body+xHair,i.y-150+yHair,0,1,1,80/2,80)
@@ -2394,7 +2503,7 @@ function loadMinigames()
       end
       
       --ARMS AND BOOK
-      print(i.showOff)
+      --print(i.showOff)
       if i.showOff then
         love.graphics.draw(img.showOff[i.showOffNum],quad.showOff[i.n+i.failAdd],i.x,i.y-163+yHair-24,0,1,1,144/2,96)
         love.graphics.draw(img.sheet,quad.book[0],i.x+96/2-16,i.y-180+bounce,0,1,1,96/2,112)
@@ -2448,13 +2557,13 @@ function loadMinigames()
       --love.graphics.circle("line",i.x,i.y,3)
       setColorHex("ffffff")
       --love.graphics.print(i.hair,i.x-5,i.y-220)
-      love.graphics.print(i.id,i.x-5+3,i.y-205)
-      love.graphics.print(i.id,i.x-5-3,i.y-205)
-      love.graphics.print(i.id,i.x-5,i.y-205+3)
-      love.graphics.print(i.id,i.x-5,i.y-205-3)
+      love.graphics.print(i.n,i.x-5+3,i.y-205)
+      love.graphics.print(i.n,i.x-5-3,i.y-205)
+      love.graphics.print(i.n,i.x-5,i.y-205+3)
+      love.graphics.print(i.n,i.x-5,i.y-205-3)
       
       setColorHex("000000")
-      love.graphics.print(i.id,i.x-5,i.y-205)
+      love.graphics.print(i.n,i.x-5,i.y-205)
       setColorHex("ffffff")]]
     end
    
@@ -2466,5 +2575,76 @@ function loadMinigames()
   loadMinigame[9] = lminigame
   updateMinigame[9] = uminigame
   drawMinigame[9] = dminigame
-  drawMinigame[9] = dminigame
+  
+  function lminigame()
+    img = {
+      sheet = love.graphics.newImage("/resources/gfx/glee club/sheet.png")
+    }
+    quad = {
+      bg = love.graphics.newQuad(0,0,960,540,img.sheet:getWidth(),img.sheet:getHeight())
+    }
+    anim = {
+      
+    } 
+    kids = {}
+    local p
+    for i = 0,2 do
+      p = {
+        x = view.width/2-32+128*i,
+        y = view.height/2-128-64+16*i,
+        anim = newAnimationGroup(img.sheet)
+      }
+      p.anim:addAnimation("idle",960,112,48,80,3)
+      
+      table.insert(kids,p)
+    end
+    p.player = true
+    
+    conductor = {
+      anim = newAnimationGroup(img.sheet),
+      x = view.width/2-256,
+      y = view.height/2,
+    }
+    conductor.anim:addAnimation("idle",960,0,64,112,3)
+  end
+  
+  function uminigame(dt)
+    for _,i in pairs(kids) do
+      i.anim:update(dt)
+    end
+    conductor.anim:update(dt)
+  end
+  
+  function dminigame()
+    love.graphics.draw(img.sheet,quad.bg)
+    for _,i in pairs(kids) do
+      i.anim:draw(i.x,i.y,0,3,3)
+    end
+    
+    conductor.anim:draw(conductor.x,conductor.y,0,3,3)
+  end
+  
+  loadMinigame[10] = lminigame
+  updateMinigame[10] = uminigame
+  drawMinigame[10] = dminigame
+  
+  function lminigame()
+    img = {
+      bg = love.graphics.newImage("/resources/gfx/manzai birds/bg.png")
+    }
+  end
+  
+  function uminigame(dt)
+    
+  end  
+    
+  function dminigame()
+    local scale = 1.095
+    love.graphics.draw(img.bg,0,0,0,scale,scale)
+    love.graphics.draw(img.bg,view.width,0,0,-scale,scale)
+  end
+  
+  loadMinigame[11] = lminigame
+  updateMinigame[11] = uminigame
+  drawMinigame[11] = dminigame
 end
