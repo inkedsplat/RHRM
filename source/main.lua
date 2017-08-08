@@ -18,7 +18,7 @@ function love.load()
     love.filesystem.createDirectory("/remixes")
   end
   
-  version = "0.4.0"
+  version = "0.4.0 (snap)"
   love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()
