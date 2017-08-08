@@ -187,16 +187,20 @@ function love.keyreleased(key)
     if key == "l" then
       input["releaseA"] = true
       input["holdA"] = false
+      if input["holdAB"] then
+        input["releaseAB"] = true
+      end
       input["holdAB"] = false
-      input["releaseAB"] = true
       input["releaseANY"] = true
       input["holdANY"] = false
     end
     if key == "k" then
       input["releaseB"] = true
       input["holdB"] = false
+      if input["holdAB"] then
+        input["releaseAB"] = true
+      end
       input["holdAB"] = false
-      input["releaseAB"] = true
       input["releaseANY"] = true
       input["holdANY"] = false
     end

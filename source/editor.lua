@@ -59,15 +59,23 @@ function loadEditor()
     editor.playhead = editor.beatStart*64
     
     for _,i in pairs(data.blocks) do
-      if i.pitchShift then
-        if i.cues then
-          for _,j in pairs(i.cues) do
+      if i.cues then
+        for _,j in pairs(i.cues) do
+          if i.pitchShift then
             j.sound:setPitch(i.pitch)
           end
+          if j.pitchToBpm then
+            j.sound:setPitch((data.bpm/(j.originalBpm or 120)))
+          end
         end
-        if i.hits then
-          for _,j in pairs(i.hits) do
+      end
+      if i.hits then
+        for _,j in pairs(i.hits) do
+          if i.pitchShift then
             j.sound:setPitch(i.pitch)
+          end
+          if j.pitchToBpm then
+            j.sound:setPitch((data.bpm/(j.originalBpm or 120)))
           end
         end
       end

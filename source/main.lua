@@ -215,7 +215,7 @@ function love.load()
       }
     },
     [5] = {
-      name = "Clappy Trio (WII)",
+      name = "Clappy Trio (Wii)",
       img = love.graphics.newImage("/resources/gfx/editor/icons/clappytrio.png"),
       blocks = {
         {
@@ -614,9 +614,31 @@ function love.load()
     },
     [11] = {
       name = "manzai birds",
+      img = love.graphics.newImage("/resources/gfx/editor/icons/manzaiBirds.png"),
       --ORIGINAL BPM = 95
       blocks = {
-        
+        {
+          name = "aichini aichinna",
+          length = 256-32,
+          cues = {
+            {name = "talk",x = 0,cueId = "manzaiAichini_aichinna",pitchToBpm = true,originalBpm = 95}
+          },
+          hits = {
+            {name = "hai1",x = 64+64+32,cueId = "manzaiHai",input = "pressA",pitchToBpm = true,originalBpm = 95},
+            {name = "hai2",x = 64+64+64,cueId = "manzaiHai2",input = "pressA",pitchToBpm = true,originalBpm = 95}
+          }
+        },
+        {
+          name = "aichini aichinna BOING",
+          length = 256-32,
+          cues = {
+            {name = "talk",x = 0,cueId = "manzaiAichini_aichinna",pitchToBpm = true,originalBpm = 95},
+            {name = "boing",x = 64+32,cueId = "manzaiBoing",pitchToBpm = true,originalBpm = 95}
+          },
+          hits = {
+            {name = "hit",x = 128+32,cueId = "manzaiDonaiyanen",pitchToBpm = true,originalBpm = 95,input = "pressA"}
+          }
+        },
       }
     }
   }

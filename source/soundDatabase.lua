@@ -113,6 +113,14 @@ function initializeCues()
   
   cue["gleeClubSing"] = function() return newSource("/resources/sfx/glee club/sing.ogg") end
   cue["gleeClubStop"] = function() return newSource("/resources/sfx/glee club/closeMouth.ogg") end
+  
+  cue["manzaiBoing"] = function() return newSource("/resources/sfx/manzai birds/boing.ogg") end
+  cue["manzaiHai"] = function() return newSource("/resources/sfx/manzai birds/haihai1.ogg") end
+  cue["manzaiHai2"] = function() return newSource("/resources/sfx/manzai birds/haihai2.ogg") end
+  cue["manzaiHai2"] = function() return newSource("/resources/sfx/manzai birds/haihai2.ogg") end
+  cue["manzaiDonaiyanen"] = function() return newSource("/resources/sfx/manzai birds/donaiyanen.ogg") end
+  
+  cue["manzaiAichini_aichinna"] = function() return newSource("/resources/sfx/manzai birds/aichini_aichinna.ogg") end
 end
 
 
