@@ -13,18 +13,18 @@ function loadMinigames()
   ]]
   function lminigame()
     img = {
-      lowerbody = love.graphics.newImage("/resources/gfx/karate man (GBA)/lowerbody.png"),
-      objects = love.graphics.newImage("/resources/gfx/karate man (GBA)/objects.png"),
+      lowerbody = newImageAssetFlipped("/karate man (GBA)/lowerbody.png"),
+      objects = newImageAssetFlipped("/karate man (GBA)/objects.png"),
     }
     quad = {
       pot = love.graphics.newQuad(0,0,32,32,img.objects:getWidth(),img.objects:getHeight()),
       rock = love.graphics.newQuad(32,0,32,32,img.objects:getWidth(),img.objects:getHeight())
     }
     anim = {
-      head = newAnimationGroup(love.graphics.newImage("/resources/gfx/karate man (GBA)/head.png")),
-      upperBody = newAnimationGroup(love.graphics.newImage("/resources/gfx/karate man (GBA)/upperbody.png")),
-      leftArm = newAnimationGroup(love.graphics.newImage("/resources/gfx/karate man (GBA)/upperbody.png")),
-      flow = newAnimationGroup(love.graphics.newImage("/resources/gfx/karate man (GBA)/flow.png")),
+      head = newAnimationGroup(newImageAssetFlipped("/karate man (GBA)/head.png")),
+      upperBody = newAnimationGroup(newImageAssetFlipped("/karate man (GBA)/upperbody.png")),
+      leftArm = newAnimationGroup(newImageAssetFlipped("/karate man (GBA)/upperbody.png")),
+      flow = newAnimationGroup(newImageAssetFlipped("/karate man (GBA)/flow.png")),
     }
     snd = {
       ohYeah = love.audio.newSource("/resources/sfx/karate man (GBA)/ohYeah.ogg"),
@@ -252,9 +252,9 @@ function loadMinigames()
   ]]
   function lminigame()
     img = {
-      onion = love.graphics.newImage("/resources/gfx/rhythm tweezers (GBA)/onion.png"),
-      face = love.graphics.newImage("/resources/gfx/rhythm tweezers (GBA)/face.png"),
-      roots = love.graphics.newImage("/resources/gfx/rhythm tweezers (GBA)/roots.png"),
+      onion = newImageAssetFlipped("/rhythm tweezers (GBA)/onion.png"),
+      face = newImageAssetFlipped("/rhythm tweezers (GBA)/face.png"),
+      roots = newImageAssetFlipped("/rhythm tweezers (GBA)/roots.png"),
     }
     quad = {
       mouth = {
@@ -516,8 +516,8 @@ function loadMinigames()
   
   function lminigame()
     img = {
-      bg = love.graphics.newImage("/resources/gfx/Blue birds/bg.png"),
-      birds = love.graphics.newImage("/resources/gfx/Blue birds/birds.png")
+      bg = newImageAssetFlipped("/Blue birds/bg.png"),
+      birds = newImageAssetFlipped("/Blue birds/birds.png")
     }
     quad = {
       bgFence = love.graphics.newQuad(0,0,512,80,img.bg:getWidth(),img.bg:getHeight()),
@@ -750,7 +750,7 @@ function loadMinigames()
   
   function lminigame()
     img = {
-      sheet = love.graphics.newImage("/resources/gfx/Fork Lifter/sheet.png")
+      sheet = newImageAssetFlipped("/Fork Lifter/sheet.png")
     }
     quad = {
       bgGradiant = love.graphics.newQuad(784,848,14,168,img.sheet:getWidth(),img.sheet:getHeight()),
@@ -784,15 +784,17 @@ function loadMinigames()
   function uminigame(dt)
     for _,i in pairs(currentSounds) do
       if i.name == "flick" then
+        shoot = true
+        shootEnd = i.time+((0.25)*(60000/data.bpm))/1000
+      end
+      if i.name == "zoom" then
         local s = {
-          stabTime = i.time+((2)*(60000/data.bpm))/1000,
+          stabTime = i.time+((0.5)*(60000/data.bpm))/1000,
           x = 128+128+8,
           y = 256-16,
           z = 0
         }
         table.insert(peas,s)
-        shoot = true
-        shootEnd = i.time+((0.25)*(60000/data.bpm))/1000
       end
       
       if i.name == "eatS" then
@@ -820,9 +822,9 @@ function loadMinigames()
     end
     
     for k,i in pairs(peas) do
-      local hsp = 3110
-      local vsp = 900
-      local zsp = 10
+      local hsp = 3110*3.35
+      local vsp = 900*3.35
+      local zsp = 10*3
       i.x = i.x+hsp*(data.bpm/60000)
       i.y = i.y+vsp*(data.bpm/60000)
       i.z = i.z+zsp*(data.bpm/60000)
@@ -899,7 +901,7 @@ function loadMinigames()
   
   function lminigame()
     img = {
-      sheet = love.graphics.newImage("/resources/gfx/Clappy Trio (WII)/sheet.png")
+      sheet = newImageAssetFlipped("/Clappy Trio (WII)/sheet.png")
     } 
     quad = {
       bg = love.graphics.newQuad(0,0,480,540,img.sheet:getWidth(),img.sheet:getHeight()),
@@ -1099,7 +1101,7 @@ function loadMinigames()
 
   function lminigame()
     img = {
-      sheet = love.graphics.newImage("/resources/gfx/Lock step/sheet.png"),
+      sheet = newImageAssetFlipped("/Lock step/sheet.png"),
       canv = love.graphics.newCanvas(view.width,view.height)
     }
     snd = {
@@ -1295,7 +1297,7 @@ function loadMinigames()
   
   function lminigame()
     img = {
-      sheet = love.graphics.newImage("/resources/gfx/screw bots/sheet.png")
+      sheet = newImageAssetFlipped("/screw bots/sheet.png")
     }
     quad = {
       clawTop = love.graphics.newQuad(0,0,64,64,img.sheet:getWidth(),img.sheet:getHeight()),
@@ -1790,7 +1792,7 @@ function loadMinigames()
   
   function lminigame()
     img = {
-      sheet = love.graphics.newImage("/resources/gfx/moai doo-woop/sheet.png")
+      sheet = newImageAssetFlipped("/moai doo-woop/sheet.png")
     }
     quad = {
       bg1 = love.graphics.newQuad(896,0,480,567,img.sheet:getWidth(),img.sheet:getHeight()),
@@ -1830,7 +1832,7 @@ function loadMinigames()
       head = 0,
       releaseTime = 0,
       pahTime = 0,
-      disapointTime = 0,
+      disappointTime = 0,
       y = 0
     }
     turn = 0
@@ -1846,7 +1848,6 @@ function loadMinigames()
       p.y = p.y + (0 - p.y) * ((2)*(data.bpm/6000))
     end
     --OTHER MOAI
-    
     for _,i in pairs(currentSounds) do
       if i.name == "dooLStart" then
         o.head = 1
@@ -1871,8 +1872,8 @@ function loadMinigames()
       o.head = 0
     end
     
-    if o.disapointTime > 0 then
-      o.disapointTime = o.disapointTime-dt*100
+    if o.disappointTime > 0 then
+      o.disappointTime = o.disappointTime-dt*100
       o.head = 4
     end
     
@@ -1883,6 +1884,7 @@ function loadMinigames()
     
     --PLAYER MOAI
     local hit = 0
+    local bearly = false
     
     for _,i in pairs(currentHits) do
       if i.name == "dooRStart" then
@@ -1895,6 +1897,7 @@ function loadMinigames()
         hit = 3
         print("PAH")
       end
+      bearly = i.bearly
     end
     
     if input["holdA"] then
@@ -1905,13 +1908,13 @@ function loadMinigames()
         
         snd.doo:stop()
         
-        if hit ~= 1 then
+        if hit ~= 1 or bearly then
           misses = misses+1
           print("missed")
           snd.fail:stop()
           snd.fail:play()
           o.head = 4
-          o.disapointTime = 100
+          o.disappointTime = 100
         end
       end
       snd.doo:play()
@@ -1925,7 +1928,7 @@ function loadMinigames()
       snd.woop:play()
       p.releaseTime = 10
       
-      if hit ~= 2 then
+      if hit ~= 2 or bearly then
         misses = misses+1
         print("missed")
       end
@@ -1940,13 +1943,13 @@ function loadMinigames()
       snd.pah:stop()
       snd.pah:play()
       p.pahTime = 10
-      if hit ~= 3 then
+      if hit ~= 3 or bearly then
         misses = misses+1
         print("missed")
         snd.fail:stop()
         snd.fail:play()
         o.head = 4
-        o.disapointTime = 100
+        o.disappointTime = 100
       end
     end
     
@@ -2031,12 +2034,12 @@ function loadMinigames()
   
   function lminigame()
     img = {
-      bg = love.graphics.newImage("/resources/gfx/cheer readers/bg.png"),
-      sheet = love.graphics.newImage("/resources/gfx/cheer readers/sheet.png"),
+      bg = newImageAssetFlipped("/cheer readers/bg.png"),
+      sheet = newImageAssetFlipped("/cheer readers/sheet.png"),
       showOff = {
-        [0] = love.graphics.newImage("/resources/gfx/cheer readers/showOff0.png"),
-        [1] = love.graphics.newImage("/resources/gfx/cheer readers/showOff1.png"),
-        [2] = love.graphics.newImage("/resources/gfx/cheer readers/showOff2.png"),
+        [0] = newImageAssetFlipped("/cheer readers/showOff0.png"),
+        [1] = newImageAssetFlipped("/cheer readers/showOff1.png"),
+        [2] = newImageAssetFlipped("/cheer readers/showOff2.png"),
       },
       canv = love.graphics.newCanvas(view.width,view.height),
     }
@@ -2195,21 +2198,21 @@ function loadMinigames()
     zoom = (zoom+zoomTarget)/2
     
     for _,i in pairs(currentSounds) do
-      if i.name == "one" then
+      if i.name == "onec" then
         flip[1] = true
         flip[2] = true
         flip[3] = true
         flip[4] = true
         anim.mouth:setAnimation("one")
       end
-      if i.name == "two" then
+      if i.name == "twoc" then
         flip[5] = true
         flip[6] = true
         flip[7] = true
         flip[8] = true
         anim.mouth:setAnimation("two")
       end
-      if i.name == "three" then
+      if i.name == "threec" then
         flip[9] = true
         flip[10] = true
         flip[11] = true
@@ -2336,7 +2339,6 @@ function loadMinigames()
       end
       if i.name == "zoomReset" then
         zoomTarget = 1
-        i.book = "black"
       end
     end
     
@@ -2346,6 +2348,9 @@ function loadMinigames()
         i.bounce = 5
         --print("flip",flip,i.id,flip+i.id)
         if not i.player then
+          if i.showOff then
+            i.book = "black"
+          end
           i.showOff = false
           if i.countIn then
             i.countIn = false
@@ -2399,6 +2404,9 @@ function loadMinigames()
       for _,i in pairs(girls) do
         if i.player then
           i.bounce = 5
+          if i.showOff then
+            i.book = "black"
+          end
           i.showOff = false
           if i.countIn then
             i.countIn = false
@@ -2578,7 +2586,7 @@ function loadMinigames()
   
   function lminigame()
     img = {
-      sheet = love.graphics.newImage("/resources/gfx/glee club/sheet.png")
+      sheet = newImageAssetFlipped("/glee club/sheet.png")
     }
     quad = {
       bg = love.graphics.newQuad(0,0,960,540,img.sheet:getWidth(),img.sheet:getHeight())
@@ -2630,8 +2638,8 @@ function loadMinigames()
   
   function lminigame()
     img = {
-      bg = love.graphics.newImage("/resources/gfx/manzai birds/bg.png"),
-      sheet = love.graphics.newImage("/resources/gfx/manzai birds/sheet.png"),
+      bg = newImageAssetFlipped("/manzai birds/bg.png"),
+      sheet = newImageAssetFlipped("/manzai birds/sheet.png"),
       canv = love.graphics.newCanvas(view.width,view.height)
     }
     img.bg:setFilter("linear","linear")
@@ -2768,4 +2776,174 @@ function loadMinigames()
   loadMinigame[11] = lminigame
   updateMinigame[11] = uminigame
   drawMinigame[11] = dminigame
+  
+  function lminigame()
+    img = {
+      sheet = newImageAssetFlipped("/mrUpbeat/sheet.png")
+    }
+    quad = {
+      needle = {
+        center = love.graphics.newQuad(16,0,16,16,img.sheet:getWidth(),img.sheet:getHeight()),
+        handle = love.graphics.newQuad(0,0,16,16,img.sheet:getWidth(),img.sheet:getHeight()),
+        head = love.graphics.newQuad(48,0,16,16,img.sheet:getWidth(),img.sheet:getHeight()),
+        line = love.graphics.newQuad(32,0,16,16,img.sheet:getWidth(),img.sheet:getHeight()),
+      },
+      headWoosh = love.graphics.newQuad(64,0,32,16,img.sheet:getWidth(),img.sheet:getHeight()),
+    }
+    
+    needle = {
+      rot = -12,
+      targetRot = 180+12,
+      dir = 0
+    }
+    player = {
+      bodyAnim = newAnimationGroup(img.sheet),
+      headAnim = newAnimationGroup(img.sheet),
+      lampAnim = newAnimationGroup(img.sheet),
+      headX = 0,
+      headY = 0,
+      flip = 1,
+      headWoosh = 0,
+      nextHit = 0,
+      targetFlip = 1
+    }
+    player.bodyAnim:addAnimation("step",0,16,32,32,3,50)
+    player.bodyAnim:addAnimation("hurt",96,16,32,32,3,100)
+    player.bodyAnim:addAnimation("hurt2",96,16+32,32,32,3,100)
+    player.bodyAnim:addAnimation("idle",64,16,32,32,1,100)
+    
+    player.headAnim:addAnimation("expressions",0,48,16,16,2,0)
+    
+    player.lampAnim:addAnimation("blink",0,64,8,16,5,100)
+    player.lampAnim:addAnimation("idle",24+8,64,8,16,1,0)
+  end
+
+  function uminigame(dt)
+    for _,i in pairs(currentSounds) do
+      if i.name == "metroR" then
+        needle.rot = -12
+        needle.targetRot = 180+12
+        needle.dir = -1
+        player.nextHit = i.time+((0.5)*(data.bpm/6000))
+        player.targetFlip = -1
+      end
+      if i.name == "metroL" then
+        needle.rot = 180+12
+        needle.targetRot = -12
+        needle.dir = 1
+        player.nextHit = i.time+((0.5)*(data.bpm/6000))
+        player.targetFlip = 1
+      end
+      if i.name == "ding" then
+        needle.dir = 0
+      end
+      if i.name == "beep" then
+        player.lampAnim:setAnimation("blink")
+      end
+    end
+    --[[NEEDLE]]--
+    local spd = 2500
+    spd = spd*(data.bpm/60000)
+    needle.rot = needle.rot+needle.dir*spd
+    
+    player.bodyAnim:update(dt)
+    player.lampAnim:update(dt)
+    player.headWoosh = player.headWoosh-dt*100
+    
+    local bearly = false
+    local hit = false
+    for _,i in pairs(currentHits) do
+      if i.name == "step" then
+        bearly = i.bearly
+        hit = true
+      end
+    end
+    
+    if input["pressA"] then
+      player.flip = (player.targetFlip or player.flip*-1)
+      if bearly then
+        player.bodyAnim:setAnimation("hurt")
+        player.headAnim:setFrame(1)
+      else
+        player.bodyAnim:setAnimation("step")
+        player.headAnim:setFrame(0)
+      end
+      if hit then
+        player.nextHit = 0
+      end
+      player.headWoosh = 5
+    end
+    if player.nextHit ~= 0 then
+      if data.music:tell() > player.nextHit+bearlyMargin*3 then
+        
+        if player.flip == player.targetFlip then
+          player.bodyAnim:setAnimation("hurt2")
+        else
+          player.headWoosh = 5
+          player.bodyAnim:setAnimation("hurt")
+        end
+        player.headAnim:setFrame(1)
+        player.nextHit = 0
+        
+        player.flip = player.targetFlip
+      end
+    end
+    
+    if player.bodyAnim:getCurrentAnimation() ~= "idle" and player.bodyAnim:getCurrentFrame() == player.bodyAnim:getLength(player.bodyAnim:getCurrentAnimation())-1 then
+      player.bodyAnim:setAnimation("idle")
+    end
+    if player.lampAnim:getCurrentAnimation() == "blink" and player.lampAnim:getCurrentFrame() == 4 then
+      player.lampAnim:setAnimation("idle")
+    end
+    
+    if player.bodyAnim:getCurrentFrame() == 0 then
+      player.headX = -51
+      player.headY = -24
+    end
+    if player.bodyAnim:getCurrentAnimation() == "hurt2" then
+      if player.bodyAnim:getCurrentFrame() == 0 then
+        player.headY = player.headY+3
+      end
+      if player.bodyAnim:getCurrentFrame() == 1 then
+        player.headY = player.headY-3
+      end
+    end
+  end
+
+  function dminigame()
+    setColorHex("f3f3f3")
+    love.graphics.rectangle("fill",0,0,view.width,view.height)
+    
+    local rot = math.rad(needle.rot)
+    local length = 256+96-16  
+    love.graphics.draw(img.sheet,quad.needle.center,view.width/2,view.height-16,rot,3,3,8,8)
+    love.graphics.draw(img.sheet,quad.needle.handle,view.width/2-math.cos(rot)*8,view.height-16-math.sin(rot)*8,rot,40,3,16,8)
+    love.graphics.draw(img.sheet,quad.needle.line,view.width/2+math.cos(rot)*8,view.height-16+math.sin(rot)*8,rot,length/16,3,0,8)
+    love.graphics.draw(img.sheet,quad.needle.head,view.width/2+math.cos(rot)*length,view.height-16+math.sin(rot)*length,rot,3,3,0,8)
+    
+    local yoff = -128
+    
+    player.bodyAnim:draw(view.width/2,view.height/2+yoff,0,3*player.flip,3,24,16)
+    
+    if player.headWoosh > 0 then
+      love.graphics.draw(img.sheet,quad.headWoosh,view.width/2,view.height/2+yoff+player.headY-math.floor(10/3)*3,0,3*-player.flip,3,16-3,8)
+    end
+    
+    player.lampAnim:draw(view.width/2+player.headX*player.flip,view.height/2+yoff+player.headY-math.floor(36/3)*3,0,3*player.flip,3,4,4)
+    player.headAnim:draw(view.width/2+player.headX*player.flip,view.height/2+yoff+player.headY,0,3*player.flip,3,8,8)
+  end
+
+  
+  loadMinigame[12] = lminigame
+  updateMinigame[12] = uminigame
+  drawMinigame[12] = dminigame
+end
+
+function newImageAssetFlipped(filename)                        
+  if love.filesystem.exists("/tempAssets/"..filename) then                                       
+    print("temp")
+    return love.graphics.newImage("/tempAssets/"..filename)
+  end
+  print("original")
+  return love.graphics.newImage("/resources/gfx/"..filename)
 end

@@ -61,6 +61,14 @@ function loadEditor()
     for _,i in pairs(data.blocks) do
       if i.cues then
         for _,j in pairs(i.cues) do
+          
+          local bpm = data.bpm
+          j.time = (((i.x+j.x)/64)*(60000/bpm))/1000
+          
+          if j.loop then
+            j.loopEnd = (((i.x+i.length)/64)*(60000/data.bpm))/1000
+          end
+          --j.played = false
           if i.pitchShift then
             j.sound:setPitch(i.pitch)
           end
@@ -71,6 +79,8 @@ function loadEditor()
       end
       if i.hits then
         for _,j in pairs(i.hits) do
+          j.time = (((i.x+j.x)/64)*(60000/data.bpm))/1000
+          --j.played = false
           if i.pitchShift then
             j.sound:setPitch(i.pitch)
           end
@@ -283,6 +293,7 @@ function loadEditor()
 end
 
 function love.wheelmoved(x,y)
+  local y = y
   local mx,my = love.mouse.getPosition()
   
   if my > editor.buttonSpace+editor.gridspace then
@@ -304,6 +315,12 @@ function love.wheelmoved(x,y)
       if my > i.y+editor.buttonSpace and my < i.y+editor.buttonSpace+editor.gridheight and mx > i.x+editor.viewX and mx < i.x+i.length+editor.viewX then
         i.pitch = i.pitch+(y/12)
       end
+    end
+  end
+  
+  for _,i in pairs(data.tempoChanges) do
+    if my > editor.buttonSpace and my < editor.buttonSpace+editor.gridspace and mx > i.x+editor.viewX-2 and mx < i.x+editor.viewX+2 then 
+      i.bpm = i.bpm+y
     end
   end
 end
@@ -367,8 +384,10 @@ function updateEditor(dt)
     --print(my,editor.gridspace+editor.buttonSpace)
     if my > editor.gridspace+editor.buttonSpace and mx > 24 and mx < view.width/2 and my > 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll and my < 8+editor.buttonSpace+editor.gridspace+40*(k)+32-editor.minigameScroll then
       if mouse.button.pressed[1] then
-        editor.selectedMinigame = k
-        if k > 0 then
+        if i.name ~= "dummy" then
+          editor.selectedMinigame = k
+        end
+        if k > 0 and i.name ~= "dummy" then
           editor.switch = k
         end
         print(editor.switch)
@@ -386,25 +405,6 @@ function updateEditor(dt)
             editor.block.pitchShift = b.pitchShift
             editor.switch = false
           end
-        end
-      end
-    end
-  end
-  --TEMPO CHANGES
-  if editor.playing then
-    for _,i in pairs(data.tempoChanges) do
-      if not i.played then
-        if editor.playhead >= i.x then
-          print("SWITCH")
-          print((60000/data.bpm)*editor.beats/1000,data.music:tell())
-          data.bpm = i.bpm
-          local b = editor.beats
-          editor.beats = i.x/64
-          print("BEATS:",editor.beats,b)
-          print((60000/data.bpm)*editor.beats/1000,data.music:tell())
-          i.played = true
-          
-          print("SWITCH END")
         end
       end
     end
@@ -608,7 +608,9 @@ function drawEditor()
             printNew(h.name,i.x+editor.viewX+4+h.x,i.y+editor.buttonSpace+32+4)
             
             --print("hit "..math.floor(editor.playhead).." "..i.x+h.x.." "..tostring(h.played).." "..k)
-            if editor.playhead > i.x+h.x and editor.playing then
+            
+            --if editor.playhead > i.x+h.x and editor.playing then
+            if editor.playing and data.music:tell() > h.time then
               if not h.played then
                 if h.sound then
                   h.sound:stop()
@@ -636,8 +638,8 @@ function drawEditor()
             printNew(c.name,i.x+editor.viewX+4+c.x,i.y+editor.buttonSpace+16+4)
             
             if c.loop then
-              if editor.playhead > i.x+c.x and editor.playing then
-                if editor.playhead < i.x+i.length then
+              if editor.playing and data.music:tell() > c.time then
+                if data.music:tell() < c.loopEnd then
                   c.sound:play()
                 elseif not c.played then
                   c.sound:stop()
@@ -645,7 +647,7 @@ function drawEditor()
                 end
               end
             else
-              if editor.playhead > i.x+c.x and editor.playing then
+              if editor.playing and data.music:tell() > c.time then
                 if not c.played then
                   if c.sound then
                     c.sound:stop()

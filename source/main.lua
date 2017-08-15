@@ -18,7 +18,7 @@ function love.load()
     love.filesystem.createDirectory("/remixes")
   end
   
-  version = "0.4.0 (snap)"
+  version = "0.4.0"
   love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()
@@ -90,6 +90,21 @@ function love.load()
           name = "4",
           length = 32,
           cues = {{name = "count4",x = 0,cueId = "countIn4"}},
+        },
+        {
+          name = "vertical flip",
+          length = 64,
+          cues = {{name = "vflip",x = 0,cueId = "silence"}},
+        },
+        {
+          name = "horizontal flip",
+          length = 64,
+          cues = {{name = "hflip",x = 0,cueId = "silence"}},
+        },
+        {
+          name = "reset flip",
+          length = 64,
+          cues = {{name = "rflip",x = 0,cueId = "silence"}},
         },
       }
     },
@@ -480,15 +495,15 @@ function love.load()
           name = "1 2 3",
           length = 128+64,
           cues = {
-            {name = "one",x = 0,cueId = "cheerReadersOneSolo"},
-            {name = "two",x = 64,cueId = "cheerReadersTwoSolo"},
+            {name = "onec",x = 0,cueId = "cheerReadersOneSolo"},
+            {name = "twoc",x = 64,cueId = "cheerReadersTwoSolo"},
 
-            {name = "one",x = 0,cueId = "cheerReadersOneGirls"},
-            {name = "two",x = 64,cueId = "cheerReadersTwoGirls"},
-            {name = "three",x = 128,cueId = "cheerReadersThreeGirls"}
+            {name = "onec",x = 0,cueId = "cheerReadersOneGirls"},
+            {name = "twoc",x = 64,cueId = "cheerReadersTwoGirls"},
+            {name = "threec",x = 128,cueId = "cheerReadersThreeGirls"}
           },
           hits = {
-            {name = "three",x = 128,cueId = "cheerReadersThreeSolo",input = "pressA"},
+            {name = "threec",x = 128,cueId = "cheerReadersThreeSolo",input = "pressA"},
           },
         },
         {
@@ -561,21 +576,30 @@ function love.load()
             
             {name = "o",x = 0,cueId = "cheerReadersOGirls"},
             {name = "kay",x = 64,cueId = "cheerReadersKayGirls"},
-            {name = "its2",x = 128,cueId = "cheerReadersItsGirls2",pitchToBpm = true,originalBpm = 124},
+            {name = "its2",x = 128,cueId = "cheerReadersItsGirls2"},
             {name = "on",x = 128+64,cueId = "cheerReadersOnGirls"},
             
             {name = "zoomReset",x = 128+64+32,cueId = "silence"},
           },
           hits = {
-            {name = "its2",x = 128,cueId = "cheerReadersItsSolo2",input = "pressAB",pitchToBpm = true,originalBpm = 124},
+            {name = "its2",x = 128,cueId = "cheerReadersItsSolo2",input = "pressAB"},
             {name = "on",x = 128+64,cueId = "cheerReadersOnSolo",input = "releaseAB"},
           },
         }
       }
     },
+    
     [10] = {
+      name = "dummy"
+    },
+    [11] = {
+      name = "dummy"
+    },
+    
+    
+    --[[[10] = {
       name = "glee club",
-      img = love.graphics.newImage("/resources/gfx/editor/icons/gleeClub.png"),
+      --img = love.graphics.newImage("/resources/gfx/editor/icons/gleeClub.png"),
       blocks = {
         {
           name = "sing",
@@ -640,23 +664,174 @@ function love.load()
           }
         },
       }
-    }
+    },]]
+    [12] = {
+      name = "mr. upbeat",
+      img = love.graphics.newImage("/resources/gfx/editor/icons/mrupbeat.png"),
+      blocks = {
+        {
+          name = "4 steps",
+          length = 256,
+          cues = {
+            {name = "metroR",x = 0,cueId = "MrUpbeatRight"},
+            {name = "metroL",x = 64,cueId = "MrUpbeatLeft"},
+            {name = "metroR",x = 128,cueId = "MrUpbeatRight"},
+            {name = "metroL",x = 128+64,cueId = "MrUpbeatLeft"},
+          },
+          hits = {
+            {name = "step",x = 32,cueId = "MrUpbeatStep",input = "pressA"},
+            {name = "step",x = 64+32,cueId = "MrUpbeatStep",input = "pressA"},
+            {name = "step",x = 128+32,cueId = "MrUpbeatStep",input = "pressA"},
+            {name = "step",x = 128+64+32,cueId = "MrUpbeatStep",input = "pressA"},
+          }
+        },
+        {
+          name = "2 steps",
+          length = 128,
+          cues = {
+            {name = "metroR",x = 0,cueId = "MrUpbeatRight"},
+            {name = "metroL",x = 64,cueId = "MrUpbeatLeft"},
+          },
+          hits = {
+            {name = "step",x = 32,cueId = "MrUpbeatStep",input = "pressA"},
+            {name = "step",x = 64+32,cueId = "MrUpbeatStep",input = "pressA"},
+          }
+        },
+        {
+          name = "step right",
+          length = 64,
+          cues = {
+            {name = "metroR",x = 0,cueId = "MrUpbeatRight"},
+          },
+          hits = {
+            {name = "step",x = 32,cueId = "MrUpbeatStep",input = "pressA"},
+          }
+        },
+        {
+          name = "step left",
+          length = 64,
+          cues = {
+            {name = "metroL",x = 0,cueId = "MrUpbeatLeft"},
+          },
+          hits = {
+            {name = "step",x = 32,cueId = "MrUpbeatStep",input = "pressA"},
+          }
+        },
+        {
+          name = "count in",
+          length = 256*2,
+          cues = {
+            {name = "one",x = 0,cueId = "MrUpbeatOne"},
+            
+            {name = "two",x = 128,cueId = "MrUpbeatTwo"},
+            
+            {name = "one",x = 256,cueId = "MrUpbeatOne"},
+            {name = "two",x = 256+64,cueId = "MrUpbeatTwo"},
+            {name = "three",x = 256+128,cueId = "MrUpbeatThree"},
+            {name = "four",x = 256+128+64,cueId = "MrUpbeatFour"},
+            
+            {name = "beep",x = 32,cueId = "MrUpbeatBeep"},
+            {name = "beep",x = 64+32,cueId = "MrUpbeatBeep"},
+            {name = "beep",x = 128+32,cueId = "MrUpbeatBeep"},
+            {name = "beep",x = 128+64+32,cueId = "MrUpbeatBeep"},
+            {name = "beep",x = 256+32,cueId = "MrUpbeatBeep"},
+            {name = "beep",x = 256+64+32,cueId = "MrUpbeatBeep"},
+            {name = "beep",x = 256+128+32,cueId = "MrUpbeatBeep"},
+            {name = "beep",x = 256+128+64+32,cueId = "MrUpbeatBeep"},
+          }
+        },
+        {
+          name = "ding",
+          length = 64,
+          pitchShift = true,
+          cues = {
+            {name = "ding",x = 0,cueId = "MrUpbeatDing",pitch = 1},
+          }
+        }
+      }
+    },
+    --[[[13] = {
+      name = "wario de mambo",
+      blocks = {
+        {
+          name = "memorize!",
+          length = 64,
+          cues = {
+            {name = "memorize",x = 0,cueId = "warioDeMamboMemorize"},
+          }
+        },
+        {
+          name = "lean left",
+          length = 64,
+          cues = {
+            {name = "lean left",x = 0,cueId = "warioDeMamboLeanLeft"},
+          }
+        },
+        {
+          name = "lean right",
+          length = 64,
+          cues = {
+            {name = "lean right",x = 0,cueId = "warioDeMamboLeanRight"},
+          }
+        },
+        {
+          name = "jump",
+          length = 64,
+          cues = {
+            {name = "jump",x = 0,cueId = "warioDeMamboJump"},
+          }
+        },
+        {
+          name = "count in",
+          length = 256,
+          cues = {
+            {name = "four",x = 0,cueId = "warioDeMamboFour"},
+            {name = "three",x = 64,cueId = "warioDeMamboThree"},
+            {name = "two",x = 128,cueId = "warioDeMamboTwo"},
+            {name = "one",x = 128+64,cueId = "warioDeMamboOne"},
+          }
+        },
+        {
+          name = "lean left player",
+          length = 64,
+          hits = {
+            {name = "lean left",x = 0,cueId = "warioDeMamboLeanLeft",input = "pressLEFT"},
+          }
+        },
+        {
+          name = "lean right player",
+          length = 64,
+          hits = {
+            {name = "lean right",x = 0,cueId = "warioDeMamboLeanRight",input = "pressRIGHT"},
+          }
+        },
+        {
+          name = "jump player",
+          length = 64,
+          hits = {
+            {name = "jump",x = 0,cueId = "warioDeMamboJump",input = "pressA"},
+          }
+        },        
+      },
+    },  ]]
   }
   
   for _,i in pairs(minigames) do
     print(i.name)
-    for _,j in pairs(i.blocks) do
-      if j.cues then
-        for _,h in pairs(j.cues) do
-          if not h.sound then
-            h.sound = cue[h.cueId]()
+    if i.blocks then
+      for _,j in pairs(i.blocks) do
+        if j.cues then
+          for _,h in pairs(j.cues) do
+            if not h.sound then
+              h.sound = cue[h.cueId]()
+            end
           end
         end
-      end
-      if j.hits then
-        for _,h in pairs(j.hits) do
-          if not h.sound then
-            h.sound = cue[h.cueId]()
+        if j.hits then
+          for _,h in pairs(j.hits) do
+            if not h.sound then
+              h.sound = cue[h.cueId]()
+            end
           end
         end
       end
@@ -671,7 +846,9 @@ function love.load()
   view = {
     canvas = love.graphics.newCanvas(w,h),
     width = 1920/2,
-    height = 1080/2
+    height = 1080/2,
+    flipH = 1,
+    flipV = 1
   }
   
   loadEditor()
@@ -736,35 +913,103 @@ function love.filedropped(file)
   if screen == "editor" then
   local filename = file:getFilename()
     if string.lower(string.sub(filename,filename:len()-3)) == ".ogg" or string.lower(string.sub(filename,filename:len()-3)) == ".wav" or string.lower(string.sub(filename,filename:len()-3)) == ".mp3" then
-      data.music = love.audio.newSource(file)
-      data.music:setVolume(0.25)
+      editorLoadMusic(file)
     elseif string.lower(string.sub(filename,filename:len()-4)) == ".rhrm" then
-      --load data
+      editorLoadBeatmap(file)
+    elseif string.lower(string.sub(filename,filename:len()-5)) == ".brhrm" then
       if file:open("r") then
-        --READ DATA
         local d = file:read()
-        print(d)
-        data = json.decode(d)
-        for _,i in pairs(data.blocks) do
-          if i.cues then
-            for _,j in pairs(i.cues) do
-              j.sound = cue[j.cueId]
-            end
-          end
-          if i.hits then
-            for _,j in pairs(i.hits) do
-              j.sound = cue[j.cueId]
-            end
-          end
+        if not love.filesystem.exists("temp") then
+          love.filesystem.createDirectory("temp")
         end
-      end
-    elseif string.lower(string.sub(filename,filename:len()-3)) == ".zip" then
-      if file:open("r") then
-        local d = file:read()
+        success, message = love.filesystem.write("temp/remix.brhrm",d)
+
+        if success then
+          love.filesystem.mount("temp/remix.brhrm","temp",true)
+          
+          local nFile
+          local nd
+          --[[for _,i in pairs(love.filesystem.getDirectoryItems("temp")) do
+            nFile = love.filesystem.newFile("temp/"..i)
+            
+            if nFile:open("r") then
+              nd = nFile:read()
+              love.filesystem.write("temp/"..i,nd)
+            end
+          end]]
+          
+          --love.filesystem.unmount("temp/remix.brhrm")
+          
+          for _,i in pairs(love.filesystem.getDirectoryItems("temp")) do
+            print(i)
+            nFile = love.filesystem.newFile("temp/"..i)
+            if string.lower(string.sub(i,i:len()-3)) == ".ogg" or string.lower(string.sub(i,i:len()-3)) == ".wav" or string.lower(string.sub(i,i:len()-3)) == ".mp3" then
+              editorLoadMusic(nFile)
+              print("loaded music")
+            elseif string.lower(string.sub(i,i:len()-4)) == ".rhrm" then
+              editorLoadBeatmap(nFile)
+              print("loaded beatmap")
+            elseif string.lower(string.sub(i,i:len()-3)) == ".gfx" then
+              editorLoadAssets(nFile)
+              print("loaded assets")
+            end
+          end
+          
+        else
+          print("THERE WAS AN ERROR WHILE LOADING:")
+          print(message)
+        end
       end
     end
   elseif screen == "menu" then
     filedroppedMenu(file)
+  end
+end
+
+function editorLoadMusic(file)
+  data.music = love.audio.newSource(file)
+  data.music:setVolume(0.25)
+end
+function editorLoadBeatmap(file)
+  --load data
+  if file:open("r") then
+    --READ DATA
+    local d = file:read()
+    --print(d)
+    data = json.decode(d)
+    for _,i in pairs(data.blocks) do
+      if i.cues then
+        for _,j in pairs(i.cues) do
+          j.sound = cue[j.cueId]()
+        end
+      end
+      if i.hits then
+        for _,j in pairs(i.hits) do
+          j.sound = cue[j.cueId]()
+        end
+      end
+    end
+  end
+end
+function editorLoadAssets(file)
+  if file:open("r") then
+    if not love.filesystem.exists("tempAssets") then
+      love.filesystem.createDirectory("tempAssets")
+    end
+    
+    local d = file:read()
+    local filename = file:getFilename()
+    local success, message = love.filesystem.write(filename,d)
+    
+    if success then
+      local mountSuccess = love.filesystem.mount(filename,"tempAssets",true)
+      if not mountSuccess then
+        print("ERROR WHILE LOADING ASSETS")
+      end
+    else
+      print("ERROR WHILE LOADING ASSETS:")
+      print(message)
+    end
   end
 end
 
@@ -812,7 +1057,15 @@ function love.draw()
   love.graphics.setDefaultFilter("nearest","nearest")
   
   local w,h = love.graphics.getDimensions()
-  love.graphics.draw(view.canvas,0,0,0,w/view.width,h/view.height)
+  local x = 0
+  if view.flipH == -1 then
+    x = w
+  end
+  local y = 0
+  if view.flipV == -1 then
+    y = h
+  end
+  love.graphics.draw(view.canvas,x,y,0,(w/view.width)*view.flipH,(h/view.height)*view.flipV)
 end
 
 function hex2rgb(hex,returnTable)

@@ -16,7 +16,14 @@ function loadGameInputs()
     perfectFail = 0
   end
   
-  minigame = 11
+  
+  minigame = 1
+  for _,i in pairs(data.beatmap.switches) do
+    if i.time <= 0 then
+      minigame = i.minigame
+    end
+  end
+  
   transition = 0
   endRemix = false
   endRemixTimer = 0
@@ -92,7 +99,19 @@ function love.keypressed(key,scancode,isRepeat)
       input["holdANY"] = true
     end
     
+    if key == "d" then
+      input["pressRIGHT"] = true
+      input["holdRIGHT"] = true
+    end
+    
+    if key == "a" then
+      input["pressLEFT"] = true
+      input["holdLEFT"] = true
+    end
+    
     if key == "r" then
+      view.flipH = 1
+      view.flipV = 1
       gameSnd.music[ratingNote]:stop()
       for _,i in pairs(data.beatmap) do
         if type(i) == "table" then
@@ -110,6 +129,8 @@ function love.keypressed(key,scancode,isRepeat)
     
     if data.beatmap.editor then
       if key == "escape" then
+        view.flipH = 1
+        view.flipV = 1
         screen = "editor"
         gameSnd.music[ratingNote]:stop()
         if data.music then
@@ -118,6 +139,8 @@ function love.keypressed(key,scancode,isRepeat)
       end
     else
       if key == "escape" then
+        view.flipH = 1
+        view.flipV = 1
         screen = "menu"
         menu.loadPhase = 0
         gameSnd.music[ratingNote]:stop()
@@ -210,6 +233,16 @@ function love.keyreleased(key)
       input["holdDPAD"] = false
       input["releaseANY"] = true
       input["holdANY"] = false
+    end
+    
+    if key == "d" then
+      input["releaseRIGHT"] = true
+      input["holdRIGHT"] = false
+    end
+    
+    if key == "a" then
+      input["releaseLEFT"] = true
+      input["holdLEFT"] = false
     end
   end
 end
@@ -352,6 +385,8 @@ function updateGameInputs(dt)
       endRemixTimer = endRemixTimer+1
       data.music:setVolume((0.25-(endRemixTimer/(data.options.endFadeOutTime or 100))*0.25))
       if endRemixTimer >= (data.options.endFadeOutTime or 100) then
+        view.flipH = 1
+        view.flipV = 1
         if data.beatmap.editor then
           screen = "editor"
           data.music:setVolume(0.25)
@@ -390,6 +425,19 @@ function updateGameInputs(dt)
       sndPerfectFail:stop()
       sndPerfectFail:play()
       perfectFail = 20
+    end
+    
+    for _,i in pairs(currentSounds) do
+      if i.name == "vflip" then
+        view.flipV = view.flipV*-1
+      end
+      if i.name == "hflip" then
+        view.flipH = view.flipH*-1
+      end
+      if i.name == "rflip" then
+        view.flipV = 1
+        view.flipH = 1
+      end
     end
     
     currentSounds = {}

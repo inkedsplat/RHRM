@@ -78,12 +78,12 @@ function writeData(t)
   for _,i in pairs(t.blocks) do
     if i.cues then
       for _,j in pairs(i.cues) do
-        j.sound = cue[j.cueId]
+        j.sound = cue[j.cueId]()
       end
     end
     if i.hits then
       for _,j in pairs(i.hits) do
-        j.sound = cue[j.cueId]
+        j.sound = cue[j.cueId]()
       end
     end
   end

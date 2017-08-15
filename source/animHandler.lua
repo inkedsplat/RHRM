@@ -114,7 +114,7 @@ function animationGroup:getLength(id)
   end
 end
 
-function animationGroup:getCurrentAnimation(id)
+function animationGroup:getCurrentAnimation()
   return self.currentAnimation.id
 end
 

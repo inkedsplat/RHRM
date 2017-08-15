@@ -6,16 +6,19 @@ function initializeCues()
   cue["countIn4"] = function() return newSource("/resources/sfx/game/countIn4.ogg")end
   cue["cowbell"] = function() return newSource("/resources/sfx/game/cowbell.ogg")end
   cue["silence"] = function() return newSource("/resources/sfx/silence.ogg")end
+  
   cue["karatekaPotThrow"] = function() return newSource("/resources/sfx/karate man (GBA)/potThrow.ogg")end
   cue["karatekaPotHit"] = function() return newSource("/resources/sfx/karate man (GBA)/potHit.ogg")end
   cue["karatekaRockHit"] = function() return newSource("/resources/sfx/karate man (GBA)/rockHit.ogg")end
   cue["karatekaMi"] = function() return newSource("/resources/sfx/karate man (GBA)/mi.ogg")end
   cue["karatekaTsu"] = function() return newSource("/resources/sfx/karate man (GBA)/tsu.ogg")end
+  
   cue["tweezersRootAppear"] = function() return newSource("/resources/sfx/rhythm tweezers (GBA)/hairAppear.ogg")end
   cue["tweezersRootPluck"] = function() return newSource("/resources/sfx/rhythm tweezers (GBA)/hairPluck.ogg")end
   cue["tweezersRootAppearLong"] = function() return newSource("/resources/sfx/rhythm tweezers (GBA)/hairAppearLong.ogg")end
   cue["tweezersRootPluckLong1"] = function() return newSource("/resources/sfx/rhythm tweezers (GBA)/hairPluckLong1.ogg")end
   cue["tweezersRootPluckLong2"] = function() return newSource("/resources/sfx/rhythm tweezers (GBA)/hairPluckLong2.ogg")end
+  
   cue["BlueBirdsPeck"] = function() return newSource("/resources/sfx/Blue birds/peck.ogg")end
   cue["BlueBirdsYour"] = function() return newSource("/resources/sfx/Blue birds/your.ogg")end
   cue["BlueBirdsBeak"] = function() return newSource("/resources/sfx/Blue birds/beak.ogg")end
@@ -26,12 +29,15 @@ function initializeCues()
   cue["BlueBirdsNeck"] = function() return newSource("/resources/sfx/Blue birds/neck.ogg")end
   cue["BlueBirdsStretchPlayer1"] = function() return newSource("/resources/sfx/Blue birds/stretchPlayer1.ogg")end
   cue["BlueBirdsStretchPlayer2"] = function() return newSource("/resources/sfx/Blue birds/stretchPlayer2.ogg")end
+  
   cue["ForkLifterFlick"] = function() return newSource("/resources/sfx/Fork Lifter/flick.ogg")end
   cue["ForkLifterZoom"] = function() return newSource("/resources/sfx/Fork Lifter/zoom.ogg")end
   cue["ForkLifterStab"] = function() return newSource("/resources/sfx/Fork Lifter/stab.ogg")end
   cue["ForkLifterEat"] = function() return newSource("/resources/sfx/Fork Lifter/eat.ogg")end
+  
   cue["ClappyTrioPrep"] = function() return newSource("/resources/sfx/Clappy Trio (Wii)/prepare.ogg")end
   cue["ClappyTrioClap"] = function() return newSource("/resources/sfx/Clappy Trio (Wii)/clap.ogg")end
+  
   cue["LockStepOn"] = function() return newSource("/resources/sfx/Lock step/stepOn.ogg")end
   cue["LockStepOff"] = function() return newSource("/resources/sfx/Lock step/stepOff.ogg")end
   cue["LockStepHai"] = function() return newSource("/resources/sfx/Lock step/hai.ogg")end
@@ -40,6 +46,7 @@ function initializeCues()
   cue["LockStepHaiOff"] = function() return newSource("/resources/sfx/Lock step/haiOff.ogg")end
   cue["LockStepOuf"] = function() return newSource("/resources/sfx/Lock step/ouf.ogg")end
   cue["LockStepHm"] = function() return newSource("/resources/sfx/Lock step/hm.ogg")end
+  
   cue["ScrewBotsCrane1"] = function() return newSource("/resources/sfx/screw bots/crane1.ogg")end
   cue["ScrewBotsCrane2"] = function() return newSource("/resources/sfx/screw bots/crane2.ogg")end
   cue["ScrewBotsCraneWhite"] = function() return newSource("/resources/sfx/screw bots/craneWhite.ogg")end
@@ -48,6 +55,7 @@ function initializeCues()
   cue["ScrewBotsWhiteDrop"] = function() return newSource("/resources/sfx/screw bots/whiteDrop.ogg")end
   cue["ScrewBotsWhiteScrew"] = function() return newSource("/resources/sfx/screw bots/whiteScrew.ogg")end
   cue["ScrewBotsComplete"] = function() return newSource("/resources/sfx/screw bots/complete.ogg")end
+  
   cue["MoaiDooLStart"] = function() return newSource("/resources/sfx/moai doo woop/dooLStart.ogg")end
   cue["MoaiDooL"] = function() return newSource("/resources/sfx/moai doo woop/dooL.ogg")end
   cue["MoaiWopL"] = function() return newSource("/resources/sfx/moai doo woop/woopL.ogg")end
@@ -57,6 +65,7 @@ function initializeCues()
   cue["MoaiDooR"] = function() return newSource("/resources/sfx/moai doo woop/dooR.ogg")end
   cue["MoaiWopR"] = function() return newSource("/resources/sfx/moai doo woop/woopR.ogg")end
   cue["MoaiPahR"] = function() return newSource("/resources/sfx/moai doo woop/pahR.ogg")end
+  
   cue["cheerReadersOneSolo"] = function() return newSource("/resources/sfx/cheer readers/oneSolo.ogg")end
   cue["cheerReadersTwoSolo"] = function() return newSource("/resources/sfx/cheer readers/twoSolo.ogg")end
   cue["cheerReadersThreeSolo"] = function() return newSource("/resources/sfx/cheer readers/threeSolo.ogg")end
@@ -114,6 +123,7 @@ function initializeCues()
   cue["gleeClubSing"] = function() return newSource("/resources/sfx/glee club/sing.ogg") end
   cue["gleeClubStop"] = function() return newSource("/resources/sfx/glee club/closeMouth.ogg") end
   
+  
   cue["manzaiBoing"] = function() return newSource("/resources/sfx/manzai birds/boing.ogg") end
   cue["manzaiHai"] = function() return newSource("/resources/sfx/manzai birds/haihai1.ogg") end
   cue["manzaiHai2"] = function() return newSource("/resources/sfx/manzai birds/haihai2.ogg") end
@@ -121,6 +131,26 @@ function initializeCues()
   cue["manzaiDonaiyanen"] = function() return newSource("/resources/sfx/manzai birds/donaiyanen.ogg") end
   
   cue["manzaiAichini_aichinna"] = function() return newSource("/resources/sfx/manzai birds/aichini_aichinna.ogg") end
+  
+  
+  cue["MrUpbeatLeft"] = function() return newSource("/resources/sfx/mrUpbeat/metronomeLeft.ogg") end
+  cue["MrUpbeatRight"] = function() return newSource("/resources/sfx/mrUpbeat/metronomeRight.ogg") end
+  cue["MrUpbeatStep"] = function() return newSource("/resources/sfx/mrUpbeat/step.ogg") end
+  cue["MrUpbeatDing"] = function() return newSource("/resources/sfx/mrUpbeat/ding.ogg") end
+  cue["MrUpbeatBeep"] = function() return newSource("/resources/sfx/mrUpbeat/beep.ogg") end
+  cue["MrUpbeatOne"] = function() return newSource("/resources/sfx/mrUpbeat/one.ogg") end
+  cue["MrUpbeatTwo"] = function() return newSource("/resources/sfx/mrUpbeat/two.ogg") end
+  cue["MrUpbeatThree"] = function() return newSource("/resources/sfx/mrUpbeat/three.ogg") end
+  cue["MrUpbeatFour"] = function() return newSource("/resources/sfx/mrUpbeat/four.ogg") end
+  
+  cue["warioDeMamboOne"] = function() return newSource("/resources/sfx/wario de mambo/one.ogg") end
+  cue["warioDeMamboTwo"] = function() return newSource("/resources/sfx/wario de mambo/two.ogg") end
+  cue["warioDeMamboThree"] = function() return newSource("/resources/sfx/wario de mambo/three.ogg") end
+  cue["warioDeMamboFour"] = function() return newSource("/resources/sfx/wario de mambo/four.ogg") end
+  cue["warioDeMamboMemorize"] = function() return newSource("/resources/sfx/wario de mambo/memorize.ogg") end
+  cue["warioDeMamboLeanLeft"] = function() return newSource("/resources/sfx/wario de mambo/leanLeft.ogg") end
+  cue["warioDeMamboLeanRight"] = function() return newSource("/resources/sfx/wario de mambo/leanRight.ogg") end
+  cue["warioDeMamboJump"] = function() return newSource("/resources/sfx/wario de mambo/bounce.ogg") end
 end
 
 

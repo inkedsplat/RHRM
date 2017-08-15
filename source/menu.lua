@@ -61,7 +61,7 @@ function drawMenu()
     printNew("press escape to cancel",16,view.height-32)
     
     if menu.loadPhase == 1 then
-      printNew("DROP A REMIX DATA FILE (.rhrm)\nONTO THE WINDOW",32,view.height/2,0,1,1)
+      printNew("DROP A BUNDLED REMIX DATA FILE (.brhrm)\nONTO THE WINDOW",32,view.height/2,0,1,1)
     elseif menu.loadPhase == 2 then
       printNew("DROP THE CORRESPONDING .ogg,.wav or .mp3 FILE\nONTO THE WINDOW ",32,view.height/2)
     elseif menu.loadPhase >= 3 and menu.loadPhase < 4 then
@@ -79,39 +79,52 @@ end
 
 function filedroppedMenu(file)
   local filename = file:getFilename()
-  if menu.loadPhase == 1 then
-    if string.lower(string.sub(filename,filename:len()-4)) == ".rhrm" then
-      --load data
-      if file:open("r") then
-        --READ DATA
-        local d = file:read()
-        print(d)
-        data = json.decode(d)
-        for _,i in pairs(data.blocks) do
-          if i.cues then
-            for _,j in pairs(i.cues) do
-              j.sound = cue[j.cueId]
-            end
+  if string.lower(string.sub(filename,filename:len()-5)) == ".brhrm" then
+    if file:open("r") then
+      local d = file:read()
+      if not love.filesystem.exists("temp") then
+        love.filesystem.createDirectory("temp")
+      end
+      success, message = love.filesystem.write("temp/remix.brhrm",d)
+
+      if success then
+        love.filesystem.mount("temp/remix.brhrm","temp",true)
+        
+        local nFile
+        local nd
+        --[[for _,i in pairs(love.filesystem.getDirectoryItems("temp")) do
+          nFile = love.filesystem.newFile("temp/"..i)
+          
+          if nFile:open("r") then
+            nd = nFile:read()
+            love.filesystem.write("temp/"..i,nd)
           end
-          if i.hits then
-            for _,j in pairs(i.hits) do
-              j.sound = cue[j.cueId]
-            end
+        end]]
+        
+        --love.filesystem.unmount("temp/remix.brhrm")
+        
+        for _,i in pairs(love.filesystem.getDirectoryItems("temp")) do
+          print(i)
+          nFile = love.filesystem.newFile("temp/"..i)
+          if string.lower(string.sub(i,i:len()-3)) == ".ogg" or string.lower(string.sub(i,i:len()-3)) == ".wav" or string.lower(string.sub(i,i:len()-3)) == ".mp3" then
+            editorLoadMusic(nFile)
+            print("loaded music")
+          elseif string.lower(string.sub(i,i:len()-4)) == ".rhrm" then
+            editorLoadBeatmap(nFile)
+            createBeatmap()
+            print("loaded beatmap")
+          elseif string.lower(string.sub(i,i:len()-3)) == ".gfx" then
+            editorLoadAssets(nFile)
+            print("loaded assets")
           end
         end
-        --create beatmap
-        createBeatmap()
-        menu.loadPhase = 2
+        
+      else
+        print("THERE WAS AN ERROR WHILE LOADING:")
+        print(message)
       end
     end
-  elseif menu.loadPhase == 2 then
-    if string.lower(string.sub(filename,filename:len()-3)) == ".ogg" or string.lower(string.sub(filename,filename:len()-3)) == ".wav" or string.lower(string.sub(filename,filename:len()-3)) == ".mp3" then
-      data.music = love.audio.newSource(file)
-      data.music:setVolume(0.25)
-      menu.remixIntro:stop()
-      menu.remixIntro:play()
-      menu.loadPhase = 3
-    end
+    menu.loadPhase = 3
   end
 end
 
