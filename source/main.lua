@@ -17,8 +17,11 @@ function love.load()
   if not love.filesystem.exists("/remixes") then
     love.filesystem.createDirectory("/remixes")
   end
+  if not love.filesystem.exists("/library") then
+    love.filesystem.createDirectory("/library")
+  end
   
-  version = "0.4.0"
+  version = "0.5.0"
   love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()
@@ -588,16 +591,8 @@ function love.load()
         }
       }
     },
-    
     [10] = {
-      name = "dummy"
-    },
-    [11] = {
-      name = "dummy"
-    },
-    
-    
-    --[[[10] = {
+      hidden = true,
       name = "glee club",
       --img = love.graphics.newImage("/resources/gfx/editor/icons/gleeClub.png"),
       blocks = {
@@ -637,6 +632,7 @@ function love.load()
       }
     },
     [11] = {
+      hidden = true,
       name = "manzai birds",
       img = love.graphics.newImage("/resources/gfx/editor/icons/manzaiBirds.png"),
       --ORIGINAL BPM = 95
@@ -664,7 +660,7 @@ function love.load()
           }
         },
       }
-    },]]
+    },
     [12] = {
       name = "mr. upbeat",
       img = love.graphics.newImage("/resources/gfx/editor/icons/mrupbeat.png"),
@@ -750,8 +746,9 @@ function love.load()
         }
       }
     },
-    --[[[13] = {
+    [13] = {
       name = "wario de mambo",
+      hidden = true,
       blocks = {
         {
           name = "memorize!",
@@ -813,7 +810,7 @@ function love.load()
           }
         },        
       },
-    },  ]]
+    },  
   }
   
   for _,i in pairs(minigames) do
@@ -916,6 +913,19 @@ function love.filedropped(file)
       editorLoadMusic(file)
     elseif string.lower(string.sub(filename,filename:len()-4)) == ".rhrm" then
       editorLoadBeatmap(file)
+    elseif string.lower(string.sub(filename,filename:len()-3)) == ".gfx" then
+      if file:open("r") then
+        local d = file:read()
+        if not love.filesystem.exists("temp") then
+          love.filesystem.createDirectory("temp")
+        end
+        success, message = love.filesystem.write("temp/assets.gfx",d)
+        file:close()
+        if success then
+          file = love.filesystem.newFile("temp/assets.gfx")
+          editorLoadAssets(file)
+        end
+      end
     elseif string.lower(string.sub(filename,filename:len()-5)) == ".brhrm" then
       if file:open("r") then
         local d = file:read()
@@ -954,7 +964,7 @@ function love.filedropped(file)
               print("loaded assets")
             end
           end
-          
+          love.window.setTitle("RHRM - "..version.." - "..filename)
         else
           print("THERE WAS AN ERROR WHILE LOADING:")
           print(message)
@@ -967,14 +977,33 @@ function love.filedropped(file)
 end
 
 function editorLoadMusic(file)
-  data.music = love.audio.newSource(file)
-  data.music:setVolume(0.25)
+  local filename = file:getFilename()
+  if file:open("r") then
+    if not love.filesystem.exists("temp") then
+      love.filesystem.createDirectory("temp")
+    end
+    local d = file:read()
+    local nFilename = "temp/music"..string.lower(string.sub(filename,filename:len()-3))
+    love.filesystem.write(nFilename,d)
+    local file = love.filesystem.newFile(nFilename)
+    data.music = love.audio.newSource(file)
+    data.music:setVolume(0.25)
+    print("MUSIC LOADED !")
+  end
 end
 function editorLoadBeatmap(file)
   --load data
   if file:open("r") then
     --READ DATA
     local d = file:read()
+    if not love.filesystem.exists("temp") then
+      love.filesystem.createDirectory("temp")
+    end
+    local nFilename = "temp/beatmap.rhrm"
+    love.filesystem.write(nFilename,d)
+    local file = love.filesystem.newFile(nFilename)
+    
+    d = file:read()
     --print(d)
     data = json.decode(d)
     for _,i in pairs(data.blocks) do
@@ -989,6 +1018,7 @@ function editorLoadBeatmap(file)
         end
       end
     end
+    print("BEATMAP LOADED !")
   end
 end
 function editorLoadAssets(file)
@@ -1002,14 +1032,18 @@ function editorLoadAssets(file)
     local success, message = love.filesystem.write(filename,d)
     
     if success then
+      local unmountSuccess = love.filesystem.unmount(filename)
       local mountSuccess = love.filesystem.mount(filename,"tempAssets",true)
       if not mountSuccess then
         print("ERROR WHILE LOADING ASSETS")
+      else
+        print("ASSETS LOADED !")
       end
     else
       print("ERROR WHILE LOADING ASSETS:")
       print(message)
     end
+    file:close()
   end
 end
 
@@ -1066,6 +1100,31 @@ function love.draw()
     y = h
   end
   love.graphics.draw(view.canvas,x,y,0,(w/view.width)*view.flipH,(h/view.height)*view.flipV)
+end
+
+function love.quit()
+  deleteTempFiles()
+end
+
+function deleteTempFiles()
+    love.filesystem.unmount("temp/assets.gfx")
+  
+    local function recursivelyDelete(item, depth)
+        if love.filesystem.isDirectory(item) then
+            for _, child in pairs(love.filesystem.getDirectoryItems(item)) do
+                recursivelyDelete(item .. '/' .. child, depth + 1);
+                love.filesystem.remove(item .. '/' .. child);
+            end
+        elseif love.filesystem.isFile(item) then
+            print(item)
+            love.filesystem.remove(item);
+        end
+         print(item)
+        love.filesystem.remove(item)
+    end
+ 
+    recursivelyDelete('temp', 0);
+    recursivelyDelete('tempAssets', 0);
 end
 
 function hex2rgb(hex,returnTable)

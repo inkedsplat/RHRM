@@ -2,10 +2,10 @@ function updateSavescreen(dt)
   local mx, my = love.mouse.getPosition()
   local k = 0
   for _,i in pairs(files) do
-    if string.lower(string.sub(i,i:len()-4)) == ".rhrm" then
+    if love.filesystem.isDirectory("remixes/"..i) then
       if my > 96+24*k and my < 96+24*(k+1)-1 then
         if mouse.button.pressed[1] then
-          entry = string.sub(i,1,i:len()-5)
+          entry = i
         end
       end
       k = k+1
@@ -19,7 +19,11 @@ function drawSavescreen()
   setColorHex(editor.scheme.grid)
   love.graphics.rectangle("line",view.width/2-256,view.height/2-256,256*2,256*2)
   love.graphics.setFont(fontBig)
-  printNew("SAVE REMIX",view.width/2-64,32)
+  if loadRemixBool then
+    printNew("LOAD REMIX",view.width/2-128,32)
+  else
+    printNew("SAVE REMIX",view.width/2-128,32)
+  end
   love.graphics.setFont(font)
   
   printNew(entry,view.width/2-128,64)
@@ -27,8 +31,8 @@ function drawSavescreen()
   local k = 0
   local mx, my = love.mouse.getPosition()
   for _,i in pairs(files) do
-    if string.lower(string.sub(i,i:len()-4)) == ".rhrm" then
-      
+      if love.filesystem.isDirectory("remixes/"..i) then
+        
       if my > 96+24*k and my < 96+24*(k+1)-1 then
         setColorHex("303030")
       else
@@ -43,14 +47,95 @@ end
 
 function love.textinput(t)
   if screen == "save" then
-    entry = entry..t
+    if not loadRemixBool then
+      entry = entry..t
+    end
   elseif screen == "remixOptions" then
     textinputRemixOptions(t)
   end
 end
 
+function loadRemix()
+  local dir = "/remixes/"..entry.."/beatmap.rhrm"
+  if love.filesystem.exists(dir) then
+    local file = love.filesystem.newFile(dir)
+    editorLoadBeatmap(file)
+    print("beatmap was successfully loaded")
+  end
+  
+  local f = love.filesystem.getDirectoryItems("/remixes/"..entry)
+  for _,i in pairs(f) do
+    if i:sub(1,5) == "music" then
+      dir = "/remixes/"..entry.."/"..i
+    end
+  end
+  print(dir)
+  if love.filesystem.exists(dir) then
+    local file = love.filesystem.newFile(dir)
+    editorLoadMusic(file)
+    print("music was successfully loaded")
+  end
+  
+  dir = "/remixes/"..entry.."/assets.gfx"
+  if love.filesystem.exists(dir) then
+    local file = love.filesystem.newFile(dir)
+    editorLoadAssets(file)
+    print("assets were successfully loaded")
+  end
+  
+  love.window.setTitle("RHRM - "..version.." - "..entry)
+end
+
+function saveRemix()
+  --save with "entry" as it's name
+  data.dir = entry
+  
+  local dir = "/remixes/"..entry
+  if not love.filesystem.exists(dir) then
+    love.filesystem.createDirectory(dir)
+  end
+  
+  local d = writeData(data)
+  love.filesystem.write(dir.."/beatmap.rhrm",d)
+  if love.filesystem.exists(dir.."/beatmap.rhrm") then
+    print("the beatmap was succesfully saved!")
+  end
+  
+  local filename 
+  local f = love.filesystem.getDirectoryItems("/temp")
+  for _,i in pairs(f) do
+    if i:sub(1,5) == "music" then
+      filename = i
+    end
+  end
+  if filename then
+    local file = love.filesystem.newFile("temp/"..filename)
+    if file:open("r") then
+      d = file:read()
+      love.filesystem.write(dir.."/"..filename,d)
+      if love.filesystem.exists(dir.."/"..filename) then
+        print("the music was succesfully saved!")
+      end
+    end
+  else
+    print("no music was found")
+  end
+  
+  if love.filesystem.exists("temp/assets.gfx") then
+    file = love.filesystem.newFile("temp/assets.gfx")
+    if file:open("r") then
+      d = file:read()
+      love.filesystem.write(dir.."/assets.gfx",d)
+      if love.filesystem.exists(dir.."/assets.gfx") then
+        print("the assets was succesfully saved!")
+      end
+    end
+  end
+  love.window.setTitle("RHRM - "..version.." - "..entry)
+end
+
 function writeData(t)
-  print("SAVE START")
+  --print("SAVE START")
   --remove some userdata values
   local music = t.music
   t.beatmap = nil
@@ -59,13 +144,13 @@ function writeData(t)
     if i.cues then
       for _,j in pairs(i.cues) do
         j.sound = nil
-        print(j.name,j.sound)
+        --print(j.name,j.sound)
       end
     end
     if i.hits then
       for _,j in pairs(i.hits) do
         j.sound = nil
-        print(j.name,j.sound)
+        --print(j.name,j.sound)
       end
     end
   end

@@ -177,16 +177,25 @@ function love.keypressed(key,scancode,isRepeat)
     if key == "escape" then
       screen = "menu"
     end
+    
+    if love.keyboard.isDown("lctrl") or love.keyboard.isDown("lctrl") then
+      if key == "s" then
+        if data.dir then
+          entry = data.dir
+          saveRemix()
+        end
+      end
+    end
   elseif screen == "save" then
     if key == "backspace" then
       entry = string.sub(entry,1,entry:len()-1)
     end
     if key == "return" then
-      --save with "entry" as it's name
-      local d = writeData(data)
-      print(d)
-      
-      love.filesystem.write("/remixes/"..entry..".rhrm",d)
+      if loadRemixBool then
+        loadRemix()
+      else
+        saveRemix()
+      end
       
       screen = "editor"
     end
@@ -480,7 +489,7 @@ end
 
 function drawGameInputs()
   if not rating then
-    printNew(data.music:tell())
+    --printNew(data.music:tell())
     
     if drawMinigame[minigame] then
       drawMinigame[minigame]()

@@ -12,6 +12,8 @@ function updateMenu(dt)
     if mouse.button.pressed[1] then
       local mx,my = love.mouse.getPosition()
       if my > 256-4 and my < 256+16 then
+        deleteTempFiles()
+        love.window.setTitle("RHRM - "..version)
         menu.loadPhase = 1
       elseif my > 256+32-4 and my < 256+16+32 then
         screen = "editor"

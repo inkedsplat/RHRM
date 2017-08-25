@@ -91,7 +91,7 @@ function loadEditor()
       end
     end
   end
-  createButton(0,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/play.png"),editor.scheme.playhead,true)
+  createButton(0,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/play.png"),editor.scheme.playhead,true,"play")
   
   local function f()
     editor.playing = false
@@ -124,7 +124,7 @@ function loadEditor()
       end
     end
   end
-  createButton(48,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/stop.png"),editor.scheme.stop,true)
+  createButton(48,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/stop.png"),editor.scheme.stop,true,"stop")
   
   local function f()
     screen = "game"
@@ -211,48 +211,57 @@ function loadEditor()
     data.music:seek(math.max(editor.playheadInGame,0))
     print(editor.playheadInGame)
   end
-  createButton(48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/playtest.png"),editor.scheme.playtest,true)
+  createButton(48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/playtest.png"),editor.scheme.playtest,true,"test")
+  
+  local function f()
+    screen = "save"
+    entry = ""
+    files = love.filesystem.getDirectoryItems("/remixes/")
+    loadRemixBool = true
+  end
+  createButton(48*6,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/load.png"),editor.scheme.block,true,"load")
   
   local function f()
     --SAVE THE DATA FILE
     screen = "save"
-    entry = ""
+    entry = data.dir or ""
     files = love.filesystem.getDirectoryItems("/remixes/")
+    loadRemixBool = false
   end
-  createButton(48*6,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/save.png"),editor.scheme.block,true)
+  createButton(48*7,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/save.png"),editor.scheme.block,true,"save")
   
   local function f()
     screen = "remixOptions"
     loadRemixOptions()
   end
   
-  createButton(48*7,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/options.png"),editor.scheme.block,true)
+  createButton(48*8,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/options.png"),editor.scheme.block,true,"options")
   
   local function f()
     editor.metronome = not editor.metronome
   end
-  local b = createButton(view.width-48,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/metronome.png"),editor.scheme.block,true)
+  local b = createButton(view.width-48,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/metronome.png"),editor.scheme.block,true,"metronome")
   b.w = 24
   b.h = 24
   
   local function f()
     editor.gridwidth = editor.gridwidth*2
   end
-  local b = createButton(view.width-24,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/gridUp.png"),editor.scheme.block,true)
+  local b = createButton(view.width-24,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/gridUp.png"),editor.scheme.block,true,"grid size up")
   b.w = 24
   b.h = 24
   
   local function f()
     editor.gridwidth = editor.gridwidth/2
   end
-  local b = createButton(view.width-24,24,f,love.graphics.newImage("/resources/gfx/editor/buttons/gridDown.png"),editor.scheme.block,true)
+  local b = createButton(view.width-24,24,f,love.graphics.newImage("/resources/gfx/editor/buttons/gridDown.png"),editor.scheme.block,true,"grid size down")
   b.w = 24
   b.h = 24
   
   local function f()
     editor.viewX = 192
   end
-  local b = createButton(view.width-48,24,f,love.graphics.newImage("/resources/gfx/editor/buttons/backToStart.png"),editor.scheme.block,true)
+  local b = createButton(view.width-48,24,f,love.graphics.newImage("/resources/gfx/editor/buttons/backToStart.png"),editor.scheme.block,true,"goto start")
   b.w = 24
   b.h = 24
   
@@ -264,7 +273,7 @@ function loadEditor()
       i.color = editor.scheme.playheadInGame
     end
   end
-  local b = createButton(view.width-48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/lineSelect.png"),editor.scheme.playhead,true)
+  local b = createButton(view.width-48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/lineSelect.png"),editor.scheme.playhead,true,"line toggle")
   b.w = 48
   b.h = 48
   
@@ -289,7 +298,7 @@ function loadEditor()
   local function f(i)
     editor.placeTempoChange = not editor.placeTempoChange
   end
-  local b = createButton(view.width-48*3,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/tempoChange.png"),editor.scheme.playtest,true)
+  local b = createButton(view.width-48*3,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/tempoChange.png"),editor.scheme.playtest,true,"tempo change")
 end
 
 function love.wheelmoved(x,y)
@@ -377,23 +386,27 @@ function updateEditor(dt)
   end
   --select patterns
   local mx,my = love.mouse.getPosition()
-  for k,i in pairs(minigames) do
+  local k = 1
+  for n,i in pairs(minigames) do
     --if k == 1 then
     --  print(k.." "..i.name.." "..8+editor.buttonSpace+editor.gridspace+40*(k).." "..my.." "..(8+editor.buttonSpace+editor.gridspace+40*(k)+32))
     --end
     --print(my,editor.gridspace+editor.buttonSpace)
     if my > editor.gridspace+editor.buttonSpace and mx > 24 and mx < view.width/2 and my > 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll and my < 8+editor.buttonSpace+editor.gridspace+40*(k)+32-editor.minigameScroll then
       if mouse.button.pressed[1] then
-        if i.name ~= "dummy" then
-          editor.selectedMinigame = k
+        if not i.hidden then
+          editor.selectedMinigame = n
         end
-        if k > 0 and i.name ~= "dummy" then
-          editor.switch = k
+        if k > 0 and not i.hidden then
+          editor.switch = n
         end
         print(editor.switch)
       end
     end
-    if k == editor.selectedMinigame then
+    if not i.hidden then
+      k = k +1
+    end
+    if n == editor.selectedMinigame then
       for n,b in pairs(i.blocks) do
         if mx > view.width/2 and mx < view.width and my > 8+editor.buttonSpace+editor.gridspace+24*(n-1)-editor.patternScroll and my < 8+editor.buttonSpace+editor.gridspace+24*(n-1)+16-editor.patternScroll then
           if mouse.button.pressed[1] then
@@ -411,12 +424,14 @@ function updateEditor(dt)
   end
   --EDITOR ON GRID
   --simple grid movement
-  local spd
+  local spd = 4
   if love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl") then
-    spd = 10
-  else
-    spd = 4
+    spd = spd*3
   end
+  if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+    spd = spd*10
+  end
+
   if love.keyboard.isDown("right") then
     editor.viewX = editor.viewX-spd
   end
@@ -705,23 +720,27 @@ function drawEditor()
   love.graphics.line(x+editor.viewX,editor.buttonSpace,x+editor.viewX,editor.buttonSpace+editor.gridspace)
   --PATTERN SELECT or however you would call that thing idk
   local mx,my = love.mouse.getPosition()
-  for k,i in pairs(minigames) do
+  local k = 1
+  for n,i in pairs(minigames) do
     if mx > 24 and mx < view.width/2 and my > 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll and my < 8+editor.buttonSpace+editor.gridspace+40*(k)+32-editor.minigameScroll then
       setColorHex(pal.block)
     else
-      if editor.selectedMinigame == k then
+      if editor.selectedMinigame == n then
         setColorHex(pal.blockOutlineLight)
       else
         setColorHex(pal.grid)
       end
     end
-    if 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll > editor.gridspace+40 then
+    if 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll > editor.gridspace+40 and not i.hidden then
       printNew(i.name,16+32+24,20+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll)
       love.graphics.rectangle("line",8+24,8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll,32,32)
       setColorHex("ffffff")
       love.graphics.draw((i.img or imgUnknownMinigame),8+24,8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll)
     end
-    if editor.selectedMinigame == k then
+    if not i.hidden then
+      k = k+1
+    end
+    if editor.selectedMinigame == n then
       for n,b in pairs(i.blocks) do
         if mx > view.width/2 and mx < view.width and my > 8+editor.buttonSpace+editor.gridspace+24*(n-1)-editor.patternScroll and my < 8+editor.buttonSpace+editor.gridspace+24*(n-1)+16-editor.patternScroll then
           setColorHex(pal.block)
@@ -800,7 +819,7 @@ function createBlock(name,x,y,length,cues,hits,resizable,pitchShift)
   return b
 end
 
-function createButton(x,y,func,img,color,outline)
+function createButton(x,y,func,img,color,outline,tooltip)
   local b = {
     x = x,
     y = y,
