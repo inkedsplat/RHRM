@@ -17,7 +17,7 @@ function loadGameInputs()
   end
   
   
-  minigame = 1
+  minigame = 14
   for _,i in pairs(data.beatmap.switches) do
     if i.time <= 0 then
       minigame = i.minigame

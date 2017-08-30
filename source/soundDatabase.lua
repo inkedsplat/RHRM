@@ -151,6 +151,13 @@ function initializeCues()
   cue["warioDeMamboLeanLeft"] = function() return newSource("/resources/sfx/wario de mambo/leanLeft.ogg") end
   cue["warioDeMamboLeanRight"] = function() return newSource("/resources/sfx/wario de mambo/leanRight.ogg") end
   cue["warioDeMamboJump"] = function() return newSource("/resources/sfx/wario de mambo/bounce.ogg") end
+  
+  cue["tapTrialTap"] = function() return newSource("/resources/sfx/tap tap trial (GBA)/tap.ogg") end
+  cue["tapTrialOok"] = function() return newSource("/resources/sfx/tap tap trial (GBA)/ook1.ogg") end
+  cue["tapTrialOokook1"] = function() return newSource("/resources/sfx/tap tap trial (GBA)/ookook1.ogg") end
+  cue["tapTrialOokook2"] = function() return newSource("/resources/sfx/tap tap trial (GBA)/ookook1.ogg") end
+  cue["tapTrialOokee1"] = function() return newSource("/resources/sfx/tap tap trial (GBA)/ookee1.ogg") end
+  cue["tapTrialOokee2"] = function() return newSource("/resources/sfx/tap tap trial (GBA)/ookee2.ogg") end
 end
 
 

@@ -2,6 +2,7 @@ require("editor")
 require("game")
 require("minigames")
 require("animHandler")
+require("pieceAnimHander")
 require("SaveLoad")
 require("menu")
 require("soundDatabase")
@@ -811,6 +812,46 @@ function love.load()
         },        
       },
     },  
+    [14] = {
+      name = "tap trial (GBA)",
+      blocks = {
+        {
+          name = "tap",
+          length = 128,
+          cues = {
+            {name = "ook",x = 0,cueId = "tapTrialOok"}
+          },
+          hits = {
+            {name = "tap",x = 64,cueId = "tapTrialTap",input = "pressA"}
+          }
+        },
+        {
+          name = "tap tap",
+          length = 128,
+          cues = {
+            {name = "ook1",x = 0,cueId = "tapTrialOokook1"},
+            {name = "ook2",x = 32,cueId = "tapTrialOokook2"},
+          },
+          hits = {
+            {name = "tap",x = 64,cueId = "tapTrialTap",input = "pressA"},
+            {name = "tap",x = 96,cueId = "tapTrialTap",input = "pressA"},
+          }
+        },
+        {
+          name = "tap tap tap",
+          length = 256,
+          cues = {
+            {name = "ookee1",x = 0,cueId = "tapTrialOokee1"},
+            {name = "ookee2",x = 32,cueId = "tapTrialOokee2"},
+          },
+          hits = {
+            {name = "tap",x = 128,cueId = "tapTrialTap",input = "pressA"},
+            {name = "tap",x = 128+32,cueId = "tapTrialTap",input = "pressA"},
+            {name = "tap",x = 128+64,cueId = "tapTrialTap",input = "pressA"},
+          }
+        },
+      }
+    }
   }
   
   for _,i in pairs(minigames) do
