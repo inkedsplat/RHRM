@@ -156,10 +156,10 @@ function love.keypressed(key,scancode,isRepeat)
         spd = 10
       end
       if key == "up" then
-        data.bpm = data.bpm+spd
+        bpm = bpm+spd
       end
       if key == "down" then
-        data.bpm = data.bpm-spd
+        bpm = bpm-spd
       end
     else
       if key == "up" then
@@ -259,16 +259,35 @@ end
 function updateGameInputs(dt)
   minigameTime = minigameTime+dt
   if not rating then
+    
+    for _,i in pairs(data.tempoChanges) do
+      if data.beat >= i.x/64 then
+        bpm = i.bpm
+      end
+    end
+    
+    editor.playTime = editor.playTime+(dt/(bpm/60))
+    
+    editor.viewX = -editor.playhead+view.width/2
+    
+    data.time = data.time+dt
+    local dist = 1
+    local time = (60000/bpm)
+    local spd = dist/time
+    
+    data.beat = data.beat+spd*(dt*1000)
+    
     --beat
-    if (60000/data.bpm)*beatCount < data.music:tell()*1000 then
-      beatCount = beatCount+1
+    
+    if data.beat > data.beatCount then
+      data.beatCount = data.beatCount+1
       beat = 10
     end
     --play music
     data.music:play()
     --handle switches
     for _,s in pairs(data.beatmap.switches) do
-      if data.music:tell() >= s.time and not s.played then
+      if data.beat >= s.beat and not s.played then
         s.played = true
         print("SWITCHING TO "..minigames[s.minigame].name)
         minigameTime = 0
@@ -281,7 +300,7 @@ function updateGameInputs(dt)
     for _,s in pairs(data.beatmap.sounds) do
       if not s.silent then
         if s.loop then
-          if data.music:tell() >= s.time and not s.played then
+          if data.beat >= s.beat and not s.played then
             s.sound:stop()
             s.sound:play()
             table.insert(currentSounds,{name = s.name,time = s.time})
@@ -289,14 +308,14 @@ function updateGameInputs(dt)
           end
           if not s.played2 and s.played then
             s.sound:play()
-            if data.music:tell() >= s.loopEnd then
+            if data.beat >= s.loopEndBeat then
               s.played2 = true
               s.sound:stop()
               table.insert(currentSounds,{name = s.name.."LoopEnd",time = s.time})
             end
           end
         else
-          if data.music:tell() >= s.time and not s.played then
+          if data.beat >= s.beat and not s.played then
             s.sound:stop()
             s.sound:play()
             s.played = true
@@ -305,7 +324,7 @@ function updateGameInputs(dt)
           end
         end
       else
-        if data.music:tell() >= s.time and not s.played then
+        if data.beat >= s.beat and not s.played then
           s.played = true
         end
       end
@@ -313,7 +332,7 @@ function updateGameInputs(dt)
     --handle gameplay
     for _,s in pairs(data.beatmap.inputs) do
       if s.input:find("hold") then
-        if data.music:tell() > s.time and not s.played then
+        if data.beat >= s.beat and not s.played then
           if input[s.input] then
             if not s.silent then
               s.sound:stop()
@@ -329,7 +348,7 @@ function updateGameInputs(dt)
           s.played = true
         end
       else
-        if data.music:tell() > s.time-margin and data.music:tell() < s.time+margin then
+        if data.beat > s.beat-margin and data.beat < s.beat+margin then
           if input[s.input] and not s.played then
             if not s.silent then
               s.sound:stop()
@@ -346,7 +365,7 @@ function updateGameInputs(dt)
             }
             table.insert(currentHits,h)
           end
-        elseif data.music:tell() > s.time-bearlyMargin and data.music:tell() < s.time+bearlyMargin then
+        elseif data.beat > s.beat-bearlyMargin and data.beat < s.beat+bearlyMargin then
           if input[s.input] and not s.played then
             misses = misses + 1
             print("bearly hit  "..misses.." misses")
@@ -359,14 +378,14 @@ function updateGameInputs(dt)
             }
             table.insert(currentHits,h)
           end
-        elseif data.music:tell() > s.time+bearlyMargin then
+        elseif data.beat > s.beat+bearlyMargin then
           if not s.played then
             misses = misses + 1
             print(misses.." misses")
             s.played = true
           end
         end
-        if data.music:tell() >= s.time and not s.played2 then
+        if data.beat >= s.beat and not s.played2 then
           s.played2 = true
           table.insert(currentSounds,{name = s.name,time = s.time})
         end

@@ -51,10 +51,34 @@ function loadEditor()
   }
   local function f()
     editor.playing = true
+    data.beat = math.max(editor.beatStart,0)
+    data.beatCount = math.max(editor.beatStart,0)
     
     data.music:play()
-    data.music:seek(math.max(editor.playheadStart,0))
-    editor.playTime = math.max(editor.playheadStart,0)
+    
+    local t = 0
+    local x = 0
+    bpm = data.bpm
+    updateTempoChanges()
+    for k,i in pairs(data.tempoChanges) do
+      if i.x <= editor.beatStart*64 and ((data.tempoChanges[k+1] and data.tempoChanges[k+1].x > editor.beatStart*64) or not data.tempoChanges[k+1]) then
+        bpm = i.bpm
+        t = t+i.time
+        x = x+i.x
+        print(i.x,i.time)
+      end
+    end
+    
+    if x < editor.beatStart*64 then
+      print(bpm)
+      local dist = (editor.beatStart*64)-x
+      t = t+(((dist)/64)*(60000/bpm))/1000
+    end
+    
+    print("t = ",t)
+    
+    data.music:seek(t)
+    editor.playTime = t
     editor.beats = editor.beatStart
     editor.playhead = editor.beatStart*64
     
@@ -63,10 +87,14 @@ function loadEditor()
         for _,j in pairs(i.cues) do
           
           local bpm = data.bpm
+          
+          
           j.time = (((i.x+j.x)/64)*(60000/bpm))/1000
+          j.beat = (i.x+j.x)/64
           
           if j.loop then
             j.loopEnd = (((i.x+i.length)/64)*(60000/data.bpm))/1000
+            j.loopEndBeat = (i.x+i.length)/64
           end
           --j.played = false
           if i.pitchShift then
@@ -80,6 +108,7 @@ function loadEditor()
       if i.hits then
         for _,j in pairs(i.hits) do
           j.time = (((i.x+j.x)/64)*(60000/data.bpm))/1000
+          j.beat = (i.x+j.x)/64
           --j.played = false
           if i.pitchShift then
             j.sound:setPitch(i.pitch)
@@ -155,6 +184,7 @@ function loadEditor()
         for _,c in pairs(i.cues) do
           local s = {
             time = (((i.x+c.x)/64)*(60000/data.bpm))/1000,
+            beat = (i.x+c.x)/64,
             sound = c.sound,
             played = false,
             name = c.name,
@@ -166,6 +196,7 @@ function loadEditor()
           end
           if s.loop then
             s.loopEnd = (((i.x+i.length)/64)*(60000/data.bpm))/1000
+            s.loopEndBeat = (i.x+i.length)/64
           end
           if s.time < math.max(editor.playheadInGame,0) then
             s.played = true
@@ -177,6 +208,7 @@ function loadEditor()
         for _,c in pairs(i.hits) do
           local s = {
             time = (((i.x+c.x)/64)*(60000/data.bpm))/1000,
+            beat = (i.x+c.x)/64,
             input = c.input,
             played = false,
             sound = c.sound,
@@ -197,6 +229,7 @@ function loadEditor()
       if i.switch then
         local s = {
           time = (((i.x)/64)*(60000/data.bpm))/1000,
+          beat = (i.x)/64,
           minigame = i.minigame,
           played = false,
         }
@@ -207,9 +240,33 @@ function loadEditor()
     --load game
     loadGameInputs()
     
+    data.beat = math.max(editor.beatStartInGame,0)
+    data.beatCount = math.max(editor.beatStartInGame,0)
+    
     data.music:play()
-    data.music:seek(math.max(editor.playheadInGame,0))
-    print(editor.playheadInGame)
+    
+    local t = 0
+    local x = 0
+    bpm = data.bpm
+    updateTempoChanges()
+    for k,i in pairs(data.tempoChanges) do
+      if i.x <= editor.beatStart*64 and ((data.tempoChanges[k+1] and data.tempoChanges[k+1].x > editor.beatStart*64) or not data.tempoChanges[k+1]) then
+        bpm = i.bpm
+        t = t+i.time
+        x = x+i.x
+        print(i.x,i.time)
+      end
+    end
+    
+    if x < editor.beatStartInGame*64 then
+      print(bpm)
+      local dist = (editor.beatStartInGame*64)-x
+      t = t+(((dist)/64)*(60000/bpm))/1000
+    end
+    
+    print("t = ",t)
+    
+    data.music:seek(t)
   end
   createButton(48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/playtest.png"),editor.scheme.playtest,true,"test")
   
@@ -328,16 +385,57 @@ function love.wheelmoved(x,y)
   end
   
   for _,i in pairs(data.tempoChanges) do
-    if my > editor.buttonSpace and my < editor.buttonSpace+editor.gridspace and mx > i.x+editor.viewX-2 and mx < i.x+editor.viewX+2 then 
-      i.bpm = i.bpm+y
+    if my > editor.buttonSpace and my < editor.buttonSpace+editor.gridspace and mx > i.x+editor.viewX-5 and mx < i.x+editor.viewX+5 then 
+      local spd = 1
+      if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+        spd = 0.1
+      end
+      i.bpm = i.bpm+y*spd
+      if y ~= 0 then
+        updateTempoChanges()
+      end
     end
   end
 end
 
-function updateEditor(dt)
-    --RESIZE PATTERNS
-  local mx, my = love.mouse.getPosition()
+function updateTempoChanges()
+  for _,i in pairs(data.tempoChanges) do
+    i.time = 0
+  end
+  local function f(a,b)
+    return a.x < b.x
+  end
+  table.sort(data.tempoChanges,f)
   
+  local bpm = data.bpm
+  local time = 0
+  local x = 0 
+  for _,i in pairs(data.tempoChanges) do
+    local t = (((i.x-x)/64)*(60000/bpm))/1000
+    i.time = time+t
+    
+    bpm = i.bpm
+    time = time+t
+    x = x+i.x
+  end
+end
+
+function updateEditor(dt)
+    
+  local mx, my = love.mouse.getPosition()
+  --HOVER OVER TEMPOCHANGES
+  for k,i in pairs(data.tempoChanges) do
+    if my > editor.buttonSpace and my < editor.buttonSpace+editor.gridspace and mx > i.x+editor.viewX-5 and mx < i.x+editor.viewX+5 then 
+      i.hover = false
+      if love.mouse.isDown(2) then
+        table.remove(data.tempoChanges,k)
+        updateTempoChanges()
+      end
+    else
+      i.hover = true
+    end
+  end
+  --RESIZE PATTERNS
   curs = love.mouse.getSystemCursor("arrow")
   love.mouse.setCursor(curs)
   
@@ -447,13 +545,35 @@ function updateEditor(dt)
   end
   --playhead
   if editor.playing then
+    for _,i in pairs(data.tempoChanges) do
+      if data.beat >= i.x/64 then
+        bpm = i.bpm
+      end
+    end
+    
     editor.playTime = editor.playTime+(dt/(data.bpm/60))
     
     editor.viewX = -editor.playhead+view.width/2
     
+    data.time = data.time+dt
+    local dist = 1
+    local time = (60000/bpm)
+    local spd = dist/time
+    
+    data.beat = data.beat+spd*(dt*1000)
+    editor.playhead = data.beat*64
+    
+    if data.beat > data.beatCount then
+      data.beatCount = data.beatCount+1
+      if editor.metronome then
+        editor.snd.metronome:stop()
+        editor.snd.metronome:play()
+      end
+    end
+    
     --print((((60000/data.bpm)*editor.beats)/1000).." "..data.music:tell())
     
-    if (60000/data.bpm)*editor.beats/1000 < data.music:tell() then--data.music:tell() then
+    --[[if (60000/data.bpm)*editor.beats/1000 < data.music:tell() then--data.music:tell() then
       --print("beat "..editor.beats)
       if editor.metronome then
         editor.snd.metronome:stop()
@@ -465,7 +585,7 @@ function updateEditor(dt)
       
       createDebugDot(editor.playhead,64)
     end
-    editor.playhead = editor.playhead+((data.bpm/60000)*64)*(20)*dt*50
+    editor.playhead = editor.playhead+((data.bpm/60000)*64)*(20)*dt*50]]
     
     --editor.playhead = data.music:tell()*data.bpm
   end
@@ -517,9 +637,13 @@ function updateEditor(dt)
         if editor.placeTempoChange then
           local s = {
             bpm = data.bpm,
-            x = editor.mouseOnGrid[1]*editor.gridwidth
+            x = editor.mouseOnGrid[1]*editor.gridwidth,
+            time = 0
           }
           table.insert(data.tempoChanges,s)
+          
+          updateTempoChanges()
+          
           editor.placeTempoChange = false
         else
           if editor.switch then
@@ -625,7 +749,7 @@ function drawEditor()
             --print("hit "..math.floor(editor.playhead).." "..i.x+h.x.." "..tostring(h.played).." "..k)
             
             --if editor.playhead > i.x+h.x and editor.playing then
-            if editor.playing and data.music:tell() > h.time then
+            if editor.playing and data.beat > h.beat then
               if not h.played then
                 if h.sound then
                   h.sound:stop()
@@ -653,8 +777,8 @@ function drawEditor()
             printNew(c.name,i.x+editor.viewX+4+c.x,i.y+editor.buttonSpace+16+4)
             
             if c.loop then
-              if editor.playing and data.music:tell() > c.time then
-                if data.music:tell() < c.loopEnd then
+              if editor.playing and data.beat >= c.beat then
+                if data.beat < c.loopEndBeat then
                   c.sound:play()
                 elseif not c.played then
                   c.sound:stop()
@@ -662,7 +786,7 @@ function drawEditor()
                 end
               end
             else
-              if editor.playing and data.music:tell() > c.time then
+              if editor.playing and data.beat >= c.beat then
                 if not c.played then
                   if c.sound then
                     c.sound:stop()
@@ -684,7 +808,11 @@ function drawEditor()
       setColorHex(pal.grid)
       love.graphics.line(i.x+editor.viewX,editor.buttonSpace,i.x+editor.viewX,editor.buttonSpace+editor.gridspace)
       love.graphics.setLineWidth(3)
-      setColorHex(pal.tempoChanges)
+      if i.hover then
+        setColorHex(pal.tempoChanges)
+      else
+        setColorHex("ffffff")
+      end
       love.graphics.line(i.x+editor.viewX,editor.buttonSpace,i.x+editor.viewX,editor.buttonSpace+editor.gridspace)
       
       setColorHex(pal.grid)
@@ -692,7 +820,11 @@ function drawEditor()
       printNew(i.bpm,i.x+8+editor.viewX-1,editor.buttonSpace+8)
       printNew(i.bpm,i.x+8+editor.viewX,editor.buttonSpace+8+1)
       printNew(i.bpm,i.x+8+editor.viewX,editor.buttonSpace+8-1)
-      setColorHex(pal.tempoChanges)
+      if i.hover then
+        setColorHex(pal.tempoChanges)
+      else
+        setColorHex("ffffff")
+      end
       printNew(i.bpm,i.x+8+editor.viewX,editor.buttonSpace+8)
     end
   end

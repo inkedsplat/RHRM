@@ -448,7 +448,6 @@ function love.load()
         {
           name = "left wop",
           length = 32,
-          resizable = true,
           cues = {
             {name = "wopL",x = 0,cueId = "MoaiWopL"},
           }
@@ -456,7 +455,6 @@ function love.load()
         {
           name = "left pah",
           length = 32,
-          resizable = true,
           cues = {
             {name = "pahL",x = 0,cueId = "MoaiPahL"},
           }
@@ -464,7 +462,6 @@ function love.load()
         {
           name = "switch",
           length = 64,
-          resizable = true,
           cues = {
             {name = "switch",x = 0,cueId = "MoaiSwitch"},
           }
@@ -483,7 +480,6 @@ function love.load()
         {
           name = "right wop",
           length = 32,
-          resizable = true,
           hits = {
             {name = "wopR",x = 0,cueId = "MoaiWopR",input = "releaseA",silent = true},
           }
@@ -491,7 +487,6 @@ function love.load()
         {
           name = "right pah",
           length = 32,
-          resizable = true,
           hits = {
             {name = "pahR",x = 0,cueId = "MoaiPahR",input = "pressB",silent = true},
           }
@@ -909,6 +904,10 @@ end
 function initializeData()
   data = {
     bpm = 119,
+    time = 0,
+    beat = 0,
+    beatCount = 0,
+    musicStart = 0,
     music = newSource("/resources/music/karate man (GBA).ogg"),
     blocks = {},
     tempoChanges = {},
@@ -1287,4 +1286,8 @@ function printNew(str,x,y,r,sx,sy,ox,oy,kx,ky)
   local fnt = love.graphics.getFont()
   local y = y or 0
   love.graphics.print(str,x,y-(fnt:getHeight()/2),r,sx,sy,ox,oy,kx,ky)
+end
+
+function getRemixTime()
+  return data.time
 end
