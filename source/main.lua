@@ -252,6 +252,13 @@ function love.load()
           }
         },
         {
+          name = "silent clap",
+          length = 32,
+          cues = {
+            {name = "clap",x = 0,cueId = "silence"},
+          }
+        },
+        {
           name = "clap player",
           length = 32,
           hits = {
@@ -845,9 +852,9 @@ function love.load()
             {name = "ookee2",x = 32,cueId = "tapTrialOokee2"},
           },
           hits = {
-            {name = "tap",x = 128,cueId = "tapTrialTap",input = "pressA"},
-            {name = "tap",x = 128+32,cueId = "tapTrialTap",input = "pressA"},
-            {name = "tap",x = 128+64,cueId = "tapTrialTap",input = "pressA"},
+            {name = "tap1",x = 128,cueId = "tapTrialTap",input = "pressA"},
+            {name = "tap2",x = 128+32,cueId = "tapTrialTap",input = "pressA"},
+            {name = "tap3",x = 128+64,cueId = "tapTrialTap",input = "pressA"},
           }
         },
       }

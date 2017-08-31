@@ -69,16 +69,28 @@ function pieceAnimationGroup:draw(x,y,r,sx,sy,ox,oy,kx,ky)
       end
     end
   end
+  if self.debug then
+    love.graphics.rectangle("line",0,0,self.canv:getWidth(),self.canv:getHeight())
+  end
   love.graphics.setCanvas(view.canvas)
   love.graphics.draw(self.canv,x,y,r,sx,sy,ox,oy,kx,ky)
-  
-  if self.debug then
-    love.graphics.rectangle("line",y,x,self.canv:getWidth(),self.canv:getHeight())
-  end
+end
+
+function pieceAnimationGroup:getWidth()
+  return self.canv:getWidth()
+end
+
+function pieceAnimationGroup:getHeight()
+  return self.canv:getHeight()
 end
 
 function pieceAnimationGroup:setAnimation(n)
   self.currentAnim = n
   self.timer = 0
   self.frame = self.anim[self.currentAnim].startF
+  self.finished = false
+end
+
+function pieceAnimationGroup:getAnimation()
+  return self.currentAnim
 end
