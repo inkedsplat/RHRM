@@ -67,11 +67,11 @@ function uminigame(dt)
         rot = 0,
         y = -300,
         z = 10,
-        vsp = 20*math.sqrt(119/data.bpm),
+        vsp = 20*math.sqrt(119/bpm),
         x = 0,
         quad = quad.pot,
         flying = true,
-        time = s.time+(64/128*(119/data.bpm))
+        time = s.time+1
       }
       table.insert(pots,p)
     end
@@ -80,18 +80,18 @@ function uminigame(dt)
         rot = 0,
         y = -300,
         z = 10,
-        vsp = 20*math.sqrt(119/data.bpm),
+        vsp = 20*math.sqrt(119/bpm),
         x = 0,
         quad = quad.rock,
         flying = true,
-        time = s.time+(64/128*(119/data.bpm))
+        time = s.time+1
       }
       table.insert(pots,p)
     end
   end
   
   for k,i in pairs(sounds) do
-    if data.music:tell() > i.time then
+    if data.beat >= i.time then
       --print("hi")
       i.sound:stop()
       i.sound:play()
@@ -105,15 +105,15 @@ function uminigame(dt)
         i.vsp = i.vsp-0.2
         if i.y > -100 then
           i.y = i.y + i.vsp 
-          i.rot = i.rot+0.4*(data.bpm/119)
+          i.rot = i.rot+0.4*(bpm/119)
         end
     else
       if i.flying then
         i.vsp = i.vsp-0.55
         if i.y > -100 or i.z > 0 then
-          i.y = i.y + i.vsp*(data.bpm/119)
-          i.z = i.z-0.30*(data.bpm/119)
-          i.x = i.x-6*(data.bpm/119)
+          i.y = i.y + i.vsp*(bpm/119)
+          i.z = i.z-0.30*(bpm/119)
+          i.x = i.x-6*(bpm/119)
         end
         
         local punch = 0
@@ -129,7 +129,7 @@ function uminigame(dt)
             end
           end
         if input["pressA"] then
-          if time > i.time-bearlyMargin and time < i.time+bearlyMargin then
+          if data.beat > i.time-bearlyMargin and data.beat < i.time+bearlyMargin then
             if punch == 2 then
               i.flying = false
               i.vsp = 5
@@ -141,7 +141,7 @@ function uminigame(dt)
               if flow == 3 then
                 anim.head:setAnimation("happy")
                 local s = {
-                  time = i.time+((0.5)*(60000/data.bpm))/1000,
+                  time = i.time,
                   sound = snd.ohYeah
                 }
                 table.insert(sounds,s)
@@ -152,7 +152,7 @@ function uminigame(dt)
                 i.vsp = 2
                 
                 local s = {
-                  time = i.time+((1)*(60000/data.bpm))/1000,
+                  time = i.time,
                   sound = snd.potBreak
                 }
                 table.insert(sounds,s)
@@ -168,7 +168,7 @@ function uminigame(dt)
           end
         end
         --print(data.music:tell().." "..i.time.." "..tostring(data.music:tell() > i.time+bearlyMargin))
-        if data.music:tell() > i.time+bearlyMargin then
+        if data.beat > i.time+bearlyMargin then
           anim.head:setAnimation("very sad")
           surprised = 5
           flow = 0
@@ -186,7 +186,7 @@ function uminigame(dt)
         end
         i.vsp = i.vsp-0.2
         i.y = i.y + i.vsp 
-        i.rot = i.rot+0.4*(data.bpm/119)
+        i.rot = i.rot+0.4*(bpm/119)
          
         if i.x > view.width/2+30 then
           table.remove(pots,k)

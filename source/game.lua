@@ -1,7 +1,7 @@
 function loadGameInputs()
   input = {}
-  margin = 0.1
-  bearlyMargin = 0.15
+  margin = 0.2
+  bearlyMargin = 0.3
   hit = 0
   beat = 0
   beatCount = 0
@@ -266,10 +266,6 @@ function updateGameInputs(dt)
       end
     end
     
-    editor.playTime = editor.playTime+(dt/(bpm/60))
-    
-    editor.viewX = -editor.playhead+view.width/2
-    
     data.time = data.time+dt
     local dist = 1
     local time = (60000/bpm)
@@ -277,14 +273,17 @@ function updateGameInputs(dt)
     
     data.beat = data.beat+spd*(dt*1000)
     
+    --play music
+    if data.beat > data.musicStart then
+      data.music:play()
+    end
     --beat
-    
     if data.beat > data.beatCount then
       data.beatCount = data.beatCount+1
-      beat = 10
+      if data.music:isPlaying() then
+        beat = 10
+      end
     end
-    --play music
-    data.music:play()
     --handle switches
     for _,s in pairs(data.beatmap.switches) do
       if data.beat >= s.beat and not s.played then
@@ -292,7 +291,7 @@ function updateGameInputs(dt)
         print("SWITCHING TO "..minigames[s.minigame].name)
         minigameTime = 0
         minigame = s.minigame
-        loadMinigame[minigame]()
+        loadMinigame[minigame](s.beat)
         transition = data.options.minigameFadeTime or 7
       end
     end 
@@ -303,7 +302,7 @@ function updateGameInputs(dt)
           if data.beat >= s.beat and not s.played then
             s.sound:stop()
             s.sound:play()
-            table.insert(currentSounds,{name = s.name,time = s.time})
+            table.insert(currentSounds,{name = s.name,time = s.beat})
             s.played = true
           end
           if not s.played2 and s.played then
@@ -311,7 +310,7 @@ function updateGameInputs(dt)
             if data.beat >= s.loopEndBeat then
               s.played2 = true
               s.sound:stop()
-              table.insert(currentSounds,{name = s.name.."LoopEnd",time = s.time})
+              table.insert(currentSounds,{name = s.name.."LoopEnd",time = s.beat})
             end
           end
         else
@@ -319,7 +318,7 @@ function updateGameInputs(dt)
             s.sound:stop()
             s.sound:play()
             s.played = true
-            table.insert(currentSounds,{name = s.name,time = s.time})
+            table.insert(currentSounds,{name = s.name,time = s.beat})
             --print(s.name)
           end
         end
@@ -360,7 +359,7 @@ function updateGameInputs(dt)
             
             local h = {
               name = s.name,
-              time = s.time,
+              time = s.beat,
               bearly = false
             }
             table.insert(currentHits,h)
@@ -373,7 +372,7 @@ function updateGameInputs(dt)
             
             local h = {
               name = s.name,
-              time = s.time,
+              time = s.beat,
               bearly = true
             }
             table.insert(currentHits,h)
@@ -387,7 +386,7 @@ function updateGameInputs(dt)
         end
         if data.beat >= s.beat and not s.played2 then
           s.played2 = true
-          table.insert(currentSounds,{name = s.name,time = s.time})
+          table.insert(currentSounds,{name = s.name,time = s.beat})
         end
       end
     end 

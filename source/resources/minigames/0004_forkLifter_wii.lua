@@ -35,11 +35,11 @@
     for _,i in pairs(currentSounds) do
       if i.name == "flick" then
         shoot = true
-        shootEnd = i.time+((0.25)*(60000/data.bpm))/1000
+        shootEnd = i.time+0.25
       end
       if i.name == "zoom" then
         local s = {
-          stabTime = i.time+((0.5)*(60000/data.bpm))/1000,
+          stabTime = i.time+0.5,
           x = 128+128+8,
           y = 256-16,
           z = 0
@@ -49,14 +49,14 @@
       
       if i.name == "eatS" then
         eat = true
-        eatTime = i.time+((0.5)*(60000/data.bpm))/1000
-        eatTimeEnd = i.time+((1)*(60000/data.bpm))/1000
+        eatTime = i.time+0.5
+        eatTimeEnd = i.time+1
         xEat = 0
       end
     end
     
     for k,i in pairs(peas) do
-      if data.music:tell() > i.stabTime-margin and data.music:tell() < i.stabTime+margin then
+      if data.beat > i.stabTime-margin and data.beat < i.stabTime+margin then
         if input["pressA"] then
           peaCount = peaCount+1
           print(peaCount)
@@ -66,7 +66,7 @@
     end
     
     if shoot then
-      if data.music:tell() > shootEnd then
+      if data.beat > shootEnd then
         shoot = false
       end
     end
@@ -94,14 +94,14 @@
     end
 
     if eat then
-      if data.music:tell() < eatTime then
+      if data.beat < eatTime then
         xEat = xEat+10000
       end
-      if data.music:tell() > eatTime then
+      if data.beat > eatTime then
         xEat = xEat-10000
         peaCount = 0
       end
-      if data.music:tell() > eatTimeEnd then
+      if data.beat > eatTimeEnd then
         eat = false
       end
       

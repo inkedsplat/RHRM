@@ -54,8 +54,6 @@ function loadEditor()
     data.beat = math.max(editor.beatStart,0)
     data.beatCount = math.max(editor.beatStart,0)
     
-    data.music:play()
-    
     local t = 0
     local x = 0
     bpm = data.bpm
@@ -243,8 +241,6 @@ function loadEditor()
     data.beat = math.max(editor.beatStartInGame,0)
     data.beatCount = math.max(editor.beatStartInGame,0)
     
-    data.music:play()
-    
     local t = 0
     local x = 0
     bpm = data.bpm
@@ -330,9 +326,9 @@ function loadEditor()
       i.color = editor.scheme.playheadInGame
     end
   end
-  local b = createButton(view.width-48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/lineSelect.png"),editor.scheme.playhead,true,"line toggle")
-  b.w = 48
-  b.h = 48
+  --local b = createButton(view.width-48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/lineSelect.png"),editor.scheme.playhead,true,"line toggle")
+  --b.w = 48
+  --b.h = 48
   
   
   local function f(i)
@@ -355,7 +351,7 @@ function loadEditor()
   local function f(i)
     editor.placeTempoChange = not editor.placeTempoChange
   end
-  local b = createButton(view.width-48*3,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/tempoChange.png"),editor.scheme.playtest,true,"tempo change")
+  local b = createButton(view.width-48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/tempoChange.png"),editor.scheme.playtest,true,"tempo change")
 end
 
 function love.wheelmoved(x,y)
@@ -545,6 +541,9 @@ function updateEditor(dt)
   end
   --playhead
   if editor.playing then
+    if data.beat > data.musicStart then
+      data.music:play()
+    end
     for _,i in pairs(data.tempoChanges) do
       if data.beat >= i.x/64 then
         bpm = i.bpm
@@ -677,14 +676,17 @@ function updateEditor(dt)
     
     if mouse.button.pressed[3] then
       local mx = editor.mouseOnGrid[1]*(editor.gridwidth/64)
-      if editor.playHeadMove == 0 then
-        --audio playhead
-        editor.playheadStart = (((mx))*(60000/data.bpm))/1000
-        editor.beatStart = mx
-      elseif editor.playHeadMove == 1 then
+      
+      if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+        data.musicStart = mx
+      elseif love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl") then
         --in game playhead
         editor.playheadInGame = (((mx))*(60000/data.bpm))/1000
         editor.beatStartInGame = mx
+      else
+        --audio playhead
+        editor.playheadStart = (((mx))*(60000/data.bpm))/1000
+        editor.beatStart = mx
       end
     end
   end
@@ -849,6 +851,14 @@ function drawEditor()
   love.graphics.line(x+editor.viewX,editor.buttonSpace,x+editor.viewX,editor.buttonSpace+editor.gridspace)
   love.graphics.setLineWidth(3)
   setColorHex(pal.playhead)
+  love.graphics.line(x+editor.viewX,editor.buttonSpace,x+editor.viewX,editor.buttonSpace+editor.gridspace)
+  
+  local x = data.musicStart*64
+  setColorHex(pal.grid)
+  love.graphics.setLineWidth(5)
+  love.graphics.line(x+editor.viewX,editor.buttonSpace,x+editor.viewX,editor.buttonSpace+editor.gridspace)
+  setColorHex("f85060")
+  love.graphics.setLineWidth(3)
   love.graphics.line(x+editor.viewX,editor.buttonSpace,x+editor.viewX,editor.buttonSpace+editor.gridspace)
   --PATTERN SELECT or however you would call that thing idk
   local mx,my = love.mouse.getPosition()

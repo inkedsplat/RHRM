@@ -1,4 +1,4 @@
-  local function lminigame()
+  local function lminigame(switchBeat)
     img = {
       sheet = newImageAssetFlipped("/Clappy Trio (WII)/sheet.png")
     } 
@@ -19,7 +19,14 @@
     claps = 0
     
     lions = {}
-    for i = 0, 2 do
+    
+    lionCount = 2
+    for _,i in pairs(data.beatmap.sounds) do
+      if i.beat == switchBeat and i.name == "4otf" then
+        lionCount = 3
+      end
+    end
+    for i = 0, lionCount do
       lions[i] = {}
       lions[i].phase = 0
       lions[i].headAnim = newAnimationGroup(img.sheet)
@@ -30,7 +37,7 @@
       lions[i].ArmsAnim:addAnimation("clap",240,624,64,112,4,0)
       lions[i].xscale = 1
       
-      if i == 2 then
+      if i == lionCount then
         lions[i].player = true
       end
     end
@@ -45,9 +52,9 @@
     for _,i in pairs(currentSounds) do
       if i.name == "prepare" then
         playerSuccess = false
-        lions[0].phase = 1
-        lions[1].phase = 1
-        lions[2].phase = 1
+        for _,i in pairs(lions) do
+          i.phase = 1
+        end
         claps = 0
       end
       if i.name == "clap" then
@@ -56,12 +63,12 @@
           lions[claps].phase = 2
           lions[claps].ArmsAnim:setFrame(0)
           lions[claps].xscale = 0.7
-          resetTime = i.time+((100)*(60000/data.bpm))/1000
+          resetTime = i.time+100
         end
         claps = claps+1
       end
       if i.name == "clapp" then
-        resetTime = i.time+((1)*(60000/data.bpm))/1000
+        resetTime = i.time+1
       end
     end
     
@@ -120,22 +127,22 @@
       else
         if minigameTime > ((0.5)*(60000/data.bpm))/1000 then
           playerSuccess = false
-          happyTime = (2)*(60000/data.bpm)/1000
+          happyTime = 2
           gameSnd.bearlyHit:stop()
           gameSnd.bearlyHit:play()
           misses = misses +1
         end
       end
-      lions[2].phase = 2
-      lions[2].ArmsAnim:setFrame(0)
-      lions[2].xscale = 0.7
-      resetTime = data.music:tell()+((1)*(60000/data.bpm))/1000
+      lions[lionCount].phase = 2
+      lions[lionCount].ArmsAnim:setFrame(0)
+      lions[lionCount].xscale = 0.7
+      resetTime = data.beat+1
     end
     
-    if data.music:tell() > resetTime then
+    if data.beat > resetTime then
       for _,i in pairs(lions) do
         if i.phase == 2 then
-          if not i.player then happyTime = (2)*(60000/data.bpm)/1000 end
+          if not i.player then happyTime = 2 end
           i.phase = 0
           i.xscale = 1
           claps = 0
@@ -150,6 +157,10 @@
     
     local dist = 128+32
     local yoff = -32
+    local xoff = 0
+    if lionCount == 3 then
+      xoff = 80
+    end
     for k,i in pairs(lions) do
       local bodyY = beat/2
       if i.phase == 1 or i.LegsAnim:getCurrentFrame() == 1 then
@@ -163,22 +174,22 @@
       end
 
       
-      love.graphics.draw(img.sheet,quad.tail,view.width/2-dist+dist*k,view.height-96-8+yoff+bodyY,0,i.xscale,2-i.xscale,64)
-      i.LegsAnim:draw(view.width/2-dist+dist*k,view.height-64+yoff,0,1,1,80/2,80/2)
-      love.graphics.draw(img.sheet,quad.body,view.width/2-dist+dist*k,view.height-96-8+yoff+bodyY,0,i.xscale,2-i.xscale,48/2,32/2)
+      love.graphics.draw(img.sheet,quad.tail,view.width/2-dist+dist*k-xoff,view.height-96-8+yoff+bodyY,0,i.xscale,2-i.xscale,64)
+      i.LegsAnim:draw(view.width/2-dist+dist*k-xoff,view.height-64+yoff,0,1,1,80/2,80/2)
+      love.graphics.draw(img.sheet,quad.body,view.width/2-dist+dist*k-xoff,view.height-96-8+yoff+bodyY,0,i.xscale,2-i.xscale,48/2,32/2)
       
-      i.headAnim:draw(view.width/2-dist+dist*k,view.height-128+yoff+bodyY+headY,0,1,1,80/2,80/2)
-      love.graphics.draw(img.sheet,quad.hair,view.width/2-dist+dist*k,view.height-128-24+yoff+bodyY+headY,0,i.xscale,2-i.xscale,112/2,80/2)
+      i.headAnim:draw(view.width/2-dist+dist*k-xoff,view.height-128+yoff+bodyY+headY,0,1,1,80/2,80/2)
+      love.graphics.draw(img.sheet,quad.hair,view.width/2-dist+dist*k-xoff,view.height-128-24+yoff+bodyY+headY,0,i.xscale,2-i.xscale,112/2,80/2)
       
       if i.phase == 2 then
-        i.ArmsAnim:draw(view.width/2-dist+dist*k,view.height-96-4+yoff+bodyY,0,i.xscale,2-i.xscale,64/2,112)
+        i.ArmsAnim:draw(view.width/2-dist+dist*k-xoff,view.height-96-4+yoff+bodyY,0,i.xscale,2-i.xscale,64/2,112)
       else
         local b = beat
         if i.phase ~= 0 then
           b = 0
         end
-        love.graphics.draw(img.sheet,quad.handLeft,view.width/2-dist+dist*k-12-b/5,view.height-128+yoff+bodyY-b/1.5,0,i.xscale,2-i.xscale,48,48/2)
-        love.graphics.draw(img.sheet,quad.handRight,view.width/2-dist+dist*k+8+b/5,view.height-128+yoff+bodyY-b/1.5,0,i.xscale,2-i.xscale,0,48/2)
+        love.graphics.draw(img.sheet,quad.handLeft,view.width/2-dist+dist*k-12-b/5-xoff,view.height-128+yoff+bodyY-b/1.5,0,i.xscale,2-i.xscale,48,48/2)
+        love.graphics.draw(img.sheet,quad.handRight,view.width/2-dist+dist*k+8+b/5-xoff,view.height-128+yoff+bodyY-b/1.5,0,i.xscale,2-i.xscale,0,48/2)
       end
     end
     

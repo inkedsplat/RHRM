@@ -245,6 +245,13 @@ function love.load()
           }
         },
         {
+          name = "four on floor",
+          length = 64,
+          cues = {
+            {name = "4otf",x = 0,cueId = "silence"},
+          }
+        },
+        {
           name = "clap",
           length = 32,
           cues = {
@@ -1065,6 +1072,9 @@ function editorLoadBeatmap(file)
         end
       end
     end
+    data.beat = 0
+    data.beatCount = 0
+    data.time = 0
     print("BEATMAP LOADED !")
   end
 end

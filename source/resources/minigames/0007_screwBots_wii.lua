@@ -113,7 +113,7 @@ end
 
 local function uminigame(dt)
   for k,i in pairs(sounds) do
-    if data.music:tell() > i.time then
+    if data.beat >= i.time then
       i.sound:stop()
       i.sound:play()
       table.remove(sounds,k)
@@ -145,13 +145,13 @@ local function uminigame(dt)
         color = "black",
         x = 128+592-64-32-24,
         moving = true,
-        time = i.time+(1)*(60000/data.bpm)/1000, 
+        time = i.time+1, 
         headHeight = 40,
         f = 0,
         bounce = 20,
         complete = false,
         armRot = 0,
-        released = i.time+(500)*(60000/data.bpm)/1000, 
+        released = i.time+500, 
       }
       table.insert(bots,b)
     end
@@ -164,13 +164,13 @@ local function uminigame(dt)
         color = "white",
         x = 128+592-64-32-24,
         moving = true,
-        time = i.time+(1)*(60000/data.bpm)/1000, 
+        time = i.time+1, 
         headHeight = 15,
         f = 0,
         bounce = 20,
         complete = false,
         armRot = 0,
-        released = i.time+(500)*(60000/data.bpm)/1000, 
+        released = i.time+500, 
       }
       table.insert(bots,b)
     end
@@ -277,7 +277,7 @@ local function uminigame(dt)
         claw.f = math.floor(i.f)
       end
       if input["releaseAB"] then
-        i.released = data.music:tell()
+        i.released = data.beat
         i.moving = true 
         claw.f = 0
         claw.spin = false
@@ -285,7 +285,7 @@ local function uminigame(dt)
       end
     end
     if i.color == "black" then
-      if time > i.time+(2)*(60000/data.bpm)/1000-margin and time < i.time+(2)*(60000/data.bpm)/1000+margin and hit == 2 and not bearly and not (i.released < i.time+(2)*(60000/data.bpm)/1000-margin) then
+      if time > i.time+2-margin and time < i.time+2+margin and hit == 2 and not bearly and not (i.released < i.time+2-margin) then
         i.armRot = 90-45+90
         
         i.moving = true
@@ -295,23 +295,23 @@ local function uminigame(dt)
         i.complete = true
         
         local s = {
-          time = i.time+(2.5)*(60000/data.bpm)/1000,
+          time = i.time+2.5,
           sound = snd.oh
         }
         table.insert(sounds,s)
         local s = {
-          time = i.time+(3)*(60000/data.bpm)/1000 ,
+          time = i.time+3 ,
           sound = snd.yea
         }
         table.insert(sounds,s)
       end
-      if data.music:tell() > i.time+(2)*(60000/data.bpm)/1000+bearlyMargin then
+      if data.beat > i.time+2+bearlyMargin then
         i.moving = true
         claw.f = 0
         claw.spin = false
       end
     else
-      if time > i.time+(1)*(60000/data.bpm)/1000-margin and time < i.time+(1)*(60000/data.bpm)/1000+margin and hit == 2 and not bearly and not (i.released < i.time+(1)*(60000/data.bpm)/1000-margin)  then
+      if time > i.time+-margin and time < i.time+1+margin and hit == 2 and not bearly and not (i.released < i.time+1-margin)  then
         i.armRot = 90-45+90
         
         i.moving = true
@@ -321,17 +321,17 @@ local function uminigame(dt)
         i.complete = true
         
         local s = {
-          time = i.time+(1.5)*(60000/data.bpm)/1000,
+          time = i.time+1.5,
           sound = snd.lets
         }
         table.insert(sounds,s)
         local s = {
-          time = i.time+(2)*(60000/data.bpm)/1000 ,
+          time = i.time+2 ,
           sound = snd.go
         }
         table.insert(sounds,s)
       end
-      if data.music:tell() > i.time+(1)*(60000/data.bpm)/1000+bearlyMargin then
+      if data.beat > i.time+1+bearlyMargin then
         i.moving = true
         claw.f = 0
         claw.spin = false

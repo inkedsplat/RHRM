@@ -131,6 +131,13 @@ function filedroppedMenu(file)
 end
 
 function createBeatmap()
+  if not data.musicStart then
+    data.musicStart = 0
+  end
+  data.beat = 0
+  data.beatCount = 0
+  data.time = 0
+  
   data.beatmap = {
     sounds = {},
     inputs = {},
@@ -141,6 +148,7 @@ function createBeatmap()
       for _,c in pairs(i.cues) do
         local s = {
           time = (((i.x+c.x)/64)*(60000/data.bpm))/1000,
+          beat = (i.x+c.x)/64,
           sound = c.sound,
           played = false,
           name = c.name,
@@ -152,6 +160,7 @@ function createBeatmap()
         end
         if s.loop then
           s.loopEnd = (((i.x+i.length)/64)*(60000/data.bpm))/1000
+          s.loopEndeat = (i.x+i.length)/64
         end
         if s.time < math.max(editor.playheadInGame,0) then
           s.played = true
@@ -163,6 +172,7 @@ function createBeatmap()
       for _,c in pairs(i.hits) do
         local s = {
           time = (((i.x+c.x)/64)*(60000/data.bpm))/1000,
+          beat = (i.x+c.x),
           input = c.input,
           played = false,
           sound = c.sound,
@@ -183,6 +193,7 @@ function createBeatmap()
     if i.switch then
       local s = {
         time = (((i.x)/64)*(60000/data.bpm))/1000,
+        beat = ((i.x)/64),
         minigame = i.minigame,
         played = false,
       }

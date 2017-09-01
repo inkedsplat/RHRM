@@ -62,7 +62,7 @@ local function uminigame(dt)
     if s.name == "call" then
       phase = "call"
       roots = {}
-      responseTime = s.time+((4)*(60000/data.bpm))/1000
+      responseTime = s.time+4
       rootMaker.x = rootMaker.startX
       rootMaker.y = rootMaker.startY
     end
@@ -72,7 +72,7 @@ local function uminigame(dt)
     --print(s.name)
     if s.name == "appear" then
       local r = {
-        time = s.time+((4)*(60000/data.bpm))/1000,
+        time = s.time+4,
         x = rootMaker.x,
         y = rootMaker.y,
         anim = newAnimationGroup(img.roots)
@@ -83,8 +83,8 @@ local function uminigame(dt)
     end
     if s.name == "appear long" then
       local r = {
-        time = s.time+((4)*(60000/data.bpm))/1000,
-        pluckTime = s.time+((4.5)*(60000/data.bpm))/1000,
+        time = s.time+4,
+        pluckTime = s.time+4.5,
         long = true,
         held = false,
         x = rootMaker.x,
@@ -98,12 +98,12 @@ local function uminigame(dt)
     end
   end
   
-  if data.music:tell() > responseTime and phase == "call" then
+  if data.beat >= responseTime and phase == "call" then
     phase = "response"
     rootMaker.x = rootMaker.startX
     rootMaker.y = rootMaker.startY
   end
-  if data.music:tell() > responseTime+((4)*(60000/data.bpm))/1000 and phase == "response" then
+  if data.beat >= responseTime+4 and phase == "response" then
     phase = nil
     rootMaker.x = rootMaker.startX
     rootMaker.y = rootMaker.startY
@@ -126,7 +126,7 @@ local function uminigame(dt)
           end
         end
         
-        if data.music:tell() > i.time-margin and data.music:tell() < i.time+margin and input["pressANY"] then
+        if data.beat > i.time-margin and data.beat < i.time+margin and input["pressANY"] then
           if i.long then
             i.held = true
           else
@@ -143,7 +143,7 @@ local function uminigame(dt)
           end
         end
         if i.long then
-          if data.music:tell() > i.pluckTime and input["holdANY"] and i.held then
+          if data.beat > i.pluckTime and input["holdANY"] and i.held then
             table.remove(roots,k)
             
             local r = {

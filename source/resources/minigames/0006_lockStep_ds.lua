@@ -23,7 +23,7 @@
     anim[4].duration = 250
     local anim = pAnim:addAnimation("offBeat",0,64,48,64,8,10)
     anim[4].duration = 250
-    pAnim:addAnimation("countIn",0,128,48,80,5,30)
+    pAnim:addAnimation("countIn",0,128,48,80,5,50)
     pAnim:addAnimation("idle",0,0,48,64,1,0)
     
     
@@ -32,7 +32,7 @@
     anim[4].duration = 250
     local anim = oAnim:addAnimation("offBeat",0,64,48,64,8,10)
     anim[4].duration = 250
-    oAnim:addAnimation("countIn",0,128,48,80,5,30)
+    oAnim:addAnimation("countIn",0,128,48,80,5,50)
     oAnim:addAnimation("idle",0,0,48,64,1,0)
   end
   
