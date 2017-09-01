@@ -886,7 +886,7 @@ function love.load()
   end
   
   minigame = 0
-  screen = "editor"
+  screen = "menu"
   loadMenu()
   
   local w,h = love.graphics.getDimensions()

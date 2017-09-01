@@ -134,71 +134,90 @@ function createBeatmap()
   if not data.musicStart then
     data.musicStart = 0
   end
-  data.beat = 0
-  data.beatCount = 0
-  data.time = 0
-  
-  data.beatmap = {
-    sounds = {},
-    inputs = {},
-    switches = {},
-  }
-  for _,i in pairs(data.blocks) do
-    if i.cues then
-      for _,c in pairs(i.cues) do
-        local s = {
-          time = (((i.x+c.x)/64)*(60000/data.bpm))/1000,
-          beat = (i.x+c.x)/64,
-          sound = c.sound,
-          played = false,
-          name = c.name,
-          loop = c.loop,
-          silent = c.silent
-        }
-        if c.pitchToBpm then
-          s.sound:setPitch((data.bpm/(c.originalBpm or 120)))
+    --generate beatmap
+    data.beatmap = {
+      sounds = {},
+      inputs = {},
+      switches = {},
+    }
+    for _,i in pairs(data.blocks) do
+      if i.pitchShift then
+        if i.cues then
+          for _,j in pairs(i.cues) do
+            j.sound:setPitch(i.pitch)
+          end
         end
-        if s.loop then
-          s.loopEnd = (((i.x+i.length)/64)*(60000/data.bpm))/1000
-          s.loopEndeat = (i.x+i.length)/64
+        if i.hits then
+          for _,j in pairs(i.hits) do
+            j.sound:setPitch(i.pitch)
+          end
         end
-        if s.time < math.max(editor.playheadInGame,0) then
-          s.played = true
-        end
-        table.insert(data.beatmap.sounds,s)
       end
-    end
-    if i.hits then
-      for _,c in pairs(i.hits) do
+      
+      if i.cues then
+        for _,c in pairs(i.cues) do
+          local s = {
+            time = (((i.x+c.x)/64)*(60000/data.bpm))/1000,
+            beat = (i.x+c.x)/64,
+            sound = c.sound,
+            played = false,
+            name = c.name,
+            loop = c.loop,
+            silent = c.silent
+          }
+          if c.pitchToBpm then
+            s.sound:setPitch((data.bpm/(c.originalBpm or 120)))
+          end
+          if s.loop then
+            s.loopEnd = (((i.x+i.length)/64)*(60000/data.bpm))/1000
+            s.loopEndBeat = (i.x+i.length)/64
+          end
+          if s.time < math.max(editor.playheadInGame,0) then
+            s.played = true
+          end
+          table.insert(data.beatmap.sounds,s)
+        end
+      end
+      if i.hits then
+        for _,c in pairs(i.hits) do
+          local s = {
+            time = (((i.x+c.x)/64)*(60000/data.bpm))/1000,
+            beat = (i.x+c.x)/64,
+            input = c.input,
+            played = false,
+            sound = c.sound,
+            name = c.name,
+            silent = c.silent
+          }
+          if c.pitchToBpm then
+            s.sound:setPitch((data.bpm/(c.originalBpm or 120)))
+          end
+          if s.time < math.max(editor.playheadInGame,0) then
+            s.played = true
+            s.played2 = true
+          end
+          table.insert(data.beatmap.inputs,s)
+        end  
+      end
+      
+      if i.switch then
         local s = {
-          time = (((i.x+c.x)/64)*(60000/data.bpm))/1000,
-          beat = (i.x+c.x),
-          input = c.input,
+          time = (((i.x)/64)*(60000/data.bpm))/1000,
+          beat = (i.x)/64,
+          minigame = i.minigame,
           played = false,
-          sound = c.sound,
-          name = c.name,
-          silent = c.silent
         }
-        if c.pitchToBpm then
-          s.sound:setPitch((data.bpm/(c.originalBpm or 120)))
-        end
-        if s.time < math.max(editor.playheadInGame,0) then
-          s.played = true
-          s.played2 = true
-        end
-        table.insert(data.beatmap.inputs,s)
-      end  
-    end
-    
-    if i.switch then
-      local s = {
-        time = (((i.x)/64)*(60000/data.bpm))/1000,
-        beat = ((i.x)/64),
-        minigame = i.minigame,
-        played = false,
-      }
-      table.insert(data.beatmap.switches,s)
+        table.insert(data.beatmap.switches,s)
+      end 
     end 
-  end 
+    
+    --load game
+    loadGameInputs()
+    
+    data.beat = 0
+    data.beatCount = 0
+    
+    bpm = data.bpm
+    updateTempoChanges()
 end
 

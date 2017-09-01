@@ -17,7 +17,7 @@ function loadGameInputs()
   end
   
   
-  minigame = 14
+  minigame = 1
   for _,i in pairs(data.beatmap.switches) do
     if i.time <= 0 then
       minigame = i.minigame
@@ -280,9 +280,9 @@ function updateGameInputs(dt)
     --beat
     if data.beat > data.beatCount then
       data.beatCount = data.beatCount+1
-      if data.music:isPlaying() then
+      --if data.music:isPlaying() then
         beat = 10
-      end
+      --end
     end
     --handle switches
     for _,s in pairs(data.beatmap.switches) do

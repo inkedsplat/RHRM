@@ -54,8 +54,14 @@ function loadEditor()
     data.beat = math.max(editor.beatStart,0)
     data.beatCount = math.max(editor.beatStart,0)
     
+    if data.musicStart <= data.beat then
+      data.music:play()
+    end
+    
+    
     local t = 0
     local x = 0
+    
     bpm = data.bpm
     updateTempoChanges()
     for k,i in pairs(data.tempoChanges) do
@@ -68,13 +74,15 @@ function loadEditor()
     end
     
     if x < editor.beatStart*64 then
-      print(bpm)
       local dist = (editor.beatStart*64)-x
       t = t+(((dist)/64)*(60000/bpm))/1000
     end
     
-    print("t = ",t)
-    
+    if data.musicStart <= data.beat then
+      t = t-(((data.musicStart))*(60000/data.bpm))/1000
+      print(t,(((data.musicStart))*(60000/data.bpm))/1000)
+    end
+
     data.music:seek(t)
     editor.playTime = t
     editor.beats = editor.beatStart
@@ -241,27 +249,36 @@ function loadEditor()
     data.beat = math.max(editor.beatStartInGame,0)
     data.beatCount = math.max(editor.beatStartInGame,0)
     
+    if data.musicStart <= data.beat then
+      data.music:play()
+    end
+    
+    
     local t = 0
     local x = 0
+    
     bpm = data.bpm
     updateTempoChanges()
     for k,i in pairs(data.tempoChanges) do
-      if i.x <= editor.beatStart*64 and ((data.tempoChanges[k+1] and data.tempoChanges[k+1].x > editor.beatStart*64) or not data.tempoChanges[k+1]) then
+      if i.x <= editor.beatStartInGame*64 and ((data.tempoChanges[k+1] and data.tempoChanges[k+1].x > editor.beatStartInGame*64) or not data.tempoChanges[k+1]) then
         bpm = i.bpm
         t = t+i.time
         x = x+i.x
-        print(i.x,i.time)
+        --print(i.x,i.time)
       end
     end
     
     if x < editor.beatStartInGame*64 then
-      print(bpm)
+      --print(bpm)
       local dist = (editor.beatStartInGame*64)-x
       t = t+(((dist)/64)*(60000/bpm))/1000
     end
     
-    print("t = ",t)
-    
+    if data.musicStart <= data.beat then
+      t = t-(((data.musicStart))*(60000/data.bpm))/1000
+      print(t,(((data.musicStart))*(60000/data.bpm))/1000)
+    end
+
     data.music:seek(t)
   end
   createButton(48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/playtest.png"),editor.scheme.playtest,true,"test")
@@ -412,7 +429,8 @@ function updateTempoChanges()
     
     bpm = i.bpm
     time = time+t
-    x = x+i.x
+    x = i.x
+    
   end
 end
 
