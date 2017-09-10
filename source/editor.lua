@@ -97,6 +97,7 @@ function loadEditor()
           
           j.time = (((i.x+j.x)/64)*(60000/bpm))/1000
           j.beat = (i.x+j.x)/64
+          print(j.beat)
           
           if j.loop then
             j.loopEnd = (((i.x+i.length)/64)*(60000/data.bpm))/1000
@@ -115,6 +116,7 @@ function loadEditor()
         for _,j in pairs(i.hits) do
           j.time = (((i.x+j.x)/64)*(60000/data.bpm))/1000
           j.beat = (i.x+j.x)/64
+          print(j.beat)
           --j.played = false
           if i.pitchShift then
             j.sound:setPitch(i.pitch)
@@ -197,6 +199,7 @@ function loadEditor()
             loop = c.loop,
             silent = c.silent
           }
+          print(s.beat)
           if c.pitchToBpm then
             s.sound:setPitch((data.bpm/(c.originalBpm or 120)))
           end
@@ -221,6 +224,7 @@ function loadEditor()
             name = c.name,
             silent = c.silent
           }
+          print(s.beat)
           if c.pitchToBpm then
             s.sound:setPitch((data.bpm/(c.originalBpm or 120)))
           end
@@ -559,7 +563,7 @@ function updateEditor(dt)
   end
   --playhead
   if editor.playing then
-    if data.beat > data.musicStart then
+    if data.beat >= data.musicStart then
       data.music:play()
     end
     for _,i in pairs(data.tempoChanges) do
@@ -769,7 +773,7 @@ function drawEditor()
             --print("hit "..math.floor(editor.playhead).." "..i.x+h.x.." "..tostring(h.played).." "..k)
             
             --if editor.playhead > i.x+h.x and editor.playing then
-            if editor.playing and data.beat > h.beat then
+            if editor.playing and data.beat >= h.beat then
               if not h.played then
                 if h.sound then
                   h.sound:stop()

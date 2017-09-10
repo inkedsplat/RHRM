@@ -16,6 +16,7 @@ function newAnimationGroup(image)
   g.transition = false
   g.nextAnimation = nil
   g.finishing = false
+  g.finished = false
   
   return setmetatable(g, animationGroup)
 end
@@ -51,7 +52,20 @@ function animationGroup:addFrame(animId,x,y,w,h,duration)
   end
 end
 
+function animationGroup:removeFrame(animId,num)
+  if self:animationExists(animId) then
+    for _,i in pairs(self.animations) do
+      if i.id == animId then
+        table.remove(i,num)
+        i.length = i.length -1
+      end
+    end
+  end
+end
+
 function animationGroup:update(dt)
+  self.finished = false
+  
   if self.playing then 
     self.timer = self.timer + dt*1000
   end
@@ -61,9 +75,13 @@ function animationGroup:update(dt)
     self.frame = self.frame+1
     if self.frame > self.currentAnimation.length-1 then
       self.frame = 0
+      self.finished = true
     end
   end
-  
+end
+
+function animationGroup:isFinished()
+  return self.finished
 end
 
 function animationGroup:setAnimation(id)
@@ -77,6 +95,7 @@ function animationGroup:setAnimation(id)
         self.frame = 0
         success = true
         self.finishing = false
+        self.finished = false
       end
     end
     if not success then 
@@ -138,5 +157,3 @@ end
 function animationGroup:draw(x,y,r,sx,sy,ox,oy,kx,ky)
   love.graphics.draw(self.img,self.currentAnimation[self.frame].quad,x,y,r,sx,sy,ox,oy,kx,ky)
 end
-
-

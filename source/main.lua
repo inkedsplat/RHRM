@@ -22,10 +22,11 @@ function love.load()
     love.filesystem.createDirectory("/library")
   end
   
-  version = "0.5.0"
+  version = "0.6.2"
   love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()
+  
   
   --[[
   MINGAME LIST:
@@ -860,6 +861,13 @@ function love.load()
           }
         },
       }
+    },
+    [15] = {
+      name = "crop stomp",
+      hidden = true,
+      blocks = {
+        
+      }
     }
   }
   
@@ -886,7 +894,7 @@ function love.load()
   end
   
   minigame = 0
-  screen = "menu"
+  screen = "editor"
   loadMenu()
   
   local w,h = love.graphics.getDimensions()
@@ -1075,6 +1083,11 @@ function editorLoadBeatmap(file)
     data.beat = 0
     data.beatCount = 0
     data.time = 0
+    
+    if not data.musicStart then
+      data.musicStart = 0
+    end
+    
     print("BEATMAP LOADED !")
   end
 end

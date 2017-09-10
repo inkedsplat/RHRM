@@ -17,7 +17,7 @@ function loadGameInputs()
   end
   
   
-  minigame = 1
+  minigame = 15
   for _,i in pairs(data.beatmap.switches) do
     if i.time <= 0 then
       minigame = i.minigame
@@ -156,10 +156,10 @@ function love.keypressed(key,scancode,isRepeat)
         spd = 10
       end
       if key == "up" then
-        bpm = bpm+spd
+        data.bpm = data.bpm+spd
       end
       if key == "down" then
-        bpm = bpm-spd
+        data.bpm = data.bpm-spd
       end
     else
       if key == "up" then
@@ -274,7 +274,7 @@ function updateGameInputs(dt)
     data.beat = data.beat+spd*(dt*1000)
     
     --play music
-    if data.beat > data.musicStart then
+    if data.beat >= data.musicStart then
       data.music:play()
     end
     --beat
