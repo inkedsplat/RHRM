@@ -53,7 +53,7 @@ function drawMenu()
     printNew("CREATE",64,256+32)
     setColorHex("000000")
     love.graphics.setFont(font)
-    printNew(version,8,view.height-16)
+    printNew(version.." welcome "..pref.username.."!",8,view.height-16)
   else
     love.graphics.setFont(fontBig)
     setColorHex("000000")

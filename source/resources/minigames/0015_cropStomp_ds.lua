@@ -3,7 +3,7 @@
 
 function lminigame()
   img = {
-    sheet = newImageAssetFlipped("Crop Stomp/sheet.png"),
+    sheet = newImageAssetFlipped("crop Stomp/sheet.png"),
   }
   quad = {
     bg = love.graphics.newQuad(0,0,16,16,img.sheet:getWidth(),img.sheet:getHeight()),

@@ -369,10 +369,10 @@ function loadEditor()
   b.w = 16
   b.h = 16
   
-  local function f(i)
+  --[[local function f(i)
     editor.placeTempoChange = not editor.placeTempoChange
   end
-  local b = createButton(view.width-48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/tempoChange.png"),editor.scheme.playtest,true,"tempo change")
+  local b = createButton(view.width-48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/tempoChange.png"),editor.scheme.playtest,true,"tempo change")]]
 end
 
 function love.wheelmoved(x,y)
@@ -812,6 +812,7 @@ function drawEditor()
             else
               if editor.playing and data.beat >= c.beat then
                 if not c.played then
+                  --print(c.beat,data.beat)
                   if c.sound then
                     c.sound:stop()
                     c.sound:play()

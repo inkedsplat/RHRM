@@ -6,6 +6,7 @@ require("pieceAnimHander")
 require("SaveLoad")
 require("menu")
 require("soundDatabase")
+require("init")
 json = require("json")
 
 function love.load()
@@ -22,7 +23,7 @@ function love.load()
     love.filesystem.createDirectory("/library")
   end
   
-  version = "0.6.2"
+  version = "0.6.3"
   love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()
@@ -894,8 +895,18 @@ function love.load()
   end
   
   minigame = 0
-  screen = "editor"
-  loadMenu()
+  if love.filesystem.exists("preferences.sav") then
+    screen = "menu"
+    loadMenu()
+    
+    local file = love.filesystem.newFile("preferences.sav")
+    if file:open('r') then
+      pref = json.decode(file:read())
+    end
+  else
+    screen = "init"
+    loadInit()
+  end
   
   local w,h = love.graphics.getDimensions()
   view = {
@@ -1128,6 +1139,8 @@ function love.update(dt)
     updateSavescreen(dt)
   elseif screen == "remixOptions" then
     updateRemixOptions(dt)
+  elseif screen == "init" then
+    updateInit(dt)
   end
   
   mouse.button.pressed[1] = false
@@ -1155,6 +1168,8 @@ function love.draw()
     drawSavescreen()
   elseif screen == "remixOptions" then
     drawRemixOptions()
+  elseif screen == "init" then
+    drawInit()
   end
   --draw the canvas
   love.graphics.reset()

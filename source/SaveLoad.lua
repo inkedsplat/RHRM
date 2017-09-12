@@ -52,6 +52,8 @@ function love.textinput(t)
     end
   elseif screen == "remixOptions" then
     textinputRemixOptions(t)
+  elseif screen == "init" then
+    textInputInit(t)
   end
 end
 
@@ -89,6 +91,9 @@ end
 function saveRemix()
   --save with "entry" as it's name
   data.dir = entry
+  if not data.author then
+    data.autor = pref.username
+  end
   
   local dir = "/remixes/"..entry
   if not love.filesystem.exists(dir) then

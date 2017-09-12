@@ -17,7 +17,7 @@ function loadGameInputs()
   end
   
   
-  minigame = 15
+  minigame = 1
   for _,i in pairs(data.beatmap.switches) do
     if i.time <= 0 then
       minigame = i.minigame
@@ -65,6 +65,10 @@ function loadGameInputs()
   
   imgPerfect = love.graphics.newImage("/resources/gfx/perfect.png")
   sndPerfectFail = love.audio.newSource("/resources/sfx/karate man (GBA)/potBreak.ogg")
+  
+  if data.musicStart == 0 then
+    data.music:play()
+  end
 end
 
 function love.keypressed(key,scancode,isRepeat)
@@ -211,6 +215,8 @@ function love.keypressed(key,scancode,isRepeat)
     else
       love.event.quit()
     end
+  elseif screen == "init" then
+    keypressedInit(key)
   end
 end
 
@@ -260,11 +266,11 @@ function updateGameInputs(dt)
   minigameTime = minigameTime+dt
   if not rating then
     
-    for _,i in pairs(data.tempoChanges) do
+    --[[for _,i in pairs(data.tempoChanges) do
       if data.beat >= i.x/64 then
         bpm = i.bpm
       end
-    end
+    end]]
     
     data.time = data.time+dt
     local dist = 1
@@ -278,7 +284,7 @@ function updateGameInputs(dt)
       data.music:play()
     end
     --beat
-    if data.beat > data.beatCount then
+    if data.beat >= data.beatCount then
       data.beatCount = data.beatCount+1
       --if data.music:isPlaying() then
         beat = 10
@@ -319,6 +325,7 @@ function updateGameInputs(dt)
             s.sound:play()
             s.played = true
             table.insert(currentSounds,{name = s.name,time = s.beat})
+            print(s.beat,data.beat)
             --print(s.name)
           end
         end
