@@ -23,7 +23,7 @@ function love.load()
     love.filesystem.createDirectory("/library")
   end
   
-  version = "0.6.3"
+  version = "0.7.0"
   love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()
@@ -869,6 +869,62 @@ function love.load()
       blocks = {
         
       }
+    },
+    [16] = {
+      name = "tap troupe",
+      blocks = {
+        {
+          name = "countIn",
+          length = 64,
+          cues = {
+            {name = "countIn",x = 0,cueId = "silence"},
+          },
+        },
+        {
+          name = "4 taps",
+          length = 256,
+          cues = {
+            {name = "tap1",x = 0,cueId = "tapTroupeTap1"},
+            {name = "tap2",x = 64,cueId = "tapTroupeTap2"},
+            {name = "tap1",x = 128,cueId = "tapTroupeTap1"},
+            {name = "tap2",x = 128+64,cueId = "tapTroupeTap2"},
+          },
+          hits = {
+            {name = "tap1p",x = 0,cueId = "silence",input = "pressA"},
+            {name = "tap2p",x = 64,cueId = "silence",input = "pressA"},
+            {name = "tap1p",x = 128,cueId = "silence",input = "pressA"},
+            {name = "tap2p",x = 128+64,cueId = "silence",input = "pressA"},
+          },
+        },
+        {
+          name = "ready",
+          length = 128,
+          cues = {
+            {name = "tap1",x = 0,cueId = "tapTroupeReady1"},
+            {name = "tapReady",x = 64,cueId = "tapTroupeReady2"},
+            {name = "ready",x = 64+32,cueId = "silence"},
+          },
+          hits = {
+            {name = "tap1p",x = 0,cueId = "silence",input = "pressA"},
+            {name = "tap2p",x = 64,cueId = "silence",input = "pressA"},
+          },
+        },
+        {
+          name = "tap no boms",
+          length = 128,
+          cues = {
+            {name = "and",x = 0,cueId = "tapTroupeAnd"},
+            {name = "tap1b",x = 32,cueId = "tapTroupeTapVoice1"},
+            {name = "tap2b",x = 64+16,cueId = "tapTroupeTapVoice2"},
+            {name = "tap3b",x = 128,cueId = "tapTroupeTapVoice3"},
+          },
+          hits = {
+            {name = "tap1p",x = 32,cueId = "silence",input = "pressA"},
+            {name = "tap1p",x = 64+16,cueId = "silence",input = "pressA"},
+            {name = "tap1p",x = 128,cueId = "silence",input = "pressA"},
+          },
+        },
+      }
     }
   }
   
@@ -896,7 +952,7 @@ function love.load()
   
   minigame = 0
   if love.filesystem.exists("preferences.sav") then
-    screen = "menu"
+    screen = "editor"
     loadMenu()
     
     local file = love.filesystem.newFile("preferences.sav")
@@ -933,7 +989,7 @@ function initializeData()
     time = 0,
     beat = 0,
     beatCount = 0,
-    musicStart = 0,
+    musicStart = 2,
     music = newSource("/resources/music/karate man (GBA).ogg"),
     blocks = {},
     tempoChanges = {},

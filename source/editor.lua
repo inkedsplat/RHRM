@@ -63,20 +63,9 @@ function loadEditor()
     local x = 0
     
     bpm = data.bpm
-    updateTempoChanges()
-    for k,i in pairs(data.tempoChanges) do
-      if i.x <= editor.beatStart*64 and ((data.tempoChanges[k+1] and data.tempoChanges[k+1].x > editor.beatStart*64) or not data.tempoChanges[k+1]) then
-        bpm = i.bpm
-        t = t+i.time
-        x = x+i.x
-        print(i.x,i.time)
-      end
-    end
-    
-    if x < editor.beatStart*64 then
-      local dist = (editor.beatStart*64)-x
-      t = t+(((dist)/64)*(60000/bpm))/1000
-    end
+
+    local dist = editor.beatStart*64
+    t = t+(((dist)/64)*(60000/bpm))/1000
     
     if data.musicStart <= data.beat then
       t = t-(((data.musicStart))*(60000/data.bpm))/1000
@@ -248,10 +237,10 @@ function loadEditor()
     end 
     
     --load game
-    loadGameInputs()
-    
     data.beat = math.max(editor.beatStartInGame,0)
     data.beatCount = math.max(editor.beatStartInGame,0)
+    
+    print(data.beat)
     
     if data.musicStart <= data.beat then
       data.music:play()
@@ -262,28 +251,16 @@ function loadEditor()
     local x = 0
     
     bpm = data.bpm
-    updateTempoChanges()
-    for k,i in pairs(data.tempoChanges) do
-      if i.x <= editor.beatStartInGame*64 and ((data.tempoChanges[k+1] and data.tempoChanges[k+1].x > editor.beatStartInGame*64) or not data.tempoChanges[k+1]) then
-        bpm = i.bpm
-        t = t+i.time
-        x = x+i.x
-        --print(i.x,i.time)
-      end
-    end
-    
-    if x < editor.beatStartInGame*64 then
-      --print(bpm)
-      local dist = (editor.beatStartInGame*64)-x
-      t = t+(((dist)/64)*(60000/bpm))/1000
-    end
+
+    local dist = editor.beatStartInGame*64
+    t = t+(((dist)/64)*(60000/bpm))/1000
     
     if data.musicStart <= data.beat then
       t = t-(((data.musicStart))*(60000/data.bpm))/1000
       print(t,(((data.musicStart))*(60000/data.bpm))/1000)
     end
-
-    data.music:seek(t)
+    
+    loadGameInputs(t)
   end
   createButton(48*2,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/playtest.png"),editor.scheme.playtest,true,"test")
   
@@ -376,6 +353,7 @@ function loadEditor()
 end
 
 function love.wheelmoved(x,y)
+  
   local y = y
   local mx,my = love.mouse.getPosition()
   
@@ -700,7 +678,7 @@ function updateEditor(dt)
       local mx = editor.mouseOnGrid[1]*(editor.gridwidth/64)
       
       if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
-        data.musicStart = mx
+        data.musicStart = math.max(2,mx)
       elseif love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl") then
         --in game playhead
         editor.playheadInGame = (((mx))*(60000/data.bpm))/1000

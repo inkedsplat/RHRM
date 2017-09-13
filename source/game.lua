@@ -1,4 +1,4 @@
-function loadGameInputs()
+function loadGameInputs(seekTime)
   input = {}
   margin = 0.2
   bearlyMargin = 0.3
@@ -17,7 +17,7 @@ function loadGameInputs()
   end
   
   
-  minigame = 1
+  minigame = 16
   for _,i in pairs(data.beatmap.switches) do
     if i.time <= 0 then
       minigame = i.minigame
@@ -66,8 +66,9 @@ function loadGameInputs()
   imgPerfect = love.graphics.newImage("/resources/gfx/perfect.png")
   sndPerfectFail = love.audio.newSource("/resources/sfx/karate man (GBA)/potBreak.ogg")
   
-  if data.musicStart == 0 then
+  if data.musicStart <= data.beat then
     data.music:play()
+    data.music:seek(seekTime)
   end
 end
 

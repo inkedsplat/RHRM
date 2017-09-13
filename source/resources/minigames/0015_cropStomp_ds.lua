@@ -1,5 +1,5 @@
 --[[ CROP STOMP ]]--
---[[ ADDED BY INKEDSPLAT ]]--
+--[[ STARTED BY INKEDSPLAT ]]--
 
 function lminigame()
   img = {

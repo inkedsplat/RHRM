@@ -158,6 +158,17 @@ function initializeCues()
   cue["tapTrialOokook2"] = function() return newSource("/resources/sfx/tap tap trial (GBA)/ookook1.ogg") end
   cue["tapTrialOokee1"] = function() return newSource("/resources/sfx/tap tap trial (GBA)/ookee1.ogg") end
   cue["tapTrialOokee2"] = function() return newSource("/resources/sfx/tap tap trial (GBA)/ookee2.ogg") end
+  
+  cue["tapTroupeTap1"] = function() return newSource("/resources/sfx/tap troupe/tap1.ogg") end
+  cue["tapTroupeTap2"] = function() return newSource("/resources/sfx/tap troupe/tap2.ogg") end
+  
+  cue["tapTroupeReady1"] = function() return newSource("/resources/sfx/tap troupe/ready1.ogg") end
+  cue["tapTroupeReady2"] = function() return newSource("/resources/sfx/tap troupe/ready2.ogg") end
+  
+  cue["tapTroupeAnd"] = function() return newSource("/resources/sfx/tap troupe/and.ogg") end
+  cue["tapTroupeTapVoice1"] = function() return newSource("/resources/sfx/tap troupe/tapVoice1.ogg") end
+  cue["tapTroupeTapVoice2"] = function() return newSource("/resources/sfx/tap troupe/tapVoice2.ogg") end
+  cue["tapTroupeTapVoice3"] = function() return newSource("/resources/sfx/tap troupe/tapVoice3.ogg") end
 end
 
 
