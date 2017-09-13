@@ -70,6 +70,8 @@ function loadGameInputs(seekTime)
     data.music:play()
     data.music:seek(seekTime)
   end
+  
+  auto = false
 end
 
 function love.keypressed(key,scancode,isRepeat)
@@ -356,7 +358,7 @@ function updateGameInputs(dt)
         end
       else
         if data.beat > s.beat-margin and data.beat < s.beat+margin then
-          if input[s.input] and not s.played then
+          if (input[s.input] or (auto and data.beat >= s.beat)) and not s.played then
             if not s.silent then
               s.sound:stop()
               s.sound:play()
@@ -371,6 +373,11 @@ function updateGameInputs(dt)
               bearly = false
             }
             table.insert(currentHits,h)
+            
+            --AUTO
+            if auto then
+              input[s.input] = true
+            end
           end
         elseif data.beat > s.beat-bearlyMargin and data.beat < s.beat+bearlyMargin then
           if input[s.input] and not s.played then

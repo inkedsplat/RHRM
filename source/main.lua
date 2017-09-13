@@ -914,8 +914,9 @@ function love.load()
           length = 128,
           cues = {
             {name = "and",x = 0,cueId = "tapTroupeAnd"},
-            {name = "tap1b",x = 32,cueId = "tapTroupeTapVoice1"},
-            {name = "tap2b",x = 64+16,cueId = "tapTroupeTapVoice2"},
+            {name = "tapb",x = 32,cueId = "tapTroupeTapVoice1"},
+            {name = "tapb",x = 64+16,cueId = "tapTroupeTapVoice2"},
+            {name = "tap3bpre",x = 128-16,cueId = "silence"},
             {name = "tap3b",x = 128,cueId = "tapTroupeTapVoice3"},
           },
           hits = {

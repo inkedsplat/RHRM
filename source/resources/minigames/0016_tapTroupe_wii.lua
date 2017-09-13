@@ -47,11 +47,21 @@ function uminigame(dt)
       legAnim.r:setAnimation(5)
       o.bounce = 20
     end
-    if i.name == "ready" then
+    if i.name == "tapb" then
+      legAnim.r:setAnimation(9)
+      o.bounce = 20
+    end
+    if i.name == "tapReady" then
+      legAnim.l:setAnimation(3)
+      legAnim.r:setAnimation(7)
+      legAnim.pl:setAnimation(3)
+      legAnim.pr:setAnimation(7)
+      o.bounce = 20
       ready = true
     end
-    if i.name == "tap3b" then
+    if i.name == "tap3bpre" then
       ready = false
+      p.side = true
     end
   end
   
@@ -65,6 +75,8 @@ function uminigame(dt)
         legAnim.pl:setAnimation(5)
         legAnim.pr:setAnimation(3)
       end
+    else
+      legAnim.pr:setAnimation(9)
     end
     p.bounce = 20
     
@@ -99,6 +111,11 @@ function uminigame(dt)
     if i:getAnimation() == 5 then
       if i:animationEnd() then
         i:setAnimation(6)
+      end
+    end
+    if i:getAnimation() == 7 or i:getAnimation() == 9 then
+      if i:animationEnd() then
+        i:setAnimation(8)
       end
     end
   end

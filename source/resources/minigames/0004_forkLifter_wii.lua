@@ -115,7 +115,7 @@
         love.graphics.draw(img.sheet,quad.orange,view.width/2+156+256-12-12*i+x,view.height/2-128-16-8,math.rad(-90))
       end
     else
-      if input["holdA"] then
+      if input["holdA"] or input["pressA"] then
         --DRAW HAND DOWN
         love.graphics.draw(img.sheet,quad.handDown,view.width+16,view.height/2-16-8,0,1,1,366,238/2)
         love.graphics.draw(img.sheet,quad.fork,view.width+8,view.height/2-128+48,0,1,1,366,238/2)
