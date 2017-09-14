@@ -50,6 +50,7 @@ function uminigame(dt)
     if i.name == "tapb" then
       legAnim.r:setAnimation(9)
       o.bounce = 20
+      p.side = false
     end
     if i.name == "tapReady" then
       legAnim.l:setAnimation(3)
@@ -61,13 +62,25 @@ function uminigame(dt)
     end
     if i.name == "tap3bpre" then
       ready = false
-      p.side = true
+      p.side = false
+    end
+    if i.name == "tap3b" then
+      legAnim.r:setAnimation(5)
+      legAnim.l:setAnimation(4)
+    end
+    if i.name == "bom1" then
+      legAnim.l:setAnimation(9)
+      legAnim.r:setAnimation(10)
+    end
+    if i.name == "bom2" then
+      legAnim.r:setAnimation(9)
+      legAnim.l:setAnimation(10)
     end
   end
   
   if input["pressA"] then
+    p.side = not p.side
     if not ready then
-      p.side = not p.side
       if p.side then 
         legAnim.pl:setAnimation(3)
         legAnim.pr:setAnimation(5)
@@ -76,7 +89,17 @@ function uminigame(dt)
         legAnim.pr:setAnimation(3)
       end
     else
-      legAnim.pr:setAnimation(9)
+      if p.side then 
+        legAnim.pr:setAnimation(9)
+        if legAnim.pl:getAnimation() == 8 then
+          legAnim.pl:setAnimation(10)
+        end
+      else 
+        legAnim.pl:setAnimation(9)
+        if legAnim.pr:getAnimation() == 8 then
+          legAnim.pr:setAnimation(10)
+        end
+      end
     end
     p.bounce = 20
     
@@ -118,6 +141,11 @@ function uminigame(dt)
         i:setAnimation(8)
       end
     end
+    if i:getAnimation() == 10 then
+      if i:animationEnd() then
+        i:setAnimation(11)
+      end
+    end
   end
 end
 
@@ -128,7 +156,7 @@ function dminigame()
   for i = 1,tapperAmount do
     local dist = 150
     local baseX = 128
-    local rLegOffset = 60
+    local rLegOffset = 50
     local y = view.height/2+512+128 -16
     
     local lanim = legAnim.l

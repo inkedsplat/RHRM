@@ -902,7 +902,7 @@ function love.load()
           cues = {
             {name = "tap1",x = 0,cueId = "tapTroupeReady1"},
             {name = "tapReady",x = 64,cueId = "tapTroupeReady2"},
-            {name = "ready",x = 64+32,cueId = "silence"},
+            {name = "ready",x = 64+48,cueId = "silence"},
           },
           hits = {
             {name = "tap1p",x = 0,cueId = "silence",input = "pressA"},
@@ -910,19 +910,37 @@ function love.load()
           },
         },
         {
-          name = "tap no boms",
-          length = 128,
+          name = "and",
+          length = 32,
           cues = {
             {name = "and",x = 0,cueId = "tapTroupeAnd"},
-            {name = "tapb",x = 32,cueId = "tapTroupeTapVoice1"},
-            {name = "tapb",x = 64+16,cueId = "tapTroupeTapVoice2"},
-            {name = "tap3bpre",x = 128-16,cueId = "silence"},
-            {name = "tap3b",x = 128,cueId = "tapTroupeTapVoice3"},
+          },
+        },
+        {
+          name = "tap tap TAP",
+          length = 128,
+          cues = {
+            {name = "tapb",x = 0,cueId = "tapTroupeTapVoice1"},
+            {name = "tapb",x = 64+16-32,cueId = "tapTroupeTapVoice2"},
+            {name = "tap3bpre",x = 128-16-32,cueId = "silence"},
+            {name = "tap3b",x = 128-32,cueId = "tapTroupeTapVoice3"},
           },
           hits = {
-            {name = "tap1p",x = 32,cueId = "silence",input = "pressA"},
-            {name = "tap1p",x = 64+16,cueId = "silence",input = "pressA"},
-            {name = "tap1p",x = 128,cueId = "silence",input = "pressA"},
+            {name = "tap1p",x = 32-32,cueId = "silence",input = "pressA"},
+            {name = "tap1p",x = 64+16-32,cueId = "silence",input = "pressA"},
+            {name = "tap1p",x = 128-32,cueId = "silence",input = "pressA"},
+          },
+        },
+        {
+          name = "2 boms",
+          length = 16*6,
+          cues = {
+            {name = "bom1",x = 0,cueId = "tapTroupeBom1"},
+            {name = "bom2",x = 16*3,cueId = "tapTroupeBom2"},
+          },
+          hits = {
+            {name = "bom1p",x = 0,cueId = "silence",input = "pressA"},
+            {name = "bom1p",x = 16*3,cueId = "silence",input = "pressA"},
           },
         },
       }

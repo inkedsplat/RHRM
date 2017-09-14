@@ -71,7 +71,7 @@ function loadGameInputs(seekTime)
     data.music:seek(seekTime)
   end
   
-  auto = false
+  auto = true
 end
 
 function love.keypressed(key,scancode,isRepeat)

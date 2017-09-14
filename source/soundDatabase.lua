@@ -169,6 +169,9 @@ function initializeCues()
   cue["tapTroupeTapVoice1"] = function() return newSource("/resources/sfx/tap troupe/tapVoice1.ogg") end
   cue["tapTroupeTapVoice2"] = function() return newSource("/resources/sfx/tap troupe/tapVoice2.ogg") end
   cue["tapTroupeTapVoice3"] = function() return newSource("/resources/sfx/tap troupe/tapVoice3.ogg") end
+  
+  cue["tapTroupeBom1"] = function() return newSource("/resources/sfx/tap troupe/bom1.ogg") end
+  cue["tapTroupeBom2"] = function() return newSource("/resources/sfx/tap troupe/bom2.ogg") end
 end
 
 
