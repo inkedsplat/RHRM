@@ -17,7 +17,7 @@ function loadGameInputs(seekTime)
   end
   
   
-  minigame = 16
+  minigame = 1
   for _,i in pairs(data.beatmap.switches) do
     if i.time <= 0 then
       minigame = i.minigame
@@ -71,7 +71,7 @@ function loadGameInputs(seekTime)
     data.music:seek(seekTime)
   end
   
-  auto = true
+  auto = false
 end
 
 function love.keypressed(key,scancode,isRepeat)

@@ -23,7 +23,7 @@ function love.load()
     love.filesystem.createDirectory("/library")
   end
   
-  version = "0.7.0"
+  version = "0.7.0-SNAPSHOT-2"
   love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()
@@ -897,6 +897,26 @@ function love.load()
           },
         },
         {
+          name = "tap 1",
+          length = 256,
+          cues = {
+            {name = "tap1",x = 0,cueId = "tapTroupeTap1"},
+          },
+          hits = {
+            {name = "tap1p",x = 0,cueId = "silence",input = "pressA"},
+          },
+        },
+        {
+          name = "tap 2",
+          length = 256,
+          cues = {
+            {name = "tap2",x = 0,cueId = "tapTroupeTap2"},
+          },
+          hits = {
+            {name = "tap2p",x = 0,cueId = "silence",input = "pressA"},
+          },
+        },
+        {
           name = "ready",
           length = 128,
           cues = {
@@ -943,6 +963,26 @@ function love.load()
             {name = "bom1p",x = 16*3,cueId = "silence",input = "pressA"},
           },
         },
+        {
+          name = "bom 1",
+          length = 16*6,
+          cues = {
+            {name = "bom1",x = 0,cueId = "tapTroupeBom1"},
+          },
+          hits = {
+            {name = "bom1p",x = 0,cueId = "silence",input = "pressA"},
+          },
+        },
+        {
+          name = "bom 2",
+          length = 16*6,
+          cues = {
+            {name = "bom2",x = 0,cueId = "tapTroupeBom2"},
+          },
+          hits = {
+            {name = "bom1p",x = 0,cueId = "silence",input = "pressA"},
+          },
+        },
       }
     }
   }
@@ -971,7 +1011,12 @@ function love.load()
   
   minigame = 0
   if love.filesystem.exists("preferences.sav") then
-    screen = "editor"
+    if love.filesystem.isFused() then
+      screen = "credits"
+      loadCredits()
+    else 
+      screen = "editor"
+    end
     loadMenu()
     
     local file = love.filesystem.newFile("preferences.sav")
@@ -1216,6 +1261,8 @@ function love.update(dt)
     updateRemixOptions(dt)
   elseif screen == "init" then
     updateInit(dt)
+  elseif screen == "credits" then
+    updateCredits(dt)
   end
   
   mouse.button.pressed[1] = false
@@ -1245,6 +1292,8 @@ function love.draw()
     drawRemixOptions()
   elseif screen == "init" then
     drawInit()
+  elseif screen == "credits" then
+    drawCredits()
   end
   --draw the canvas
   love.graphics.reset()
