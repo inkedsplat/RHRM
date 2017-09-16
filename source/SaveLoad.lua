@@ -6,6 +6,9 @@ function updateSavescreen(dt)
       if my > 96+24*k and my < 96+24*(k+1)-1 then
         if mouse.button.pressed[1] then
           entry = i
+          if exportRemixBool then
+            exportRemix()
+          end
         end
       end
       k = k+1
@@ -19,14 +22,20 @@ function drawSavescreen()
   setColorHex(editor.scheme.grid)
   love.graphics.rectangle("line",view.width/2-256,view.height/2-256,256*2,256*2)
   love.graphics.setFont(fontBig)
-  if loadRemixBool then
+  if exportRemixBool then
+    printNew("EXPORT REMIX",view.width/2-128,32)
+    love.graphics.setFont(font)
+    love.graphics.printf("choose the remix you want to export",view.width/2-256,48,512,"center")
+  elseif loadRemixBool then
     printNew("LOAD REMIX",view.width/2-128,32)
   else
     printNew("SAVE REMIX",view.width/2-128,32)
   end
   love.graphics.setFont(font)
   
-  printNew(entry,view.width/2-128,64)
+  if not exportRemixBool then
+    printNew(entry,view.width/2-128,64)
+  end
   
   local k = 0
   local mx, my = love.mouse.getPosition()
@@ -137,6 +146,31 @@ function saveRemix()
     end
   end
   love.window.setTitle("RHRM - "..version.." - "..entry)
+end
+
+function exportRemix()
+  local userDir = love.filesystem.getUserDirectory()
+  
+  local destPath = userDir..[[Desktop\]]..entry..".zip"
+  
+  local path = userDir..[[AppData\Roaming\rhythmHeavenRemixMaker\remixes\]]..entry..[[\beatmap.rhrm]]
+  
+  local script = [[Compress-Archive -Path ]]..path..[[ -DestinationPath ]]..destPath
+  executePowershell(script)
+  
+  for _,i in pairs(love.filesystem.getDirectoryItems("/remixes/"..entry)) do
+    if i ~= "beatmap.rhrm" then
+      path = userDir..[[AppData\Roaming\rhythmHeavenRemixMaker\remixes\]]..entry..[[\]]..i
+      script = [[Compress-Archive -Path ]]..path..[[ -Update -DestinationPath ]]..destPath
+      executePowershell(script)
+    end
+  end
+  
+  script = [[Rename-Item -Path "]]..destPath..[[" -NewName "]]..entry..[[.brhrm"]]
+  executePowershell(script)
+  
+  print("YOUR REMIX WAS EXPORTED TO YOUR DESKTOP AS "..entry..".brhrm")
+  screen = "editor"
 end
 
 function writeData(t)
@@ -466,3 +500,4 @@ elseif i.name == "extreme bob" then
         data.options.karateka.extremeBob = i.val
       end
 ]]
+os.execute()

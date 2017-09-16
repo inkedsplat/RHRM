@@ -131,7 +131,7 @@ function love.keypressed(key,scancode,isRepeat)
       data.music:stop()
       data.music:play()
       data.music:setVolume(0.25)
-      loadGameInputs()
+      loadGameInputs(0)
     end
     
     if data.beatmap.editor then

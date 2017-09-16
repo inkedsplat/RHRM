@@ -10,6 +10,7 @@ require("init")
 json = require("json")
 
 function love.load()
+  
   font = love.graphics.newFont("/resources/rodin.otf",17)
   fontBig = love.graphics.newFont("/resources/rodin.otf",35)
   
@@ -23,7 +24,7 @@ function love.load()
     love.filesystem.createDirectory("/library")
   end
   
-  version = "0.7.0-SNAPSHOT-2"
+  version = "0.7.0-SNAPSHOT-3"
   love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()
@@ -1009,13 +1010,22 @@ function love.load()
     end
   end
   
+  local w,h = love.graphics.getDimensions()
+  view = {
+    canvas = love.graphics.newCanvas(w,h),
+    width = 1920/2,
+    height = 1080/2,
+    flipH = 1,
+    flipV = 1
+  }
+  
   minigame = 0
   if love.filesystem.exists("preferences.sav") then
     if love.filesystem.isFused() then
       screen = "credits"
       loadCredits()
     else 
-      screen = "editor"
+      screen = "menu"
     end
     loadMenu()
     
@@ -1027,15 +1037,6 @@ function love.load()
     screen = "init"
     loadInit()
   end
-  
-  local w,h = love.graphics.getDimensions()
-  view = {
-    canvas = love.graphics.newCanvas(w,h),
-    width = 1920/2,
-    height = 1080/2,
-    flipH = 1,
-    flipV = 1
-  }
   
   loadEditor()
   
@@ -1452,4 +1453,22 @@ end
 
 function getRemixTime()
   return data.time
+end
+
+function sign(n)
+  if n > 0 then
+    return 1
+  elseif n < 0 then
+    return -1
+  end
+  return 0
+end
+
+function executePowershell(str)
+  -- You can generate PowerShell script at run-time
+  local script = str
+  -- Now create powershell process and feed your script to its stdin
+  local pipe = io.popen("powershell -command -", "w")
+  pipe:write(script)
+  pipe:close()
 end

@@ -269,6 +269,7 @@ function loadEditor()
     entry = ""
     files = love.filesystem.getDirectoryItems("/remixes/")
     loadRemixBool = true
+    exportRemixBool = false
   end
   createButton(48*6,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/load.png"),editor.scheme.block,true,"load")
   
@@ -278,15 +279,26 @@ function loadEditor()
     entry = data.dir or ""
     files = love.filesystem.getDirectoryItems("/remixes/")
     loadRemixBool = false
+    exportRemixBool = false
   end
   createButton(48*7,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/save.png"),editor.scheme.block,true,"save")
+  
+  local function f()
+    --EXPORT AS A .BRHRM
+    screen = "save"
+    entry = data.dir or ""
+    files = love.filesystem.getDirectoryItems("/remixes/")
+    loadRemixBool = false
+    exportRemixBool = true
+  end
+  createButton(48*8,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/export.png"),editor.scheme.block,true,"export")
   
   local function f()
     screen = "remixOptions"
     loadRemixOptions()
   end
   
-  createButton(48*8,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/options.png"),editor.scheme.block,true,"options")
+  createButton(48*10,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/options.png"),editor.scheme.block,true,"options")
   
   local function f()
     editor.metronome = not editor.metronome

@@ -1,15 +1,112 @@
 function loadMenu()
+  love.graphics.setDefaultFilter("nearest","nearest")
   menu = {
     loadPhase = 0,
     remixIntro = love.audio.newSource("/resources/sfx/game/remixIntro.ogg"),
     remixIntroImg = love.graphics.newImage("/resources/gfx/game/remix.png"),
-    remixIntroSize = 0.1
+    remixIntroSize = 0.1,
+    
+    img = {
+      logo = love.graphics.newImage("/resources/gfx/menu/logo.png"),
+      buttonSheet = love.graphics.newImage("/resources/gfx/menu/buttons.png"),
+      baristaSheet = love.graphics.newImage("/resources/gfx/menu/barista.png")
+    },
+    buttons = {},
+    stars = {}
   }
+  menu.quad = {
+    buttonOn = love.graphics.newQuad(0,0,256,32,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+    buttonOff = love.graphics.newQuad(0,32,256,32,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+    baristaBox = love.graphics.newQuad(160,96,48,32,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+    
+    play = love.graphics.newQuad(0,64,96,32,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+    create = love.graphics.newQuad(96,64,144,32,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+    library = love.graphics.newQuad(0,96,160,32,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+    
+    star = {
+      [0] = love.graphics.newQuad(240,64,16,16,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+      [1] = love.graphics.newQuad(240,64+16,16,16,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+      [2] = love.graphics.newQuad(208,96,24,20,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+      [3] = love.graphics.newQuad(208+24,96,24,20,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+      [4] = love.graphics.newQuad(208,116,5,5,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+      [5] = love.graphics.newQuad(208+5,116,5,5,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+    }
+  }
+  
+  for i = 1,50 do
+    local t = {
+      quad = menu.quad.star[love.math.random(0,5)],
+      y = love.math.random(16,view.height-16),
+      x = love.math.random(16,view.width-16),
+      r = 0,--love.math.random(-0.1,0.1),
+      side = 0
+    }
+    table.insert(menu.stars,t)
+  end
+  
+  local x = view.width/2-256
+  local y = 128+64
+  local dist = 96
+  
+  local t = {
+    x = x,
+    y = y,
+    on = false,
+    text = menu.quad.play,
+    tw = 96,
+    bounce = 0,
+    bounceOld = 0,
+    barista = newAnimationGroup(menu.img.baristaSheet)
+  }
+  t.barista:addAnimation("anim",0,0,32,32,6,100)
+  table.insert(menu.buttons,t)
+  local t = {
+    x = x,
+    y = y+dist,
+    on = false,
+    text = menu.quad.create,
+    tw = 144,
+    bounce = 0,
+    bounceOld = 0
+  }
+  table.insert(menu.buttons,t)
+  local t = {
+    x = x,
+    y = y+dist*2,
+    on = false,
+    text = menu.quad.library,
+    tw = 160,
+    bounce = 0,
+    bounceOld = 0
+  }
+  table.insert(menu.buttons,t)
 end
 
 function updateMenu(dt)
   if menu.loadPhase == 0 then
-    if mouse.button.pressed[1] then
+    
+    local mx,my = love.mouse.getPosition()
+    for _,i in pairs(menu.buttons) do
+      
+      i.bounce = i.bounce-1*sign(i.bounce)
+      if i.barista then
+        i.barista:update(dt)
+      end
+      
+      if mx > i.x and mx < i.x+512 and my > i.y and my < i.y+64 then
+        if not i.on then
+          i.on = true
+          i.bounce = -10
+        end
+      else
+        if i.on then
+          i.on = false
+          i.bounce = 8
+        end
+      end
+
+    end
+    --[[if mouse.button.pressed[1] then
       local mx,my = love.mouse.getPosition()
       if my > 256-4 and my < 256+16 then
         deleteTempFiles()
@@ -18,7 +115,7 @@ function updateMenu(dt)
       elseif my > 256+32-4 and my < 256+16+32 then
         screen = "editor"
       end
-    end
+    end]]
   end
   if menu.loadPhase >= 3 and menu.loadPhase < 4 then
     menu.loadPhase = menu.loadPhase+0.003
@@ -35,10 +132,35 @@ end
 
 function drawMenu()
   if menu.loadPhase == 0 then
-    setColorHex("a9a9a9")
+    setColorHex("5096ff")
     love.graphics.rectangle("fill",0,0,view.width,view.height)
     
-    local mx,my = love.mouse.getPosition()
+    setColorHex("ffffff")
+    for _,i in pairs(menu.stars) do
+      love.graphics.draw(menu.img.buttonSheet,i.quad,i.x+i.side*(view.width-256),i.y,i.r,2,2)
+    end
+    
+    for _,i in pairs(menu.buttons) do
+      local q = menu.quad.buttonOff
+      if i.on then
+        q = menu.quad.buttonOn
+      end
+      i.bounceOld = (i.bounce+i.bounceOld)/2
+      local bounce = i.bounceOld
+      
+      love.graphics.draw(menu.img.buttonSheet,q,i.x,i.y+bounce,0,2,2)
+      
+      love.graphics.draw(menu.img.buttonSheet,i.text,i.x+256,i.y+bounce,0,2,2,i.tw/2)
+      
+      if i.on then
+        love.graphics.draw(menu.img.buttonSheet,menu.quad.baristaBox,i.x-46*2,i.y+bounce,0,2,2)
+        if i.barista then
+          i.barista:draw(i.x-40*2,i.y+bounce,0,2,2)
+        end
+      end
+    end
+    
+    --[[local mx,my = love.mouse.getPosition()
     love.graphics.setFont(fontBig)
     setColorHex("000000")
     if my > 256-4 and my < 256+16 then
@@ -53,6 +175,10 @@ function drawMenu()
     printNew("CREATE",64,256+32)
     setColorHex("000000")
     love.graphics.setFont(font)
+    
+    setColorHex("ffffff")
+    love.graphics.draw(menu.img.logo,view.width/2,0,0,0.25,0.25,menu.img.logo:getWidth()/2,0)]]
+    setColorHex("000000")
     printNew(version.." welcome "..pref.username.."!",8,view.height-16)
   else
     love.graphics.setFont(fontBig)
