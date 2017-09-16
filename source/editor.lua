@@ -13,7 +13,9 @@ function loadEditor()
       playheadInGame = "768aec",
       stop = "e53f3f",
       playtest = "ffffff",
-      tempoChanges=  "c0a0ff"
+      tempoChanges= "c0a0ff",
+      text = "000000",
+      musicStart = "f85060"
     },
     snd = {
       metronome = love.audio.newSource("/resources/sfx/metronome.ogg"),
@@ -49,6 +51,12 @@ function loadEditor()
     
     buttons = {}
   }
+  
+  if pref.theme then
+    editor.scheme = pref.theme
+  end
+  love.system.setClipboardText(json.encode(editor.scheme))
+  
   local function f()
     editor.playing = true
     data.beat = math.max(editor.beatStart,0)
@@ -737,6 +745,7 @@ function drawEditor()
         end
         setColorHex(pal.blockOutline)
         love.graphics.rectangle("line",i.x+editor.viewX,i.y+editor.buttonSpace,i.length,editor.gridheight)
+        setColorHex(pal.text)
         printNew(i.name,i.x+editor.viewX+4,i.y+editor.buttonSpace+4)
         
         if i.pitchShift then
@@ -758,6 +767,7 @@ function drawEditor()
             setColorHex(pal.blockOutlineLight)
             love.graphics.line(i.x+editor.viewX+h.x,i.y+editor.buttonSpace,i.x+editor.viewX+h.x,i.y+editor.gridheight+editor.buttonSpace)
             setColorHex(pal.blockOutline)
+            setColorHex(pal.text)
             printNew(h.name,i.x+editor.viewX+4+h.x,i.y+editor.buttonSpace+32+4)
             
             --print("hit "..math.floor(editor.playhead).." "..i.x+h.x.." "..tostring(h.played).." "..k)
@@ -787,7 +797,7 @@ function drawEditor()
             
             setColorHex(pal.blockOutlineLight)
             love.graphics.line(i.x+editor.viewX+c.x,i.y+editor.buttonSpace,i.x+editor.viewX+c.x,i.y+editor.gridheight+editor.buttonSpace)
-            setColorHex(pal.blockOutline)
+            setColorHex(pal.text)
             printNew(c.name,i.x+editor.viewX+4+c.x,i.y+editor.buttonSpace+16+4)
             
             if c.loop then
@@ -830,7 +840,7 @@ function drawEditor()
       end
       love.graphics.line(i.x+editor.viewX,editor.buttonSpace,i.x+editor.viewX,editor.buttonSpace+editor.gridspace)
       
-      setColorHex(pal.grid)
+      setColorHex(pal.text)
       printNew(i.bpm,i.x+8+editor.viewX+1,editor.buttonSpace+8)
       printNew(i.bpm,i.x+8+editor.viewX-1,editor.buttonSpace+8)
       printNew(i.bpm,i.x+8+editor.viewX,editor.buttonSpace+8+1)
@@ -870,7 +880,7 @@ function drawEditor()
   setColorHex(pal.grid)
   love.graphics.setLineWidth(5)
   love.graphics.line(x+editor.viewX,editor.buttonSpace,x+editor.viewX,editor.buttonSpace+editor.gridspace)
-  setColorHex("f85060")
+  setColorHex(pal.musicStart)
   love.graphics.setLineWidth(3)
   love.graphics.line(x+editor.viewX,editor.buttonSpace,x+editor.viewX,editor.buttonSpace+editor.gridspace)
   --PATTERN SELECT or however you would call that thing idk
@@ -883,7 +893,7 @@ function drawEditor()
       if editor.selectedMinigame == n then
         setColorHex(pal.blockOutlineLight)
       else
-        setColorHex(pal.grid)
+        setColorHex(pal.text)
       end
     end
     if 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll > editor.gridspace+40 and not i.hidden then
@@ -900,7 +910,7 @@ function drawEditor()
         if mx > view.width/2 and mx < view.width and my > 8+editor.buttonSpace+editor.gridspace+24*(n-1)-editor.patternScroll and my < 8+editor.buttonSpace+editor.gridspace+24*(n-1)+16-editor.patternScroll then
           setColorHex(pal.block)
         else
-          setColorHex(pal.grid)
+          setColorHex(pal.text)
         end
         
         if 8+editor.buttonSpace+editor.gridspace+24*(n)-editor.patternScroll > editor.gridspace+64 then
@@ -928,7 +938,7 @@ function drawEditor()
       love.graphics.draw(i.img,i.x,i.y)
     end
   end
-  setColorHex("000000")
+  setColorHex(pal.text)
   if data.music then
     printNew("BPM : "..tostring(data.bpm),48*3+8,8)
     printNew("TIME : "..string.sub(tostring(data.music:tell()),1,5),48*3+8,8+22)

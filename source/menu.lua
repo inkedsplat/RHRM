@@ -12,7 +12,14 @@ function loadMenu()
       baristaSheet = love.graphics.newImage("/resources/gfx/menu/barista.png")
     },
     buttons = {},
-    stars = {}
+    stars = {},
+    music = love.audio.newSource("/resources/music/space dance (GBA).ogg"),
+    bpm = 120,
+    beat = 0,
+    beatCount = 0,
+    beatAnim = false,
+    bounce = 0,
+    bounceOld = 0,
   }
   menu.quad = {
     buttonOn = love.graphics.newQuad(0,0,256,32,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
@@ -22,6 +29,10 @@ function loadMenu()
     play = love.graphics.newQuad(0,64,96,32,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
     create = love.graphics.newQuad(96,64,144,32,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
     library = love.graphics.newQuad(0,96,160,32,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+    
+    rhrmR = love.graphics.newQuad(0,128,48,48,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+    rhrmH = love.graphics.newQuad(48,128,48,48,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
+    rhrmM = love.graphics.newQuad(48*2,128,48,48,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
     
     star = {
       [0] = love.graphics.newQuad(240,64,16,16,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
@@ -36,16 +47,28 @@ function loadMenu()
   for i = 1,50 do
     local t = {
       quad = menu.quad.star[love.math.random(0,5)],
-      y = love.math.random(16,view.height-16),
-      x = love.math.random(16,view.width-16),
+      y = love.math.random(0,view.height),
+      x = love.math.random(0,view.width),
       r = 0,--love.math.random(-0.1,0.1),
-      side = 0
+      depth = love.math.random(1,3),
+      bounce = 0,
+      oldBounce = 0,
     }
+    if t.quad == menu.quad.star[0] or menu.quad.star[1] then
+      t.w = 16
+      t.h = 16
+    elseif t.quad == menu.quad.star[2] or menu.quad.star[3] then
+      t.w = 24
+      t.h = 20
+    else
+      t.w = 5
+      t.h = 5
+    end
     table.insert(menu.stars,t)
   end
   
   local x = view.width/2-256
-  local y = 128+64
+  local y = 128+64+32
   local dist = 96
   
   local t = {
@@ -56,7 +79,8 @@ function loadMenu()
     tw = 96,
     bounce = 0,
     bounceOld = 0,
-    barista = newAnimationGroup(menu.img.baristaSheet)
+    barista = newAnimationGroup(menu.img.baristaSheet),
+    n = 1,
   }
   t.barista:addAnimation("anim",0,0,32,32,6,100)
   table.insert(menu.buttons,t)
@@ -67,8 +91,11 @@ function loadMenu()
     text = menu.quad.create,
     tw = 144,
     bounce = 0,
-    bounceOld = 0
+    bounceOld = 0,
+    barista = newAnimationGroup(menu.img.baristaSheet),
+    n = 2,
   }
+  t.barista:addAnimation("anim",0,32,32,32,8,100)
   table.insert(menu.buttons,t)
   local t = {
     x = x,
@@ -84,6 +111,21 @@ end
 
 function updateMenu(dt)
   if menu.loadPhase == 0 then
+    local dist = 1
+    local time = (60000/menu.bpm)
+    local spd = dist/time
+    
+    menu.beat = menu.beat+spd*(dt*1000)
+    menu.beatAnim = false
+    menu.bounce = menu.bounce/1.1
+    if menu.beat >= menu.beatCount then
+      menu.beatCount = menu.beatCount+1
+      menu.beatAnim = true
+      menu.bounce = 10
+    end
+    menu.bounceOld = (menu.bounce+menu.bounceOld)/2
+    
+    menu.music:play()
     
     local mx,my = love.mouse.getPosition()
     for _,i in pairs(menu.buttons) do
@@ -97,6 +139,19 @@ function updateMenu(dt)
         if not i.on then
           i.on = true
           i.bounce = -10
+        else
+          if love.mouse.isDown(1) then
+            if i.n == 1 then
+              deleteTempFiles()
+              love.window.setTitle("RHRM - "..version)
+              menu.loadPhase = 1
+            elseif i.n == 2 then
+              screen = "editor"
+            end
+            menu.music:stop()
+            menu.beatCount = 0
+            menu.beat = 0
+          end
         end
       else
         if i.on then
@@ -104,8 +159,26 @@ function updateMenu(dt)
           i.bounce = 8
         end
       end
-
     end
+  
+    for _,i in pairs(menu.stars) do
+      
+      if i.bounce > 0 then
+        i.bounce = i.bounce/1.1
+      end
+      if menu.beatAnim then
+        i.bounce = 1
+      end
+      
+      i.y = i.y-i.depth
+      if i.y < -32 then
+        i.y = view.height+32
+      end
+      if i.x < -32 then
+        i.x = view.width+32
+      end
+    end
+  
     --[[if mouse.button.pressed[1] then
       local mx,my = love.mouse.getPosition()
       if my > 256-4 and my < 256+16 then
@@ -137,7 +210,9 @@ function drawMenu()
     
     setColorHex("ffffff")
     for _,i in pairs(menu.stars) do
-      love.graphics.draw(menu.img.buttonSheet,i.quad,i.x+i.side*(view.width-256),i.y,i.r,2,2)
+      
+      i.oldBounce = (i.bounce+i.oldBounce)/2
+      love.graphics.draw(menu.img.buttonSheet,i.quad,i.x,i.y,i.r,2+i.oldBounce,2+i.oldBounce,i.w/2,i.h/2)
     end
     
     for _,i in pairs(menu.buttons) do
@@ -159,6 +234,29 @@ function drawMenu()
         end
       end
     end
+    
+    local yoff = 16
+    local xoff = -48+8
+    local rad = 64+10+menu.bounceOld/4
+    
+    setColorHex("4946bd")
+    love.graphics.circle("fill",view.width/2+128+xoff,64+32+yoff+menu.bounceOld,rad)
+    love.graphics.circle("fill",view.width/2+64+xoff,64-12+yoff-menu.bounceOld,rad)
+    love.graphics.circle("fill",view.width/2+xoff,64+28+yoff+menu.bounceOld,rad)
+    love.graphics.circle("fill",view.width/2-64+xoff,64+yoff-menu.bounceOld,rad)
+    
+    rad = 64-menu.bounceOld/4
+    setColorHex("000000")
+    love.graphics.circle("fill",view.width/2+128+xoff,64+32+yoff+menu.bounceOld,rad)
+    love.graphics.circle("fill",view.width/2+64+xoff,64-12+yoff-menu.bounceOld,rad)
+    love.graphics.circle("fill",view.width/2+xoff,64+28+yoff+menu.bounceOld,rad)
+    love.graphics.circle("fill",view.width/2-64+xoff,64+yoff-menu.bounceOld,rad)
+    
+    setColorHex("ffffff")
+    love.graphics.draw(menu.img.buttonSheet,menu.quad.rhrmM,view.width/2+128+xoff,64+32+yoff+menu.bounceOld,0,2,2,48/2,48/2)
+    love.graphics.draw(menu.img.buttonSheet,menu.quad.rhrmR,view.width/2+64+xoff,64-12+yoff-menu.bounceOld,0,2,2,48/2,48/2)
+    love.graphics.draw(menu.img.buttonSheet,menu.quad.rhrmH,view.width/2+xoff,64+28+yoff+menu.bounceOld,0,2,2,48/2,48/2)
+    love.graphics.draw(menu.img.buttonSheet,menu.quad.rhrmR,view.width/2-64+xoff,64+yoff-menu.bounceOld,0,2,2,48/2,48/2)
     
     --[[local mx,my = love.mouse.getPosition()
     love.graphics.setFont(fontBig)

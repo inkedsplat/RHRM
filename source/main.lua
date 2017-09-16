@@ -1025,7 +1025,7 @@ function love.load()
       screen = "credits"
       loadCredits()
     else 
-      screen = "menu"
+      screen = "editor"
     end
     loadMenu()
     
@@ -1103,7 +1103,13 @@ end
 function love.filedropped(file)
   if screen == "editor" then
   local filename = file:getFilename()
-    if string.lower(string.sub(filename,filename:len()-3)) == ".ogg" or string.lower(string.sub(filename,filename:len()-3)) == ".wav" or string.lower(string.sub(filename,filename:len()-3)) == ".mp3" then
+    if string.lower(string.sub(filename,filename:len()-3)) == ".thm" then
+      if file:open("r") then
+        local d = file:read()
+        pref.theme = json.decode(d)
+        loadEditor()
+      end
+    elseif string.lower(string.sub(filename,filename:len()-3)) == ".ogg" or string.lower(string.sub(filename,filename:len()-3)) == ".wav" or string.lower(string.sub(filename,filename:len()-3)) == ".mp3" then
       editorLoadMusic(file)
     elseif string.lower(string.sub(filename,filename:len()-4)) == ".rhrm" then
       editorLoadBeatmap(file)
@@ -1313,6 +1319,8 @@ function love.draw()
 end
 
 function love.quit()
+  local d = json.encode(pref)
+  love.filesystem.write("preferences.sav",d)
   deleteTempFiles()
 end
 
