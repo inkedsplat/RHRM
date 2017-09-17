@@ -45,6 +45,7 @@ function love.load()
   minigames = {
     [0] = {
       name = "misc",
+      img = love.graphics.newImage("/resources/gfx/editor/icons/misc.png"),
       blocks = {
         {
           name = "END REMIX",
@@ -826,6 +827,7 @@ function love.load()
     },  
     [14] = {
       name = "tap trial (GBA)",
+      img = love.graphics.newImage("/resources/gfx/editor/icons/tapTrial.png"),
       blocks = {
         {
           name = "tap",
@@ -866,6 +868,7 @@ function love.load()
     },
     [15] = {
       name = "crop stomp",
+      img = love.graphics.newImage("/resources/gfx/editor/icons/cropStomp.png"),
       hidden = true,
       blocks = {
         
@@ -899,7 +902,7 @@ function love.load()
         },
         {
           name = "tap 1",
-          length = 256,
+          length = 64,
           cues = {
             {name = "tap1",x = 0,cueId = "tapTroupeTap1"},
           },
@@ -909,7 +912,7 @@ function love.load()
         },
         {
           name = "tap 2",
-          length = 256,
+          length = 64,
           cues = {
             {name = "tap2",x = 0,cueId = "tapTroupeTap2"},
           },
@@ -938,18 +941,26 @@ function love.load()
           },
         },
         {
-          name = "tap tap TAP",
-          length = 128,
+          name = "tap tap",
+          length = 128-32,
           cues = {
             {name = "tapb",x = 0,cueId = "tapTroupeTapVoice1"},
             {name = "tapb",x = 64+16-32,cueId = "tapTroupeTapVoice2"},
             {name = "tap3bpre",x = 128-16-32,cueId = "silence"},
-            {name = "tap3b",x = 128-32,cueId = "tapTroupeTapVoice3"},
           },
           hits = {
             {name = "tap1p",x = 32-32,cueId = "silence",input = "pressA"},
             {name = "tap1p",x = 64+16-32,cueId = "silence",input = "pressA"},
-            {name = "tap1p",x = 128-32,cueId = "silence",input = "pressA"},
+          },
+        },
+        {
+          name = "TAP",
+          length = 64,
+          cues = {
+            {name = "tap3b",x = 0,cueId = "tapTroupeTapVoice3"},
+          },
+          hits = {
+            {name = "tap1p",x = 0,cueId = "silence",input = "pressA"},
           },
         },
         {
@@ -966,7 +977,7 @@ function love.load()
         },
         {
           name = "bom 1",
-          length = 16*6,
+          length = 16*3,
           cues = {
             {name = "bom1",x = 0,cueId = "tapTroupeBom1"},
           },
@@ -976,7 +987,7 @@ function love.load()
         },
         {
           name = "bom 2",
-          length = 16*6,
+          length = 16*3,
           cues = {
             {name = "bom2",x = 0,cueId = "tapTroupeBom2"},
           },
@@ -1025,7 +1036,7 @@ function love.load()
       screen = "credits"
       loadCredits()
     else 
-      screen = "editor"
+      screen = "menu"
     end
     loadMenu()
     

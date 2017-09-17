@@ -468,6 +468,17 @@ function createToggleButton(x,y,name,val)
   table.insert(toggleButtons,i)
 end
 
+function createMultiselectButton(x,y,name,val,default)
+  local i = {
+    x = x,
+    y = y,
+    name = name or "",
+    val = val,
+    default = default or 1,
+  }
+  table.insert(multiselectButtons,i)
+end
+
 function createOptionsTextinputs(subcat)
   if subcategory == "general" then
     createTextInput(view.width/2-256+16,128,256,16,"name",data.options.name)

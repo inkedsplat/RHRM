@@ -20,6 +20,11 @@ function loadMenu()
     beatAnim = false,
     bounce = 0,
     bounceOld = 0,
+    snd = {
+      buttonOn = love.audio.newSource("/resources/sfx/menu/buttonOn.ogg"),
+      buttonOff = love.audio.newSource("/resources/sfx/menu/buttonOff.ogg"),
+      buttonPress = love.audio.newSource("/resources/sfx/menu/buttonPress.ogg")
+    }
   }
   menu.quad = {
     buttonOn = love.graphics.newQuad(0,0,256,32,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
@@ -41,7 +46,7 @@ function loadMenu()
       [3] = love.graphics.newQuad(208+24,96,24,20,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
       [4] = love.graphics.newQuad(208,116,5,5,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
       [5] = love.graphics.newQuad(208+5,116,5,5,menu.img.buttonSheet:getWidth(),menu.img.buttonSheet:getHeight()),
-    }
+    },
   }
   
   for i = 1,50 do
@@ -125,7 +130,7 @@ function updateMenu(dt)
     end
     menu.bounceOld = (menu.bounce+menu.bounceOld)/2
     
-    menu.music:play()
+    --menu.music:play()
     
     local mx,my = love.mouse.getPosition()
     for _,i in pairs(menu.buttons) do
@@ -137,6 +142,8 @@ function updateMenu(dt)
       
       if mx > i.x and mx < i.x+512 and my > i.y and my < i.y+64 then
         if not i.on then
+          menu.snd.buttonOn:stop()
+          menu.snd.buttonOn:play()
           i.on = true
           i.bounce = -10
         else
@@ -151,10 +158,14 @@ function updateMenu(dt)
             menu.music:stop()
             menu.beatCount = 0
             menu.beat = 0
+            
+            menu.snd.buttonPress:play()
           end
         end
       else
         if i.on then
+          --menu.snd.buttonOff:stop()
+          --menu.snd.buttonOff:play()
           i.on = false
           i.bounce = 8
         end

@@ -52,7 +52,7 @@ function loadEditor()
     buttons = {}
   }
   
-  if pref.theme then
+  if pref and pref.theme then
     editor.scheme = pref.theme
   end
   love.system.setClipboardText(json.encode(editor.scheme))
