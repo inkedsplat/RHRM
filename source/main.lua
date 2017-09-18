@@ -876,6 +876,7 @@ function love.load()
     },
     [16] = {
       name = "tap troupe",
+      img = love.graphics.newImage("/resources/gfx/editor/icons/taptroupe.png"),
       blocks = {
         {
           name = "countIn",
@@ -996,7 +997,14 @@ function love.load()
           },
         },
       }
-    }
+    },
+    [17] = {
+      name = "fan club",
+      img = love.graphics.newImage("/resources/gfx/editor/icons/fanclub.png"),
+      blocks = {
+        
+      }
+    },
   }
   
   for _,i in pairs(minigames) do
@@ -1036,7 +1044,7 @@ function love.load()
       screen = "credits"
       loadCredits()
     else 
-      screen = "menu"
+      screen = "editor" --dev start screen
     end
     loadMenu()
     

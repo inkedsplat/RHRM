@@ -46,6 +46,8 @@ function loadCredits()
     "with some programming",
     "MarioFan5000",
     "with the tap trial sheet",
+    "Minenice55",
+    "with the fan club animations",
     "Pnegu123",
     "because he wanted to be in the credits",
   }
