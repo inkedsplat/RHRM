@@ -161,17 +161,29 @@ function initializeCues()
   
   cue["tapTroupeTap1"] = function() return newSource("/resources/sfx/tap troupe/tap1.ogg") end
   cue["tapTroupeTap2"] = function() return newSource("/resources/sfx/tap troupe/tap2.ogg") end
-  
   cue["tapTroupeReady1"] = function() return newSource("/resources/sfx/tap troupe/ready1.ogg") end
   cue["tapTroupeReady2"] = function() return newSource("/resources/sfx/tap troupe/ready2.ogg") end
-  
   cue["tapTroupeAnd"] = function() return newSource("/resources/sfx/tap troupe/and.ogg") end
   cue["tapTroupeTapVoice1"] = function() return newSource("/resources/sfx/tap troupe/tapVoice1.ogg") end
   cue["tapTroupeTapVoice2"] = function() return newSource("/resources/sfx/tap troupe/tapVoice2.ogg") end
   cue["tapTroupeTapVoice3"] = function() return newSource("/resources/sfx/tap troupe/tapVoice3.ogg") end
-  
   cue["tapTroupeBom1"] = function() return newSource("/resources/sfx/tap troupe/bom1.ogg") end
   cue["tapTroupeBom2"] = function() return newSource("/resources/sfx/tap troupe/bom2.ogg") end
+  
+  cue["fanClubSingerHai1"] = function() return newSource("/resources/sfx/fan club (3DS)/singerHai1.ogg") end
+  cue["fanClubSingerHai2"] = function() return newSource("/resources/sfx/fan club (3DS)/singerHai2.ogg") end
+  cue["fanClubSingerHai3"] = function() return newSource("/resources/sfx/fan club (3DS)/singerHai3.ogg") end
+  cue["fanClubAudienceHai"] = function() return newSource("/resources/sfx/fan club (3DS)/audienceHai.ogg") end
+  cue["fanClubSingerKamone1"] = function() return newSource("/resources/sfx/fan club (3DS)/singerKamone1.ogg") end
+  cue["fanClubSingerKamone2"] = function() return newSource("/resources/sfx/fan club (3DS)/singerKamone2.ogg") end
+  cue["fanClubSingerKamone3"] = function() return newSource("/resources/sfx/fan club (3DS)/singerKamone3.ogg") end
+  cue["fanClubAudienceKamone1"] = function() return newSource("/resources/sfx/fan club (3DS)/audienceKamone1.ogg") end
+  cue["fanClubAudienceKamone2"] = function() return newSource("/resources/sfx/fan club (3DS)/audienceKamone2.ogg") end
+  cue["fanClubAudienceKamone3"] = function() return newSource("/resources/sfx/fan club (3DS)/audienceKamone3.ogg") end
+  cue["fanClubAudienceKamone4"] = function() return newSource("/resources/sfx/fan club (3DS)/audienceKamone4.ogg") end
+  cue["fanClubOoh1"] = function() return newSource("/resources/sfx/fan club (3DS)/ooh1.ogg") end
+  cue["fanClubOoh2"] = function() return newSource("/resources/sfx/fan club (3DS)/ooh2.ogg") end
+  cue["fanClubOoh3"] = function() return newSource("/resources/sfx/fan club (3DS)/ooh3.ogg") end
 end
 
 

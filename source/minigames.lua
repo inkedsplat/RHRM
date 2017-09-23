@@ -26,15 +26,15 @@ end
 
 function newImageAssetFlipped(filename)                        
   if love.filesystem.exists("/tempAssets/"..filename) then                                       
-    print("temp")
+    --print("temp")
     return love.graphics.newImage("/tempAssets/"..filename)
   end
-  print("original")
+  --print("original")
   return love.graphics.newImage("/resources/gfx/"..filename)
 end
 function newImageAssetUserOnly(filename)    
   if love.filesystem.exists("/tempAssets/"..filename) then                                       
-    print("user Image")
+    --print("user Image")
     return love.graphics.newImage("/tempAssets/"..filename)
   end
   return nil

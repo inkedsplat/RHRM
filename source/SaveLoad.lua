@@ -101,7 +101,12 @@ function saveRemix()
   --save with "entry" as it's name
   data.dir = entry
   if not data.author then
-    data.autor = pref.username
+    data.author = pref.username
+  end
+  for _,i in pairs(data.blocks) do
+    if i.name == "END REMIX" then
+      data.length = (i.x*(60000/data.bpm))
+    end
   end
   
   local dir = "/remixes/"..entry
@@ -218,9 +223,10 @@ end
 function loadRemixOptions()
   subcategories = {
     [1] = "general",
-    [2] = "karate man (GBA)",
-    [3] = "clappy trio (WII)",
-    [4] = "lock step",
+    [2] = "remix intro",
+    [3] = "karate man (GBA)",
+    [4] = "clappy trio (WII)",
+    [5] = "lock step",
   }
   subCount = 1
   subcategory = "general"
@@ -342,11 +348,20 @@ function updateRemixOptions(dt)
         data.options.clappyTrio.headBeat = i.val
       end
     end
+  elseif subcategory == "remix intro" then
+    for _,i in pairs(textinputs) do
+      if i.name == "color 1" then
+        data.options.color1 = i.text
+      elseif i.name == "color 2" then
+        data.options.color2 = i.text
+      end
+    end
   end
 end
 
 --[[
-createToggleButton(view.width/2-256+16,128,"head bob",data.options.clappyTrio.headBeat)
+    createTextInput(view.width/2-256+16,128+24,256,16,"color 1",data.options.color1 or "00d8a8")
+    createTextInput(view.width/2-256+16,128+24*2,256,16,"color 2",data.options.color2 or "00e820")
 ]]
 
 function drawRemixOptions()
@@ -504,6 +519,10 @@ function createOptionsTextinputs(subcat)
     createTextInput(view.width/2-256+16,128+24*3+32,256,16,"use palette swap",data.options.lockStep.paletteSwap)
   elseif subcategory == "clappy trio (WII)" then
     createToggleButton(view.width/2-256+16,128,"head bob",data.options.clappyTrio.headBeat)
+  elseif subcategory == "remix intro" then
+    createTextInput(view.width/2-256+16,128,256,16,"intro style (WIP)",tostring(data.options.introStyle or 1),true)
+    createTextInput(view.width/2-256+16,128+24,256,16,"color 1",data.options.color1 or "00d8a8")
+    createTextInput(view.width/2-256+16,128+24*2,256,16,"color 2",data.options.color2 or "00e820")
   end
 end
 --[[
@@ -511,4 +530,4 @@ elseif i.name == "extreme bob" then
         data.options.karateka.extremeBob = i.val
       end
 ]]
-os.execute()
+--os.execute()

@@ -21,6 +21,7 @@ function lminigame()
     bounce = 0
   }
   o = {
+    side = true,
     bounce = 0
   }
   ready = false
@@ -37,14 +38,15 @@ function uminigame(dt)
       o.bounce = 20
       p.bounce = 20
     end
-    if i.name == "tap1" then
-      legAnim.l:setAnimation(5)
-      legAnim.r:setAnimation(3)
-      o.bounce = 20
-    end
-    if i.name == "tap2" then
-      legAnim.l:setAnimation(3)
-      legAnim.r:setAnimation(5)
+    if i.name == "tap1" or i.name == "tap2" then
+      o.side = not o.side
+      if o.side then
+        legAnim.l:setAnimation(3)
+        legAnim.r:setAnimation(5)
+      else
+        legAnim.l:setAnimation(5)
+        legAnim.r:setAnimation(3)
+      end
       o.bounce = 20
     end
     if i.name == "tapb" then
@@ -91,14 +93,14 @@ function uminigame(dt)
     else
       if p.side then 
         legAnim.pr:setAnimation(9)
-        if legAnim.pl:getAnimation() == 8 then
+        --if legAnim.pl:getAnimation() == 8 then
           legAnim.pl:setAnimation(10)
-        end
+        --end
       else 
         legAnim.pl:setAnimation(9)
-        if legAnim.pr:getAnimation() == 8 then
+        --if legAnim.pr:getAnimation() == 8 then
           legAnim.pr:setAnimation(10)
-        end
+        --end
       end
     end
     p.bounce = 20

@@ -212,11 +212,14 @@ function love.keypressed(key,scancode,isRepeat)
   elseif screen == "remixOptions" then
     keypressedRemixOptions(key)
   elseif screen == "menu" then
-    if menu.loadPhase > 0 then
-      menu.loadPhase = 0
-      initializeData()
-    else
-      love.event.quit()
+    if key == "escape" then
+      if menu.loadPhase > 0 then
+        menu.loadPhase = 0
+        tempData = nil
+        initializeData()
+      else
+        love.event.quit()
+      end
     end
   elseif screen == "init" then
     keypressedInit(key)
@@ -297,7 +300,7 @@ function updateGameInputs(dt)
     for _,s in pairs(data.beatmap.switches) do
       if data.beat >= s.beat and not s.played then
         s.played = true
-        print("SWITCHING TO "..minigames[s.minigame].name)
+        --print("SWITCHING TO "..minigames[s.minigame].name)
         minigameTime = 0
         minigame = s.minigame
         loadMinigame[minigame](s.beat)
@@ -328,8 +331,8 @@ function updateGameInputs(dt)
             s.sound:play()
             s.played = true
             table.insert(currentSounds,{name = s.name,time = s.beat})
-            print(s.beat,data.beat)
-            --print(s.name)
+            --print(s.beat,data.beat)
+            ----print(s.name)
           end
         end
       else
@@ -348,10 +351,10 @@ function updateGameInputs(dt)
               s.sound:play()
             end
             hit = 10
-            print("HIT")
+            --print("HIT")
           else
             misses = misses + 1
-            print(misses.." misses")
+            --print(misses.." misses")
             s.played = true
           end
           s.played = true
@@ -365,7 +368,7 @@ function updateGameInputs(dt)
             end
             s.played = true
             hit = 10
-            print("HIT WITH A MARGIN OF "..data.music:tell()-s.time)
+            --print("HIT WITH A MARGIN OF "..data.music:tell()-s.time)
             
             local h = {
               name = s.name,
@@ -382,7 +385,7 @@ function updateGameInputs(dt)
         elseif data.beat > s.beat-bearlyMargin and data.beat < s.beat+bearlyMargin then
           if input[s.input] and not s.played then
             misses = misses + 1
-            print("bearly hit  "..misses.." misses")
+            --print("bearly hit  "..misses.." misses")
             s.played = true
             
             local h = {
@@ -395,7 +398,7 @@ function updateGameInputs(dt)
         elseif data.beat > s.beat+bearlyMargin then
           if not s.played then
             misses = misses + 1
-            print(misses.." misses")
+            --print(misses.." misses")
             s.played = true
           end
         end
@@ -433,9 +436,9 @@ function updateGameInputs(dt)
           screen = "editor"
           data.music:setVolume(0.25)
           data.music:stop()
-          print(misses.." misses")
+          --print(misses.." misses")
           if misses == 0 then
-            print("YOU GOT A PERFECT")
+            --print("YOU GOT A PERFECT")
           end
         else
           data.music:stop()

@@ -2,8 +2,20 @@ function loadMenu()
   love.graphics.setDefaultFilter("nearest","nearest")
   menu = {
     loadPhase = 0,
-    remixIntro = love.audio.newSource("/resources/sfx/game/remixIntro.ogg"),
-    remixIntroImg = love.graphics.newImage("/resources/gfx/game/remix.png"),
+    remixIntro = {
+      [1] = love.audio.newSource("/resources/sfx/game/remixIntroTengoku.ogg"),
+      [3] = love.audio.newSource("/resources/sfx/game/remixIntroFever.ogg"),
+    },
+    introImg = {
+      [1] = {
+        border = love.graphics.newImage("/resources/gfx/game/remixBorderTengoku.png"),
+        remix = love.graphics.newImage("/resources/gfx/game/remixTengoku.png"),
+        overlay = love.graphics.newImage("/resources/gfx/game/remixOverlayTengoku.png"),
+      },
+      [3] = {
+        remix = love.graphics.newImage("/resources/gfx/game/remix.png"),
+      },
+    },
     remixIntroSize = 0.1,
     
     img = {
@@ -115,24 +127,43 @@ function loadMenu()
 end
 
 function updateMenu(dt)
-  if menu.loadPhase == 0 then
-    local dist = 1
-    local time = (60000/menu.bpm)
-    local spd = dist/time
+  
+  local dist = 1
+  local time = (60000/menu.bpm)
+  local spd = dist/time
+  
+  menu.beat = menu.beat+spd*(dt*1000)
+  menu.beatAnim = false
+  menu.bounce = menu.bounce/1.1
+  if menu.beat >= menu.beatCount then
+    menu.beatCount = menu.beatCount+1
+    menu.beatAnim = true
+    menu.bounce = 10
+  end
+  menu.bounceOld = (menu.bounce+menu.bounceOld)/2
+  
+  --menu.music:play()
+  
+  for _,i in pairs(menu.stars) do
     
-    menu.beat = menu.beat+spd*(dt*1000)
-    menu.beatAnim = false
-    menu.bounce = menu.bounce/1.1
-    if menu.beat >= menu.beatCount then
-      menu.beatCount = menu.beatCount+1
-      menu.beatAnim = true
-      menu.bounce = 10
+    if i.bounce > 0 then
+      i.bounce = i.bounce/1.1
     end
-    menu.bounceOld = (menu.bounce+menu.bounceOld)/2
+    if menu.beatAnim then
+      i.bounce = 1
+    end
     
-    --menu.music:play()
+    i.y = i.y-i.depth
+    if i.y < -32 then
+      i.y = view.height+32
+    end
+    if i.x < -32 then
+      i.x = view.width+32
+    end
+  end
     
-    local mx,my = love.mouse.getPosition()
+  local mx,my = love.mouse.getPosition()
+  if menu.loadPhase == 0 then
     for _,i in pairs(menu.buttons) do
       
       i.bounce = i.bounce-1*sign(i.bounce)
@@ -152,6 +183,7 @@ function updateMenu(dt)
               deleteTempFiles()
               love.window.setTitle("RHRM - "..version)
               menu.loadPhase = 1
+              randomized = false
             elseif i.n == 2 then
               screen = "editor"
             end
@@ -172,24 +204,6 @@ function updateMenu(dt)
       end
     end
   
-    for _,i in pairs(menu.stars) do
-      
-      if i.bounce > 0 then
-        i.bounce = i.bounce/1.1
-      end
-      if menu.beatAnim then
-        i.bounce = 1
-      end
-      
-      i.y = i.y-i.depth
-      if i.y < -32 then
-        i.y = view.height+32
-      end
-      if i.x < -32 then
-        i.x = view.width+32
-      end
-    end
-  
     --[[if mouse.button.pressed[1] then
       local mx,my = love.mouse.getPosition()
       if my > 256-4 and my < 256+16 then
@@ -200,6 +214,30 @@ function updateMenu(dt)
         screen = "editor"
       end
     end]]
+  end
+  if menu.loadPhase == 1 then
+    if love.keyboard.isDown("return") then
+      gradient = newVertGradient(view.width, view.height, hex2rgb("ffe600",true), hex2rgb("6b297b",true))
+      menu.loadPhase = 3
+      randomized = true
+    end
+  elseif menu.loadPhase == 2 then
+    if not tempData then
+      local remixFile = love.filesystem.newFile("/temp/beatmap.rhrm")
+      if remixFile:open('r') then
+        tempData = json.decode(remixFile:read())
+      end
+    else
+      if love.keyboard.isDown("return") then
+        menu.remixIntro[tempData.options.introStyle or 1]:stop()
+        menu.remixIntro[tempData.options.introStyle or 1]:play()
+        menu.loadPhase = 3
+        
+        if (tempData.options.introStyle or 1) == 1 then
+          gradient = newVertGradient(view.width, view.height, hex2rgb(tempData.options.color1 or "00d8a8",true), hex2rgb(tempData.options.color2 or "00e820",true))
+        end
+      end
+    end
   end
   if menu.loadPhase >= 3 and menu.loadPhase < 4 then
     menu.loadPhase = menu.loadPhase+0.003
@@ -215,17 +253,17 @@ function updateMenu(dt)
 end
 
 function drawMenu()
+  setColorHex("5096ff")
+  love.graphics.rectangle("fill",0,0,view.width,view.height)
+  
+  setColorHex("ffffff")
+  for _,i in pairs(menu.stars) do
+    
+    i.oldBounce = (i.bounce+i.oldBounce)/2
+    love.graphics.draw(menu.img.buttonSheet,i.quad,i.x,i.y,i.r,2+i.oldBounce,2+i.oldBounce,i.w/2,i.h/2)
+  end
+  
   if menu.loadPhase == 0 then
-    setColorHex("5096ff")
-    love.graphics.rectangle("fill",0,0,view.width,view.height)
-    
-    setColorHex("ffffff")
-    for _,i in pairs(menu.stars) do
-      
-      i.oldBounce = (i.bounce+i.oldBounce)/2
-      love.graphics.draw(menu.img.buttonSheet,i.quad,i.x,i.y,i.r,2+i.oldBounce,2+i.oldBounce,i.w/2,i.h/2)
-    end
-    
     for _,i in pairs(menu.buttons) do
       local q = menu.quad.buttonOff
       if i.on then
@@ -290,19 +328,65 @@ function drawMenu()
     setColorHex("000000")
     printNew(version.." welcome "..pref.username.."!",8,view.height-16)
   else
+    setColorHex("000000",200)
+    love.graphics.rectangle("fill",16,16,view.width-32,view.height-32)
     love.graphics.setFont(fontBig)
-    setColorHex("000000")
-    love.graphics.rectangle("fill",0,0,view.width,view.height)
-    setColorHex("ffffff")
+    setColorHex("ffffff",255)
     
-    printNew("press escape to cancel",16,view.height-32)
+    printNew("esc to cancel",16+8,view.height-48)
     
     if menu.loadPhase == 1 then
-      printNew("DROP A BUNDLED REMIX DATA FILE (.brhrm)\nONTO THE WINDOW",32,view.height/2,0,1,1)
+      love.graphics.printf({{255,255,255},"drop a ",hex2rgb("5aabff",true),".brhrm",{255,255,255}," file onto the window to play it, or press enter to play a randomized remix"},0,view.height/2-16,view.width,"center",0,1,1)
     elseif menu.loadPhase == 2 then
-      printNew("DROP THE CORRESPONDING .ogg,.wav or .mp3 FILE\nONTO THE WINDOW ",32,view.height/2)
+      love.graphics.printf("remix info",0,16,view.width,"center")
+      love.graphics.setFont(font)
+      if tempData then
+        local files = love.filesystem.getDirectoryItems("/temp")
+        --PRINT REMIX INFO
+        love.graphics.print("name: "..(tempData.options.name or "???"),32,128)
+        love.graphics.print({{255,255,255},"author: ",{255,248,98},(tempData.author or tempData.autor or "???")},32,128+32)
+        love.graphics.print("bpm: "..(tempData.bpm or "???"),32,128+32*2)
+        
+        local sec = tempData.length
+        local min 
+        if sec then
+          min = 0
+          sec = math.floor(sec*0.00001)
+          while sec > 60 do
+            sec = sec-60
+            min = min+1
+          end
+          if tostring(sec):len() == 1 then
+            sec = "0"..tostring(sec)
+          end
+        end
+        love.graphics.print("length: "..(min or "???")..":"..(sec or "???").." minutes",32,128+32*3)
+        
+        local customTextures = "No"
+        for _,i in pairs(files) do
+          if string.lower(string.sub(i,i:len()-3)) == ".gfx" then
+            customTextures = "Yes"
+            break
+          end
+        end
+        love.graphics.print("custom textures?: "..(customTextures or "???"),32,128+32*4)
+      end
+      love.graphics.setFont(fontBig)
+      
+      printNew("press enter to play",view.width-256-128+32,view.height-48)
     elseif menu.loadPhase >= 3 and menu.loadPhase < 4 then
-      love.graphics.draw(menu.remixIntroImg,view.width/2,view.height/2,0,menu.remixIntroSize,menu.remixIntroSize,menu.remixIntroImg:getWidth()/2,menu.remixIntroImg:getHeight()/2)
+      setColorHex("000000",255)
+      love.graphics.rectangle("fill",0,0,view.width,view.height)
+      setColorHex("ffffff",255)
+      if randomized or (tempData.options.introStyle or 1) == 1 then
+        love.graphics.draw(gradient,0,0,0,view.width,1)
+        love.graphics.draw(menu.introImg[1].border,view.width/2,view.height/2,0,3,3,menu.introImg[1].border:getWidth()/2,menu.introImg[1].border:getHeight()/2)
+        love.graphics.draw(menu.introImg[1].remix,view.width/2,view.height/2,0,3,3,menu.introImg[1].remix:getWidth()/2,menu.introImg[1].remix:getHeight()/2)
+        setColorHex("ffffff",50)
+        love.graphics.draw(menu.introImg[1].overlay,0,0,0,3,3)
+      elseif tempData.options.introStyle == 3 then
+        love.graphics.draw(menu.introImg[3].remix,view.width/2,view.height/2,0,menu.remixIntroSize,menu.remixIntroSize,menu.remixIntroImg:getWidth()/2,menu.remixIntroImg:getHeight()/2)
+      end
       
       if menu.loadPhase > 3.5 then
         setColorHex("000000",(menu.loadPhase-3.5)*255*3)
@@ -321,6 +405,10 @@ function filedroppedMenu(file)
       local d = file:read()
       if not love.filesystem.exists("temp") then
         love.filesystem.createDirectory("temp")
+      else
+        for _,i in pairs(love.filesystem.getDirectoryItems("temp")) do
+          love.filesystem.remove("temp/"..i)
+        end
       end
       success, message = love.filesystem.write("temp/remix.brhrm",d)
 
@@ -361,7 +449,7 @@ function filedroppedMenu(file)
         print(message)
       end
     end
-    menu.loadPhase = 3
+    menu.loadPhase = 2
   end
 end
 

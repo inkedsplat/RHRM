@@ -103,7 +103,7 @@ local function uminigame(dt)
     end
     if i.name == "pahR" then
       hit = 3
-      print("PAH")
+      --print("PAH")
     end
     bearly = i.bearly
   end
@@ -118,7 +118,7 @@ local function uminigame(dt)
       
       if hit ~= 1 or bearly then
         misses = misses+1
-        print("missed")
+        --print("missed")
         snd.fail:stop()
         snd.fail:play()
         o.head = 4
@@ -138,7 +138,7 @@ local function uminigame(dt)
     
     if hit ~= 2 or bearly then
       misses = misses+1
-      print("missed")
+      --print("missed")
     end
   end
   
@@ -153,7 +153,7 @@ local function uminigame(dt)
     p.pahTime = 10
     if hit ~= 3 or bearly then
       misses = misses+1
-      print("missed")
+      --print("missed")
       snd.fail:stop()
       snd.fail:play()
       o.head = 4

@@ -6,7 +6,7 @@ function newPieceAnimationGroup(filename,image,w,h)
   local file = love.filesystem.newFile(filename)
   if file:open('r') then
     str = file:read()
-    print(str)
+    --print(str)
     g = json.decode(str)
   end
   

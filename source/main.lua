@@ -24,7 +24,7 @@ function love.load()
     love.filesystem.createDirectory("/library")
   end
   
-  version = "0.7.0-SNAPSHOT-3"
+  version = "0.7.0"
   love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()
@@ -1002,6 +1002,54 @@ function love.load()
       name = "fan club",
       img = love.graphics.newImage("/resources/gfx/editor/icons/fanclub.png"),
       blocks = {
+        {
+          name = "hai hai hai",
+          length = 8*64,
+          cues = {
+            {name = "hai",x = 0,cueId = "fanClubSingerHai1"},
+            {name = "hai",x = 64,cueId = "fanClubSingerHai2"},
+            {name = "hai",x = 128,cueId = "fanClubSingerHai3"},
+          },
+          hits = {
+            {name = "haiA",x = 256,cueId = "fanClubAudienceHai",input = "pressA"},
+            {name = "haiA",x = 256+64,cueId = "fanClubAudienceHai",input = "pressA"},
+            {name = "haiA",x = 256+64*2,cueId = "fanClubAudienceHai",input = "pressA"},
+            {name = "haiA",x = 256+64*3,cueId = "fanClubAudienceHai",input = "pressA"},
+          }
+        },
+        {
+          name = "kamone",
+          length = 8*64,
+          cues = {
+            {name = "ka",x = 0,cueId = "fanClubSingerKamone1"},
+            {name = "mo",x = 32,cueId = "fanClubSingerKamone2"},
+            {name = "ne",x = 64,cueId = "fanClubSingerKamone3"},
+          },
+          hits = {
+            {name = "kaA",x = 128,cueId = "fanClubAudienceKamone1",input = "pressA"},
+            {name = "moA",x = 128+96,cueId = "fanClubAudienceKamone2",input = "pressA"},
+            {name = "neA",x = 256,cueId = "fanClubAudienceKamone3",input = "pressA"},
+            {name = "jump",x = 256+64,cueId = "fanClubAudienceKamone4",input = "releaseA"},
+          }
+        },
+        {
+          name = "OOH",
+          length = 4*64,
+          cues = {
+            {name = "ooh",x = 0,cueId = "fanClubOoh1"},
+          },
+          hits = {
+            {name = "oohClap",x = 128+32,cueId = "fanClubOoh2",input = "pressA"},
+            {name = "oohClap",x = 128+64,cueId = "fanClubOoh3",input = "pressA"},
+          }
+        }
+      }
+    },
+    [18] = {
+      name = "shoot 'em up",
+      hidden = true,
+      img = love.graphics.newImage("/resources/gfx/editor/icons/shootemup.png"),
+      blocks = {
         
       }
     },
@@ -1044,7 +1092,7 @@ function love.load()
       screen = "credits"
       loadCredits()
     else 
-      screen = "editor" --dev start screen
+      screen = "menu" --dev start screen
     end
     loadMenu()
     
@@ -1069,12 +1117,12 @@ end
 
 function initializeData()
   data = {
-    bpm = 119,
+    bpm = 125,
     time = 0,
     beat = 0,
     beatCount = 0,
-    musicStart = 2,
-    music = newSource("/resources/music/karate man (GBA).ogg"),
+    musicStart = 2.75,
+    music = newSource("/resources/music/practice.ogg"),
     blocks = {},
     tempoChanges = {},
     version = version,
@@ -1498,4 +1546,36 @@ function executePowershell(str)
   local pipe = io.popen("powershell -command -", "w")
   pipe:write(script)
   pipe:close()
+end
+
+function SecondsToClock(seconds)
+  local seconds = tonumber(seconds)
+
+  if seconds <= 0 then
+    return "00:00:00";
+  else
+    hours = string.format("%02.f", math.floor(seconds/3600));
+    mins = string.format("%02.f", math.floor(seconds/60 - (hours*60)));
+    secs = string.format("%02.f", math.floor(seconds - hours*3600 - mins *60));
+    return hours..":"..mins..":"..secs
+  end
+end
+
+function newVertGradient(w, h, c1, c2)
+  local data = love.image.newImageData(1, h)
+  for j=0, h-1 do
+    local percent = j/h
+    local r = c1[1] + (c2[1] - c1[1]) * percent
+    local g = c1[2] + (c2[2] - c1[2]) * percent
+    local b = c1[3] + (c2[3] - c1[3]) * percent
+    local a = c1[4] + (c2[4] - c1[4]) * percent
+    data:setPixel(0, j, r, g, b, a)
+  end
+
+  local img = love.graphics.newImage(data)
+  img:setWrap('repeat', 'clamp')
+
+  local quad = love.graphics.newQuad(0, 0, w, h, 1, h)
+
+  return img, quad
 end

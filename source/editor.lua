@@ -55,7 +55,7 @@ function loadEditor()
   if pref and pref.theme then
     editor.scheme = pref.theme
   end
-  love.system.setClipboardText(json.encode(editor.scheme))
+  --love.system.setClipboardText(json.encode(editor.scheme))
   
   local function f()
     editor.playing = true
@@ -94,7 +94,7 @@ function loadEditor()
           
           j.time = (((i.x+j.x)/64)*(60000/bpm))/1000
           j.beat = (i.x+j.x)/64
-          print(j.beat)
+          --print(j.beat)
           
           if j.loop then
             j.loopEnd = (((i.x+i.length)/64)*(60000/data.bpm))/1000
@@ -113,7 +113,7 @@ function loadEditor()
         for _,j in pairs(i.hits) do
           j.time = (((i.x+j.x)/64)*(60000/data.bpm))/1000
           j.beat = (i.x+j.x)/64
-          print(j.beat)
+          --print(j.beat)
           --j.played = false
           if i.pitchShift then
             j.sound:setPitch(i.pitch)
@@ -161,6 +161,8 @@ function loadEditor()
   createButton(48,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/stop.png"),editor.scheme.stop,true,"stop")
   
   local function f()
+    editor.playing = false
+    editor.playhead = 0
     screen = "game"
     data.music:stop()
     
@@ -666,15 +668,17 @@ function updateEditor(dt)
           editor.placeTempoChange = false
         else
           if editor.switch then
-            local s = {
-              switch = true,
-              x = editor.mouseOnGrid[1]*editor.gridwidth,
-              y = editor.mouseOnGrid[2]*editor.gridheight,
-              length = 64,
-              name = "switch to "..minigames[editor.switch].name,
-              minigame = editor.switch
-            }
-            table.insert(data.blocks,s)
+            if editor.switch ~= 0 then
+              local s = {
+                switch = true,
+                x = editor.mouseOnGrid[1]*editor.gridwidth,
+                y = editor.mouseOnGrid[2]*editor.gridheight,
+                length = 64,
+                name = "switch to "..minigames[editor.switch].name,
+                minigame = editor.switch
+              }
+              table.insert(data.blocks,s)
+            end
           else
             local b = createBlock(editor.block.name,editor.mouseOnGrid[1]*editor.gridwidth,editor.mouseOnGrid[2]*editor.gridheight,editor.block.length,deepcopy(editor.block.cues),deepcopy(editor.block.hits),editor.block.resizable,editor.block.pitchShift)
             if b.cues then
