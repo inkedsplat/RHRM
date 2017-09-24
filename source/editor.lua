@@ -354,8 +354,8 @@ function loadEditor()
   
   local function f(i)
     editor.minigameScroll = editor.minigameScroll - 40
-    if editor.minigameScroll < 0 then
-      editor.minigameScroll = 0
+    if editor.minigameScroll < 40 then
+      editor.minigameScroll = 40
     end
   end
   local b = createButton(6,editor.gridspace+editor.buttonSpace+8,f,love.graphics.newImage("/resources/gfx/editor/buttons/up.png"),editor.scheme.playtest)
@@ -366,6 +366,23 @@ function loadEditor()
     editor.minigameScroll = editor.minigameScroll + 40
   end
   local b = createButton(6,editor.gridspace+editor.buttonSpace+8+24,f,love.graphics.newImage("/resources/gfx/editor/buttons/down.png"),editor.scheme.playtest)
+  b.w = 16
+  b.h = 16
+  
+  local function f(i)
+    editor.patternScroll = editor.patternScroll - 24
+    if editor.patternScroll < 0 then
+      editor.patternScroll = 0
+    end
+  end
+  local b = createButton(view.width-6-16,editor.gridspace+editor.buttonSpace+8,f,love.graphics.newImage("/resources/gfx/editor/buttons/up.png"),editor.scheme.playtest)
+  b.w = 16
+  b.h = 16
+  
+  local function f(i)
+    editor.patternScroll = editor.patternScroll + 24
+  end
+  local b = createButton(view.width-6-16,editor.gridspace+editor.buttonSpace+8+24,f,love.graphics.newImage("/resources/gfx/editor/buttons/down.png"),editor.scheme.playtest)
   b.w = 16
   b.h = 16
   
@@ -425,8 +442,8 @@ function love.wheelmoved(x,y)
   if my > editor.buttonSpace+editor.gridspace then
     if mx < view.width/2 then
       editor.minigameScroll = editor.minigameScroll-y*40
-      if editor.minigameScroll < 0 then
-        editor.minigameScroll = 0
+      if editor.minigameScroll < 40 then
+        editor.minigameScroll = 40
       end
     else
       editor.patternScroll = editor.patternScroll-y*24
