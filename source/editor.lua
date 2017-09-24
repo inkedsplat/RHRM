@@ -46,6 +46,7 @@ function loadEditor()
     patternScroll = 0,
     playHeadMove = 0,
     placeTempoChange = false,
+    group = "misc",
     
     mouseOnGrid = {0,0},
     
@@ -368,6 +369,48 @@ function loadEditor()
   b.w = 16
   b.h = 16
   
+  local function f(i)
+    editor.group = "misc"
+  end
+  local b = createButton(6,editor.gridspace+editor.buttonSpace+8+24+24,f,love.graphics.newImage("/resources/gfx/editor/buttons/misc.png"),editor.scheme.playtest)
+  b.w = 16
+  b.h = 16
+  
+  local function f(i)
+    editor.group = "gba"
+  end
+  local b = createButton(6,editor.gridspace+editor.buttonSpace+8+24+24+24,f,love.graphics.newImage("/resources/gfx/editor/buttons/gba.png"),editor.scheme.playtest)
+  b.w = 16
+  b.h = 16
+  
+  local function f(i)
+    editor.group = "ds"
+  end
+  local b = createButton(6,editor.gridspace+editor.buttonSpace+8+24+24+24+24,f,love.graphics.newImage("/resources/gfx/editor/buttons/ds.png"),editor.scheme.playtest)
+  b.w = 16
+  b.h = 16
+  
+  local function f(i)
+    editor.group = "wii"
+  end
+  local b = createButton(6,editor.gridspace+editor.buttonSpace+8+24+24+24+24+24,f,love.graphics.newImage("/resources/gfx/editor/buttons/wii.png"),editor.scheme.playtest)
+  b.w = 16
+  b.h = 16
+  
+  local function f(i)
+    editor.group = "3ds"
+  end
+  local b = createButton(6,editor.gridspace+editor.buttonSpace+8+24+24+24+24+24+24,f,love.graphics.newImage("/resources/gfx/editor/buttons/3ds.png"),editor.scheme.playtest)
+  b.w = 16
+  b.h = 16
+  
+  local function f(i)
+    editor.group = "rhrm"
+  end
+  local b = createButton(6,editor.gridspace+editor.buttonSpace+8+24+24+24+24+24+24+24,f,love.graphics.newImage("/resources/gfx/editor/buttons/rhrm.png"),editor.scheme.playtest)
+  b.w = 16
+  b.h = 16
+  
   --[[local function f(i)
     editor.placeTempoChange = not editor.placeTempoChange
   end
@@ -510,16 +553,16 @@ function updateEditor(dt)
     --print(my,editor.gridspace+editor.buttonSpace)
     if my > editor.gridspace+editor.buttonSpace and mx > 24 and mx < view.width/2 and my > 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll and my < 8+editor.buttonSpace+editor.gridspace+40*(k)+32-editor.minigameScroll then
       if mouse.button.pressed[1] then
-        if not i.hidden then
+        if not i.hidden and i.group == editor.group then
           editor.selectedMinigame = n
         end
-        if k > 0 and not i.hidden then
+        if k > 0 and not i.hidden and i.group == editor.group then
           editor.switch = n
         end
         print(editor.switch)
       end
     end
-    if not i.hidden then
+    if not i.hidden and i.group == editor.group then
       k = k +1
     end
     if n == editor.selectedMinigame then
@@ -900,13 +943,13 @@ function drawEditor()
         setColorHex(pal.text)
       end
     end
-    if 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll > editor.gridspace+40 and not i.hidden then
+    if 8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll > editor.gridspace+40 and not i.hidden and i.group == editor.group then
       printNew(i.name,16+32+24,20+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll)
       love.graphics.rectangle("line",8+24,8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll,32,32)
       setColorHex("ffffff")
       love.graphics.draw((i.img or imgUnknownMinigame),8+24,8+editor.buttonSpace+editor.gridspace+40*(k)-editor.minigameScroll)
     end
-    if not i.hidden then
+    if not i.hidden and i.group == editor.group then
       k = k+1
     end
     if editor.selectedMinigame == n then
