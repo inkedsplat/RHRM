@@ -216,11 +216,27 @@ function updateMenu(dt)
     end]]
   end
   if menu.loadPhase == 1 then
-    if love.keyboard.isDown("return") then
+    --[[if love.keyboard.isDown("return") then
       gradient = newVertGradient(view.width, view.height, hex2rgb("ffe600",true), hex2rgb("6b297b",true))
       menu.loadPhase = 3
       randomized = true
-    end
+      intro = true
+      local introFile = love.filesystem.newFile("/resources/remixBits/intro.rhrm")
+      if introFile:open('r') then
+        data = json.decode(introFile:read())
+        data.music = love.audio.newSource("/resources/sfx/randomizedRemix/endlessRemixIntro.ogg")
+        createBeatmap()
+        bpm = data.bpm
+        data.beat = 0
+        data.beatCount = 0
+        loadGameInputs(0)
+        love.math.setRandomSeed(os.time())
+        loadRemixBit = love.thread.newThread("threads/loadRemixBit.lua")
+        loadRemixBitChannel = love.thread.getChannel("loadRemixBitChannel")
+        
+        loadRemixBit:start("/resources/remixBits/intro.rhrm")
+      end
+    end]]
   elseif menu.loadPhase == 2 then
     if not tempData then
       local remixFile = love.filesystem.newFile("/temp/beatmap.rhrm")
@@ -244,7 +260,7 @@ function updateMenu(dt)
     if menu.loadPhase < 3.5 and menu.remixIntroSize < 2 then
       menu.remixIntroSize = menu.remixIntroSize*2
     end
-    print(menu.loadPhase)
+    --print(menu.loadPhase)
   end
   if menu.loadPhase >= 4 then
     loadGameInputs()
@@ -336,7 +352,7 @@ function drawMenu()
     printNew("esc to cancel",16+8,view.height-48)
     
     if menu.loadPhase == 1 then
-      love.graphics.printf({{255,255,255},"drop a ",hex2rgb("5aabff",true),".brhrm",{255,255,255}," file onto the window to play it, or press enter to play a randomized remix"},0,view.height/2-16,view.width,"center",0,1,1)
+      love.graphics.printf({{255,255,255},"drop a ",hex2rgb("5aabff",true),".brhrm",{255,255,255}," file onto the window to play it"},0,view.height/2-16,view.width,"center",0,1,1)
     elseif menu.loadPhase == 2 then
       love.graphics.printf("remix info",0,16,view.width,"center")
       love.graphics.setFont(font)
@@ -437,6 +453,15 @@ function filedroppedMenu(file)
           elseif string.lower(string.sub(i,i:len()-4)) == ".rhrm" then
             editorLoadBeatmap(nFile)
             createBeatmap()
+            
+            --load game
+            loadGameInputs()
+            
+            data.beat = 0
+            data.beatCount = 0
+            
+            bpm = data.bpm
+            
             print("loaded beatmap")
           elseif string.lower(string.sub(i,i:len()-3)) == ".gfx" then
             editorLoadAssets(nFile)
@@ -457,6 +482,7 @@ function createBeatmap()
   if not data.musicStart then
     data.musicStart = 0
   end
+  data.beat = 0
     --generate beatmap
     data.beatmap = {
       sounds = {},
@@ -464,6 +490,22 @@ function createBeatmap()
       switches = {},
     }
     for _,i in pairs(data.blocks) do
+      
+      if i.cues then
+        for _,j in pairs(i.cues) do
+          if not j.sound then 
+            j.sound = cue[j.cueId]()
+          end
+        end
+      end
+      if i.hits then
+        for _,j in pairs(i.hits) do
+          if not j.sound then 
+            j.sound = cue[j.cueId]()
+          end
+        end
+      end
+      
       if i.pitchShift then
         if i.cues then
           for _,j in pairs(i.cues) do
@@ -533,14 +575,5 @@ function createBeatmap()
         table.insert(data.beatmap.switches,s)
       end 
     end 
-    
-    --load game
-    loadGameInputs()
-    
-    data.beat = 0
-    data.beatCount = 0
-    
-    bpm = data.bpm
-    updateTempoChanges()
 end
 

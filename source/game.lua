@@ -269,6 +269,11 @@ function love.keyreleased(key)
 end
 
 function updateGameInputs(dt)
+  local nxtData = loadRemixBitChannel:pop()
+  if nxtData then
+    nextData = nxtData
+  end
+  
   minigameTime = minigameTime+dt
   if not rating then
     
@@ -427,33 +432,44 @@ function updateGameInputs(dt)
     end
 
     if endRemix then
-      endRemixTimer = endRemixTimer+1
-      data.music:setVolume((0.25-(endRemixTimer/(data.options.endFadeOutTime or 100))*0.25))
-      if endRemixTimer >= (data.options.endFadeOutTime or 100) then
-        view.flipH = 1
-        view.flipV = 1
-        if data.beatmap.editor then
-          screen = "editor"
-          data.music:setVolume(0.25)
+      if randomized then
+        if intro then
           data.music:stop()
-          --print(misses.." misses")
-          if misses == 0 then
-            --print("YOU GOT A PERFECT")
-          end
-        else
-          data.music:stop()
-          rating = true
-          if misses >= 1 then
-            ratingNote = "superb"
-          end
-          if misses >= (data.options.okRating or 3) then
-            ratingNote = "ok"
-          end
-          if misses >= (data.options.tryAgainRating or 10) then
-            ratingNote = "tryAgain"
-          end
+          data.music = love.audio.newSource("/resources/sfx/randomizedRemix/endlessRemixLoop.ogg")
+          data.music:seek(0)
+          intro = false
         end
-      end 
+        loadRemixBit:start("/resources/remixBits/intro.rhrm")
+        data = nextData
+      else
+        endRemixTimer = endRemixTimer+1
+        data.music:setVolume((0.25-(endRemixTimer/(data.options.endFadeOutTime or 100))*0.25))
+        if endRemixTimer >= (data.options.endFadeOutTime or 100) then
+          view.flipH = 1
+          view.flipV = 1
+          if data.beatmap.editor then
+            screen = "editor"
+            data.music:setVolume(0.25)
+            data.music:stop()
+            --print(misses.." misses")
+            if misses == 0 then
+              --print("YOU GOT A PERFECT")
+            end
+          else
+            data.music:stop()
+            rating = true
+            if misses >= 1 then
+              ratingNote = "superb"
+            end
+            if misses >= (data.options.okRating or 3) then
+              ratingNote = "ok"
+            end
+            if misses >= (data.options.tryAgainRating or 10) then
+              ratingNote = "tryAgain"
+            end
+          end
+        end 
+      end
     end
     
     --END THE REMIX
