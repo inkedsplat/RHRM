@@ -269,10 +269,10 @@ function love.keyreleased(key)
 end
 
 function updateGameInputs(dt)
-  local nxtData = loadRemixBitChannel:pop()
+  --[[local nxtData = loadRemixBitChannel:pop()
   if nxtData then
     nextData = nxtData
-  end
+  end]]
   
   minigameTime = minigameTime+dt
   if not rating then

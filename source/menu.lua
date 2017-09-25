@@ -112,7 +112,7 @@ function loadMenu()
     barista = newAnimationGroup(menu.img.baristaSheet),
     n = 2,
   }
-  t.barista:addAnimation("anim",0,32,32,32,8,100)
+  t.barista:addAnimation("anim",0,32,32,32,6,100)
   table.insert(menu.buttons,t)
   local t = {
     x = x,
@@ -242,6 +242,8 @@ function updateMenu(dt)
       local remixFile = love.filesystem.newFile("/temp/beatmap.rhrm")
       if remixFile:open('r') then
         tempData = json.decode(remixFile:read())
+      else
+        print("AN ERROR OCCURED WHILE LOADING")
       end
     else
       if love.keyboard.isDown("return") then
@@ -386,6 +388,8 @@ function drawMenu()
           end
         end
         love.graphics.print("custom textures?: "..(customTextures or "???"),32,128+32*4)
+      else
+        love.graphics.printf("LOADING REMIX INFO",0,view.height/2,view.width,"center")
       end
       love.graphics.setFont(fontBig)
       
