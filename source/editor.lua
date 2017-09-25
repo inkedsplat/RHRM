@@ -428,6 +428,21 @@ function loadEditor()
   b.w = 16
   b.h = 16
   
+  local function f(i)
+    i.count = i.count-1
+    if i.count < 4 and i.count > 0 then
+      i.img = love.graphics.newImage("/resources/gfx/editor/buttons/clear"..i.count..".png")
+    elseif i.count == 0 then
+      i.img = love.graphics.newImage("/resources/gfx/editor/buttons/clear.png")
+      love.quit()
+      initializeData()
+      i.count = 4
+    end
+  end
+  
+  local b = createButton(48*12,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/clear.png"),editor.scheme.block,true,"clear remix")
+  b.count = 4
+  
   --[[local function f(i)
     editor.placeTempoChange = not editor.placeTempoChange
   end
@@ -501,6 +516,18 @@ end
 function updateEditor(dt)
     
   local mx, my = love.mouse.getPosition()
+  
+  if mouse.button.pressed[1] then
+    for _,i in pairs(editor.buttons) do
+      if i.tooltip == "clear remix" then
+        if i.count < 4 and not i.hover then
+          i.count = 4
+          i.img = love.graphics.newImage("/resources/gfx/editor/buttons/clear.png")
+        end
+        break
+      end
+    end
+  end
   --HOVER OVER TEMPOCHANGES
   for k,i in pairs(data.tempoChanges) do
     if my > editor.buttonSpace and my < editor.buttonSpace+editor.gridspace and mx > i.x+editor.viewX-5 and mx < i.x+editor.viewX+5 then 
@@ -1058,6 +1085,7 @@ function createButton(x,y,func,img,color,outline,tooltip)
     img = img,
     color = color,
     outline = outline,
+    tooltip = tooltip,
   }
   table.insert(editor.buttons,b)
   return b
