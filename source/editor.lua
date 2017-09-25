@@ -432,6 +432,8 @@ function loadEditor()
     i.count = i.count-1
     if i.count < 4 and i.count > 0 then
       i.img = love.graphics.newImage("/resources/gfx/editor/buttons/clear"..i.count..".png")
+      i.sfx[i.count]:stop()
+      i.sfx[i.count]:play()
     elseif i.count == 0 then
       i.img = love.graphics.newImage("/resources/gfx/editor/buttons/clear.png")
       love.quit()
@@ -442,6 +444,11 @@ function loadEditor()
   
   local b = createButton(48*12,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/clear.png"),editor.scheme.block,true,"clear remix")
   b.count = 4
+  b.sfx = {
+    [1] = love.audio.newSource("/resources/sfx/editor/oneH.ogg"),
+    [2] = love.audio.newSource("/resources/sfx/editor/twoH.ogg"),
+    [3] = love.audio.newSource("/resources/sfx/editor/threeH.ogg"),
+  }
   
   --[[local function f(i)
     editor.placeTempoChange = not editor.placeTempoChange

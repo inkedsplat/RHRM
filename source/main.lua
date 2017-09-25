@@ -7,6 +7,7 @@ require("SaveLoad")
 require("menu")
 require("soundDatabase")
 require("init")
+require("library")
 json = require("json")
 
 function love.load()
@@ -1111,7 +1112,7 @@ function love.load()
       screen = "credits"
       loadCredits()
     else 
-      screen = "editor" --dev start screen
+      screen = "menu" --dev start screen
     end
     loadMenu()
     
@@ -1356,6 +1357,8 @@ function love.update(dt)
     updateInit(dt)
   elseif screen == "credits" then
     updateCredits(dt)
+  elseif screen == "library" then
+    updateLibrary(dt)
   end
   
   mouse.button.pressed[1] = false
@@ -1387,6 +1390,8 @@ function love.draw()
     drawInit()
   elseif screen == "credits" then
     drawCredits()
+  elseif screen == "library" then
+    drawLibrary()
   end
   --draw the canvas
   love.graphics.reset()

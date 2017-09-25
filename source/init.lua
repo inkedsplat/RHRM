@@ -48,6 +48,8 @@ function loadCredits()
     "with the tap trial sheet",
     "Minenice55",
     "with the fan club animations",
+    "GlitchyPSI",
+    "with some voice work",
     "Pnegu123",
     "because he wanted to be in the credits",
   }

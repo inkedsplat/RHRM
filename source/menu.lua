@@ -121,7 +121,8 @@ function loadMenu()
     text = menu.quad.library,
     tw = 160,
     bounce = 0,
-    bounceOld = 0
+    bounceOld = 0,
+    n = 3,
   }
   table.insert(menu.buttons,t)
 end
@@ -161,112 +162,117 @@ function updateMenu(dt)
       i.x = view.width+32
     end
   end
-    
-  local mx,my = love.mouse.getPosition()
-  if menu.loadPhase == 0 then
-    for _,i in pairs(menu.buttons) do
-      
-      i.bounce = i.bounce-1*sign(i.bounce)
-      if i.barista then
-        i.barista:update(dt)
-      end
-      
-      if mx > i.x and mx < i.x+512 and my > i.y and my < i.y+64 then
-        if not i.on then
-          menu.snd.buttonOn:stop()
-          menu.snd.buttonOn:play()
-          i.on = true
-          i.bounce = -10
-        else
-          if love.mouse.isDown(1) then
-            if i.n == 1 then
-              deleteTempFiles()
-              love.window.setTitle("RHRM - "..version)
-              menu.loadPhase = 1
-              randomized = false
-            elseif i.n == 2 then
-              screen = "editor"
+  
+  if screen == "menu" then
+    local mx,my = love.mouse.getPosition()
+    if menu.loadPhase == 0 then
+      for _,i in pairs(menu.buttons) do
+        
+        i.bounce = i.bounce-1*sign(i.bounce)
+        if i.barista then
+          i.barista:update(dt)
+        end
+        
+        if mx > i.x and mx < i.x+512 and my > i.y and my < i.y+64 then
+          if not i.on then
+            menu.snd.buttonOn:stop()
+            menu.snd.buttonOn:play()
+            i.on = true
+            i.bounce = -10
+          else
+            if love.mouse.isDown(1) then
+              if i.n == 1 then
+                deleteTempFiles()
+                love.window.setTitle("RHRM - "..version)
+                menu.loadPhase = 1
+                randomized = false
+              elseif i.n == 2 then
+                screen = "editor"
+              elseif i.n == 3 then
+                loadLibrary()
+                screen = "library"
+              end
+              menu.music:stop()
+              menu.beatCount = 0
+              menu.beat = 0
+              
+              menu.snd.buttonPress:play()
             end
-            menu.music:stop()
-            menu.beatCount = 0
-            menu.beat = 0
-            
-            menu.snd.buttonPress:play()
+          end
+        else
+          if i.on then
+            --menu.snd.buttonOff:stop()
+            --menu.snd.buttonOff:play()
+            i.on = false
+            i.bounce = 8
           end
         end
-      else
-        if i.on then
-          --menu.snd.buttonOff:stop()
-          --menu.snd.buttonOff:play()
-          i.on = false
-          i.bounce = 8
+      end
+    
+      --[[if mouse.button.pressed[1] then
+        local mx,my = love.mouse.getPosition()
+        if my > 256-4 and my < 256+16 then
+          deleteTempFiles()
+          love.window.setTitle("RHRM - "..version)
+          menu.loadPhase = 1
+        elseif my > 256+32-4 and my < 256+16+32 then
+          screen = "editor"
         end
-      end
+      end]]
     end
-  
-    --[[if mouse.button.pressed[1] then
-      local mx,my = love.mouse.getPosition()
-      if my > 256-4 and my < 256+16 then
-        deleteTempFiles()
-        love.window.setTitle("RHRM - "..version)
-        menu.loadPhase = 1
-      elseif my > 256+32-4 and my < 256+16+32 then
-        screen = "editor"
-      end
-    end]]
-  end
-  if menu.loadPhase == 1 then
-    --[[if love.keyboard.isDown("return") then
-      gradient = newVertGradient(view.width, view.height, hex2rgb("ffe600",true), hex2rgb("6b297b",true))
-      menu.loadPhase = 3
-      randomized = true
-      intro = true
-      local introFile = love.filesystem.newFile("/resources/remixBits/intro.rhrm")
-      if introFile:open('r') then
-        data = json.decode(introFile:read())
-        data.music = love.audio.newSource("/resources/sfx/randomizedRemix/endlessRemixIntro.ogg")
-        createBeatmap()
-        bpm = data.bpm
-        data.beat = 0
-        data.beatCount = 0
-        loadGameInputs(0)
-        love.math.setRandomSeed(os.time())
-        loadRemixBit = love.thread.newThread("threads/loadRemixBit.lua")
-        loadRemixBitChannel = love.thread.getChannel("loadRemixBitChannel")
-        
-        loadRemixBit:start("/resources/remixBits/intro.rhrm")
-      end
-    end]]
-  elseif menu.loadPhase == 2 then
-    if not tempData then
-      local remixFile = love.filesystem.newFile("/temp/beatmap.rhrm")
-      if remixFile:open('r') then
-        tempData = json.decode(remixFile:read())
-      else
-        print("AN ERROR OCCURED WHILE LOADING")
-      end
-    else
-      if love.keyboard.isDown("return") then
-        menu.remixIntro[tempData.options.introStyle or 1]:stop()
-        menu.remixIntro[tempData.options.introStyle or 1]:play()
+    if menu.loadPhase == 1 then
+      --[[if love.keyboard.isDown("return") then
+        gradient = newVertGradient(view.width, view.height, hex2rgb("ffe600",true), hex2rgb("6b297b",true))
         menu.loadPhase = 3
-        
-        if (tempData.options.introStyle or 1) == 1 then
-          gradient = newVertGradient(view.width, view.height, hex2rgb(tempData.options.color1 or "00d8a8",true), hex2rgb(tempData.options.color2 or "00e820",true))
+        randomized = true
+        intro = true
+        local introFile = love.filesystem.newFile("/resources/remixBits/intro.rhrm")
+        if introFile:open('r') then
+          data = json.decode(introFile:read())
+          data.music = love.audio.newSource("/resources/sfx/randomizedRemix/endlessRemixIntro.ogg")
+          createBeatmap()
+          bpm = data.bpm
+          data.beat = 0
+          data.beatCount = 0
+          loadGameInputs(0)
+          love.math.setRandomSeed(os.time())
+          loadRemixBit = love.thread.newThread("threads/loadRemixBit.lua")
+          loadRemixBitChannel = love.thread.getChannel("loadRemixBitChannel")
+          
+          loadRemixBit:start("/resources/remixBits/intro.rhrm")
+        end
+      end]]
+    elseif menu.loadPhase == 2 then
+      if not tempData then
+        local remixFile = love.filesystem.newFile("/temp/beatmap.rhrm")
+        if remixFile:open('r') then
+          tempData = json.decode(remixFile:read())
+        else
+          print("AN ERROR OCCURED WHILE LOADING")
+        end
+      else
+        if love.keyboard.isDown("return") then
+          menu.remixIntro[tempData.options.introStyle or 1]:stop()
+          menu.remixIntro[tempData.options.introStyle or 1]:play()
+          menu.loadPhase = 3
+          
+          if (tempData.options.introStyle or 1) == 1 then
+            gradient = newVertGradient(view.width, view.height, hex2rgb(tempData.options.color1 or "00d8a8",true), hex2rgb(tempData.options.color2 or "00e820",true))
+          end
         end
       end
     end
-  end
-  if menu.loadPhase >= 3 and menu.loadPhase < 4 then
-    menu.loadPhase = menu.loadPhase+0.003
-    if menu.loadPhase < 3.5 and menu.remixIntroSize < 2 then
-      menu.remixIntroSize = menu.remixIntroSize*2
+    if menu.loadPhase >= 3 and menu.loadPhase < 4 then
+      menu.loadPhase = menu.loadPhase+0.003
+      if menu.loadPhase < 3.5 and menu.remixIntroSize < 2 then
+        menu.remixIntroSize = menu.remixIntroSize*2
+      end
+      --print(menu.loadPhase)
     end
-    --print(menu.loadPhase)
-  end
-  if menu.loadPhase >= 4 then
-    loadGameInputs()
-    screen = "game"
+    if menu.loadPhase >= 4 then
+      loadGameInputs()
+      screen = "game"
+    end
   end
 end
 
@@ -281,140 +287,142 @@ function drawMenu()
     love.graphics.draw(menu.img.buttonSheet,i.quad,i.x,i.y,i.r,2+i.oldBounce,2+i.oldBounce,i.w/2,i.h/2)
   end
   
-  if menu.loadPhase == 0 then
-    for _,i in pairs(menu.buttons) do
-      local q = menu.quad.buttonOff
-      if i.on then
-        q = menu.quad.buttonOn
-      end
-      i.bounceOld = (i.bounce+i.bounceOld)/2
-      local bounce = i.bounceOld
-      
-      love.graphics.draw(menu.img.buttonSheet,q,i.x,i.y+bounce,0,2,2)
-      
-      love.graphics.draw(menu.img.buttonSheet,i.text,i.x+256,i.y+bounce,0,2,2,i.tw/2)
-      
-      if i.on then
-        love.graphics.draw(menu.img.buttonSheet,menu.quad.baristaBox,i.x-46*2,i.y+bounce,0,2,2)
-        if i.barista then
-          i.barista:draw(i.x-40*2,i.y+bounce,0,2,2)
+  if screen == "menu" then
+    if menu.loadPhase == 0 then
+      for _,i in pairs(menu.buttons) do
+        local q = menu.quad.buttonOff
+        if i.on then
+          q = menu.quad.buttonOn
         end
-      end
-    end
-    
-    local yoff = 16
-    local xoff = -48+8
-    local rad = 64+10+menu.bounceOld/4
-    
-    setColorHex("4946bd")
-    love.graphics.circle("fill",view.width/2+128+xoff,64+32+yoff+menu.bounceOld,rad)
-    love.graphics.circle("fill",view.width/2+64+xoff,64-12+yoff-menu.bounceOld,rad)
-    love.graphics.circle("fill",view.width/2+xoff,64+28+yoff+menu.bounceOld,rad)
-    love.graphics.circle("fill",view.width/2-64+xoff,64+yoff-menu.bounceOld,rad)
-    
-    rad = 64-menu.bounceOld/4
-    setColorHex("000000")
-    love.graphics.circle("fill",view.width/2+128+xoff,64+32+yoff+menu.bounceOld,rad)
-    love.graphics.circle("fill",view.width/2+64+xoff,64-12+yoff-menu.bounceOld,rad)
-    love.graphics.circle("fill",view.width/2+xoff,64+28+yoff+menu.bounceOld,rad)
-    love.graphics.circle("fill",view.width/2-64+xoff,64+yoff-menu.bounceOld,rad)
-    
-    setColorHex("ffffff")
-    love.graphics.draw(menu.img.buttonSheet,menu.quad.rhrmM,view.width/2+128+xoff,64+32+yoff+menu.bounceOld,0,2,2,48/2,48/2)
-    love.graphics.draw(menu.img.buttonSheet,menu.quad.rhrmR,view.width/2+64+xoff,64-12+yoff-menu.bounceOld,0,2,2,48/2,48/2)
-    love.graphics.draw(menu.img.buttonSheet,menu.quad.rhrmH,view.width/2+xoff,64+28+yoff+menu.bounceOld,0,2,2,48/2,48/2)
-    love.graphics.draw(menu.img.buttonSheet,menu.quad.rhrmR,view.width/2-64+xoff,64+yoff-menu.bounceOld,0,2,2,48/2,48/2)
-    
-    --[[local mx,my = love.mouse.getPosition()
-    love.graphics.setFont(fontBig)
-    setColorHex("000000")
-    if my > 256-4 and my < 256+16 then
-      setColorHex("f0f0f0")
-    end
-    printNew("PLAY",64,256)
-    
-    setColorHex("000000")
-    if my > 256+32-4 and my < 256+16+32 then
-      setColorHex("f0f0f0")
-    end
-    printNew("CREATE",64,256+32)
-    setColorHex("000000")
-    love.graphics.setFont(font)
-    
-    setColorHex("ffffff")
-    love.graphics.draw(menu.img.logo,view.width/2,0,0,0.25,0.25,menu.img.logo:getWidth()/2,0)]]
-    setColorHex("000000")
-    printNew(version.." welcome "..pref.username.."!",8,view.height-16)
-  else
-    setColorHex("000000",200)
-    love.graphics.rectangle("fill",16,16,view.width-32,view.height-32)
-    love.graphics.setFont(fontBig)
-    setColorHex("ffffff",255)
-    
-    printNew("esc to cancel",16+8,view.height-48)
-    
-    if menu.loadPhase == 1 then
-      love.graphics.printf({{255,255,255},"drop a ",hex2rgb("5aabff",true),".brhrm",{255,255,255}," file onto the window to play it"},0,view.height/2-16,view.width,"center",0,1,1)
-    elseif menu.loadPhase == 2 then
-      love.graphics.printf("remix info",0,16,view.width,"center")
-      love.graphics.setFont(font)
-      if tempData then
-        local files = love.filesystem.getDirectoryItems("/temp")
-        --PRINT REMIX INFO
-        love.graphics.print("name: "..(tempData.options.name or "???"),32,128)
-        love.graphics.print({{255,255,255},"author: ",{255,248,98},(tempData.author or tempData.autor or "???")},32,128+32)
-        love.graphics.print("bpm: "..(tempData.bpm or "???"),32,128+32*2)
+        i.bounceOld = (i.bounce+i.bounceOld)/2
+        local bounce = i.bounceOld
         
-        local sec = tempData.length
-        local min 
-        if sec then
-          min = 0
-          sec = math.floor(sec*0.00001)
-          while sec > 60 do
-            sec = sec-60
-            min = min+1
-          end
-          if tostring(sec):len() == 1 then
-            sec = "0"..tostring(sec)
-          end
-        end
-        love.graphics.print("length: "..(min or "???")..":"..(sec or "???").." minutes",32,128+32*3)
+        love.graphics.draw(menu.img.buttonSheet,q,i.x,i.y+bounce,0,2,2)
         
-        local customTextures = "No"
-        for _,i in pairs(files) do
-          if string.lower(string.sub(i,i:len()-3)) == ".gfx" then
-            customTextures = "Yes"
-            break
+        love.graphics.draw(menu.img.buttonSheet,i.text,i.x+256,i.y+bounce,0,2,2,i.tw/2)
+        
+        if i.on then
+          love.graphics.draw(menu.img.buttonSheet,menu.quad.baristaBox,i.x-46*2,i.y+bounce,0,2,2)
+          if i.barista then
+            i.barista:draw(i.x-40*2,i.y+bounce,0,2,2)
           end
         end
-        love.graphics.print("custom textures?: "..(customTextures or "???"),32,128+32*4)
-      else
-        love.graphics.printf("LOADING REMIX INFO",0,view.height/2,view.width,"center")
       end
+      
+      local yoff = 16
+      local xoff = -48+8
+      local rad = 64+10+menu.bounceOld/4
+      
+      setColorHex("4946bd")
+      love.graphics.circle("fill",view.width/2+128+xoff,64+32+yoff+menu.bounceOld,rad)
+      love.graphics.circle("fill",view.width/2+64+xoff,64-12+yoff-menu.bounceOld,rad)
+      love.graphics.circle("fill",view.width/2+xoff,64+28+yoff+menu.bounceOld,rad)
+      love.graphics.circle("fill",view.width/2-64+xoff,64+yoff-menu.bounceOld,rad)
+      
+      rad = 64-menu.bounceOld/4
+      setColorHex("000000")
+      love.graphics.circle("fill",view.width/2+128+xoff,64+32+yoff+menu.bounceOld,rad)
+      love.graphics.circle("fill",view.width/2+64+xoff,64-12+yoff-menu.bounceOld,rad)
+      love.graphics.circle("fill",view.width/2+xoff,64+28+yoff+menu.bounceOld,rad)
+      love.graphics.circle("fill",view.width/2-64+xoff,64+yoff-menu.bounceOld,rad)
+      
+      setColorHex("ffffff")
+      love.graphics.draw(menu.img.buttonSheet,menu.quad.rhrmM,view.width/2+128+xoff,64+32+yoff+menu.bounceOld,0,2,2,48/2,48/2)
+      love.graphics.draw(menu.img.buttonSheet,menu.quad.rhrmR,view.width/2+64+xoff,64-12+yoff-menu.bounceOld,0,2,2,48/2,48/2)
+      love.graphics.draw(menu.img.buttonSheet,menu.quad.rhrmH,view.width/2+xoff,64+28+yoff+menu.bounceOld,0,2,2,48/2,48/2)
+      love.graphics.draw(menu.img.buttonSheet,menu.quad.rhrmR,view.width/2-64+xoff,64+yoff-menu.bounceOld,0,2,2,48/2,48/2)
+      
+      --[[local mx,my = love.mouse.getPosition()
       love.graphics.setFont(fontBig)
+      setColorHex("000000")
+      if my > 256-4 and my < 256+16 then
+        setColorHex("f0f0f0")
+      end
+      printNew("PLAY",64,256)
       
-      printNew("press enter to play",view.width-256-128+32,view.height-48)
-    elseif menu.loadPhase >= 3 and menu.loadPhase < 4 then
-      setColorHex("000000",255)
-      love.graphics.rectangle("fill",0,0,view.width,view.height)
+      setColorHex("000000")
+      if my > 256+32-4 and my < 256+16+32 then
+        setColorHex("f0f0f0")
+      end
+      printNew("CREATE",64,256+32)
+      setColorHex("000000")
+      love.graphics.setFont(font)
+      
+      setColorHex("ffffff")
+      love.graphics.draw(menu.img.logo,view.width/2,0,0,0.25,0.25,menu.img.logo:getWidth()/2,0)]]
+      setColorHex("000000")
+      printNew(version.." welcome "..pref.username.."!",8,view.height-16)
+    else
+      setColorHex("000000",200)
+      love.graphics.rectangle("fill",16,16,view.width-32,view.height-32)
+      love.graphics.setFont(fontBig)
       setColorHex("ffffff",255)
-      if randomized or (tempData.options.introStyle or 1) == 1 then
-        love.graphics.draw(gradient,0,0,0,view.width,1)
-        love.graphics.draw(menu.introImg[1].border,view.width/2,view.height/2,0,3,3,menu.introImg[1].border:getWidth()/2,menu.introImg[1].border:getHeight()/2)
-        love.graphics.draw(menu.introImg[1].remix,view.width/2,view.height/2,0,3,3,menu.introImg[1].remix:getWidth()/2,menu.introImg[1].remix:getHeight()/2)
-        setColorHex("ffffff",50)
-        love.graphics.draw(menu.introImg[1].overlay,0,0,0,3,3)
-      elseif tempData.options.introStyle == 3 then
-        love.graphics.draw(menu.introImg[3].remix,view.width/2,view.height/2,0,menu.remixIntroSize,menu.remixIntroSize,menu.remixIntroImg:getWidth()/2,menu.remixIntroImg:getHeight()/2)
+      
+      printNew("esc to cancel",16+8,view.height-48)
+      
+      if menu.loadPhase == 1 then
+        love.graphics.printf({{255,255,255},"drop a ",hex2rgb("5aabff",true),".brhrm",{255,255,255}," file onto the window to play it"},0,view.height/2-16,view.width,"center",0,1,1)
+      elseif menu.loadPhase == 2 then
+        love.graphics.printf("remix info",0,16,view.width,"center")
+        love.graphics.setFont(font)
+        if tempData then
+          local files = love.filesystem.getDirectoryItems("/temp")
+          --PRINT REMIX INFO
+          love.graphics.print("name: "..(tempData.options.name or "???"),32,128)
+          love.graphics.print({{255,255,255},"author: ",{255,248,98},(tempData.author or tempData.autor or "???")},32,128+32)
+          love.graphics.print("bpm: "..(tempData.bpm or "???"),32,128+32*2)
+          
+          local sec = tempData.length
+          local min 
+          if sec then
+            min = 0
+            sec = math.floor(sec*0.00001)
+            while sec > 60 do
+              sec = sec-60
+              min = min+1
+            end
+            if tostring(sec):len() == 1 then
+              sec = "0"..tostring(sec)
+            end
+          end
+          love.graphics.print("length: "..(min or "???")..":"..(sec or "???").." minutes",32,128+32*3)
+          
+          local customTextures = "No"
+          for _,i in pairs(files) do
+            if string.lower(string.sub(i,i:len()-3)) == ".gfx" then
+              customTextures = "Yes"
+              break
+            end
+          end
+          love.graphics.print("custom textures?: "..(customTextures or "???"),32,128+32*4)
+        else
+          love.graphics.printf("LOADING REMIX INFO",0,view.height/2,view.width,"center")
+        end
+        love.graphics.setFont(fontBig)
+        
+        printNew("press enter to play",view.width-256-128+32,view.height-48)
+      elseif menu.loadPhase >= 3 and menu.loadPhase < 4 then
+        setColorHex("000000",255)
+        love.graphics.rectangle("fill",0,0,view.width,view.height)
+        setColorHex("ffffff",255)
+        if randomized or (tempData.options.introStyle or 1) == 1 then
+          love.graphics.draw(gradient,0,0,0,view.width,1)
+          love.graphics.draw(menu.introImg[1].border,view.width/2,view.height/2,0,3,3,menu.introImg[1].border:getWidth()/2,menu.introImg[1].border:getHeight()/2)
+          love.graphics.draw(menu.introImg[1].remix,view.width/2,view.height/2,0,3,3,menu.introImg[1].remix:getWidth()/2,menu.introImg[1].remix:getHeight()/2)
+          setColorHex("ffffff",50)
+          love.graphics.draw(menu.introImg[1].overlay,0,0,0,3,3)
+        elseif tempData.options.introStyle == 3 then
+          love.graphics.draw(menu.introImg[3].remix,view.width/2,view.height/2,0,menu.remixIntroSize,menu.remixIntroSize,menu.remixIntroImg:getWidth()/2,menu.remixIntroImg:getHeight()/2)
+        end
+        
+        if menu.loadPhase > 3.5 then
+          setColorHex("000000",(menu.loadPhase-3.5)*255*3)
+          love.graphics.rectangle("fill",0,0,view.width,view.height)
+        end
       end
       
-      if menu.loadPhase > 3.5 then
-        setColorHex("000000",(menu.loadPhase-3.5)*255*3)
-        love.graphics.rectangle("fill",0,0,view.width,view.height)
-      end
+      love.graphics.setFont(font)
     end
-    
-    love.graphics.setFont(font)
   end
 end
 
