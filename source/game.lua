@@ -499,6 +499,15 @@ function updateGameInputs(dt)
         view.flipV = 1
         view.flipH = 1
       end
+      if i.name == "screenshake" then
+        view.shake = view.shake+16
+      end
+      if i.name == "screenshake1" then
+        view.shake = view.shake+32
+      end
+      if i.name == "screenshake2" then
+        view.shake = view.shake+64
+      end
     end
     
     currentSounds = {}

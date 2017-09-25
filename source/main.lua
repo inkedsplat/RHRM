@@ -116,6 +116,21 @@ function love.load()
           length = 64,
           cues = {{name = "rflip",x = 0,cueId = "silence"}},
         },
+        {
+          name = "screenshake mag1",
+          length = 64,
+          cues = {{name = "screenshake",x = 0,cueId = "silence"}},
+        },
+        {
+          name = "screenshake mag2",
+          length = 64,
+          cues = {{name = "screenshake1",x = 0,cueId = "silence"}},
+        },
+        {
+          name = "screenshake mag3",
+          length = 64,
+          cues = {{name = "screenshake2",x = 0,cueId = "silence"}},
+        },
       }
     },
     [1] = {
