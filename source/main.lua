@@ -1103,7 +1103,8 @@ function love.load()
     width = 1920/2,
     height = 1080/2,
     flipH = 1,
-    flipV = 1
+    flipV = 1,
+    shake = 0,
   }
   
   minigame = 0
@@ -1368,6 +1369,12 @@ function love.update(dt)
   mouse.button.pressed[3] = false
   mouse.button.released[3] = false
 
+  if view.shake > 0 then
+    view.shake = view.shake/1.02
+    if view.shake < 0.5 then
+      view.shake = 0
+    end
+  end
 end
 
 function love.draw()
@@ -1406,7 +1413,7 @@ function love.draw()
   if view.flipV == -1 then
     y = h
   end
-  love.graphics.draw(view.canvas,x,y,0,(w/view.width)*view.flipH,(h/view.height)*view.flipV)
+  love.graphics.draw(view.canvas,x+math.random(-view.shake,view.shake)*2,y+math.random(-view.shake,view.shake)*2,0,(w/view.width)*view.flipH,(h/view.height)*view.flipV)
 end
 
 function love.quit()

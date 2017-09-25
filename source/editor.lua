@@ -439,6 +439,7 @@ function loadEditor()
       love.quit()
       initializeData()
       i.count = 4
+      view.shake = 64
     end
   end
   
