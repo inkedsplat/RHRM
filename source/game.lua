@@ -628,7 +628,7 @@ function drawGameInputs()
           y = -hit
         end
         setColorHex("ffffff")
-        love.graphics.draw(imgPerfect,8+math.sin(perfectFail)*perfectFail,8+y)
+        love.graphics.draw(imgPerfect,8+math.sin(perfectFail)*perfectFail,8+y,0,2,2)
       end
     end
   

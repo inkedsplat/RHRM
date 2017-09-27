@@ -395,11 +395,12 @@ function drawMenu()
             end
           end
           love.graphics.print("custom textures?: "..(customTextures or "???"),32,128+32*4)
+          love.graphics.print("endless?: "..(tempData.endless or "???"),32,128+32*5)
           
           if tempData.version ~= version then
             setColorHex("ffa649")
           end
-          love.graphics.print("version: "..(tempData.version or "???"),32,128+32*5)
+          love.graphics.print("version: "..(tempData.version or "???"),32,128+32*6)
           setColorHex("ffffff")
         else
           love.graphics.printf("LOADING REMIX INFO",0,view.height/2,view.width,"center")

@@ -1162,7 +1162,7 @@ function initializeData()
     blocks = {},
     tempoChanges = {},
     version = version,
-    endless = true,
+    endless = false,
     lives = 3,
     options = {
       name = "REMIX",
