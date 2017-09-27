@@ -25,7 +25,7 @@ function love.load()
     love.filesystem.createDirectory("/library")
   end
   
-  version = "0.7.0"
+  version = "0.8.0-SNAPSHOT-1"
   love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()
@@ -1128,7 +1128,7 @@ function love.load()
       screen = "credits"
       loadCredits()
     else 
-      screen = "menu" --dev start screen
+      screen = "editor" --dev start screen
     end
     loadMenu()
     
@@ -1162,6 +1162,8 @@ function initializeData()
     blocks = {},
     tempoChanges = {},
     version = version,
+    endless = true,
+    lives = 3,
     options = {
       name = "REMIX",
       header = "Rhythm League Notes",

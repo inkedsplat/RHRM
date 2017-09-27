@@ -6,6 +6,19 @@ function loadGameInputs(seekTime)
   beat = 0
   beatCount = 0
   minigameTime = 0
+  missCount = 0
+  
+  if data.endless then
+    speedUp = 1
+    originalBpm = bpm
+    originalLives = data.lives
+    endlessAssets = {
+      heart = love.graphics.newImage("/resources/gfx/game/life.png"),
+      alive = love.graphics.newQuad(0,0,32,32,96,32),
+      dead = love.graphics.newQuad(32,0,32,32,96,32),
+      worried = love.graphics.newQuad(64,0,32,32,96,32),
+    }
+  end
   
   misses = 0
   if not data.beatmap.editor then
@@ -140,6 +153,7 @@ function love.keypressed(key,scancode,isRepeat)
         view.flipV = 1
         screen = "editor"
         gameSnd.music[ratingNote]:stop()
+        data.music:setPitch(1)
         if data.music then
           data.music:stop()
         end
@@ -149,6 +163,7 @@ function love.keypressed(key,scancode,isRepeat)
         view.flipH = 1
         view.flipV = 1
         screen = "menu"
+        data.music:setPitch(1)
         menu.loadPhase = 0
         gameSnd.music[ratingNote]:stop()
         if data.music then
@@ -414,6 +429,13 @@ function updateGameInputs(dt)
       end
     end 
     
+    if misses > missCount then
+      missCount = missCount+1
+      if data.endless then
+        data.lives = data.lives-1
+      end
+    end
+    
     if updateMinigame[minigame] then
       updateMinigame[minigame](dt)
     end
@@ -432,7 +454,36 @@ function updateGameInputs(dt)
     end
 
     if endRemix then
-      if randomized then
+      if data.endless then
+        data.beat = math.ceil(data.musicStart)
+        data.beatCount = data.beat
+        local seekPos = (((math.ceil(data.musicStart)-data.musicStart))*(60000/bpm))/1000
+        data.music:seek(seekPos)
+        print(data.beat,data.music:tell())
+        
+        for _,i in pairs(data.beatmap.sounds) do 
+          if i.beat >= math.ceil(data.musicStart) then
+            i.played = nil
+          end
+        end
+        for _,i in pairs(data.beatmap.inputs) do 
+          if i.beat >= math.ceil(data.musicStart) then
+            i.played = nil
+            i.played2 = nil
+          end
+        end
+        for _,i in pairs(data.beatmap.switches) do 
+          if i.beat >= math.ceil(data.musicStart) then
+            i.played = nil
+          end
+        end
+        
+        speedUp = speedUp+0.1
+        bpm = originalBpm*speedUp
+        data.music:setPitch(speedUp)
+        
+        endRemix = false
+      elseif randomized then
         if intro then
           data.music:stop()
           data.music = love.audio.newSource("/resources/sfx/randomizedRemix/endlessRemixLoop.ogg")
@@ -556,15 +607,31 @@ function drawGameInputs()
       drawMinigame[minigame]()
     end
     
-    if perfect or perfectFail > 0 then
-      local y = 0--beat/2
-      if hit > 0 then
-        y = -hit
+    if data.endless then
+      for i = 1, originalLives do
+        y = 0
+        if (data.beatCount%4) == i%4 then
+          y = beat
+        end
+        if i > data.lives then
+          love.graphics.draw(endlessAssets.heart,endlessAssets.dead,32-64+64*i,32+beat/5,0,2+beat/40,2-beat/40,16,16)
+        elseif data.lives == 1 then
+          love.graphics.draw(endlessAssets.heart,endlessAssets.worried,32-64+64*i,32+y,0,2-y/40,2+y/40,16,16)
+        else
+          love.graphics.draw(endlessAssets.heart,endlessAssets.alive,32-64+64*i,32+y,0,2-y/40,2+y/40,16,16)
+        end
       end
-      setColorHex("ffffff")
-      love.graphics.draw(imgPerfect,8+math.sin(perfectFail)*perfectFail,8+y)
+    else
+      if perfect or perfectFail > 0 then
+        local y = 0--beat/2
+        if hit > 0 then
+          y = -hit
+        end
+        setColorHex("ffffff")
+        love.graphics.draw(imgPerfect,8+math.sin(perfectFail)*perfectFail,8+y)
+      end
     end
-    
+  
     if transition > 0 then
       setColorHex("000000")
       love.graphics.rectangle("fill",0,0,view.width,view.height)
