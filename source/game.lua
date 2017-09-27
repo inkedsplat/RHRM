@@ -9,7 +9,7 @@ function loadGameInputs(seekTime)
   missCount = 0
   
   if data.endless then
-    speedUp = 1
+    speed = 1
     originalBpm = bpm
     originalLives = data.lives
     endlessAssets = {
@@ -17,6 +17,7 @@ function loadGameInputs(seekTime)
       alive = love.graphics.newQuad(0,0,32,32,96,32),
       dead = love.graphics.newQuad(32,0,32,32,96,32),
       worried = love.graphics.newQuad(64,0,32,32,96,32),
+      fail = love.audio.newSource("/resources/sfx/game/endlessFail.ogg"),
     }
   end
   
@@ -298,22 +299,34 @@ function updateGameInputs(dt)
       end
     end]]
     
-    data.time = data.time+dt
-    local dist = 1
-    local time = (60000/bpm)
-    local spd = dist/time
-    
-    data.beat = data.beat+spd*(dt*1000)
+    if data.lives > 0 then
+      data.time = data.time+dt
+      local dist = 1
+      local time = (60000/bpm)
+      local spd = dist/time
+      
+      data.beat = data.beat+spd*(dt*1000)
+    else
+      if love.keyboard.isDown("escape") then
+        screen = "menu"
+      end
+    end
     
     --play music
     if data.beat >= data.musicStart then
-      data.music:play()
+      if data.endless and data.lives == 0 then
+        data.music:stop()
+      else
+        data.music:play()
+      end
     end
     --beat
     if data.beat >= data.beatCount then
       data.beatCount = data.beatCount+1
       --if data.music:isPlaying() then
+      if data.lives ~= 0 then
         beat = 10
+      end
       --end
     end
     --handle switches
@@ -433,6 +446,13 @@ function updateGameInputs(dt)
       missCount = missCount+1
       if data.endless then
         data.lives = data.lives-1
+        if data.lives == 0 then
+          if data.beatmap.editor then
+            data.lives = 1
+          else
+            endlessAssets.fail:play()
+          end
+        end
       end
     end
     
@@ -455,34 +475,36 @@ function updateGameInputs(dt)
 
     if endRemix then
       if data.endless then
-        data.beat = math.ceil(data.musicStart)
-        data.beatCount = data.beat
-        local seekPos = (((math.ceil(data.musicStart)-data.musicStart))*(60000/bpm))/1000
-        data.music:seek(seekPos)
-        print(data.beat,data.music:tell())
-        
-        for _,i in pairs(data.beatmap.sounds) do 
-          if i.beat >= math.ceil(data.musicStart) then
-            i.played = nil
+        if not endlessEnd then
+          data.beat = math.ceil(data.musicStart)
+          data.beatCount = data.beat
+          local seekPos = (((math.ceil(data.musicStart)-data.musicStart))*(60000/bpm))/1000
+          data.music:seek(seekPos)
+          print(data.beat,data.music:tell())
+          
+          for _,i in pairs(data.beatmap.sounds) do 
+            if i.beat >= math.ceil(data.musicStart) then
+              i.played = nil
+            end
           end
-        end
-        for _,i in pairs(data.beatmap.inputs) do 
-          if i.beat >= math.ceil(data.musicStart) then
-            i.played = nil
-            i.played2 = nil
+          for _,i in pairs(data.beatmap.inputs) do 
+            if i.beat >= math.ceil(data.musicStart) then
+              i.played = nil
+              i.played2 = nil
+            end
           end
-        end
-        for _,i in pairs(data.beatmap.switches) do 
-          if i.beat >= math.ceil(data.musicStart) then
-            i.played = nil
+          for _,i in pairs(data.beatmap.switches) do 
+            if i.beat >= math.ceil(data.musicStart) then
+              i.played = nil
+            end
           end
+          
+          speed = speed+data.speedUp
+          bpm = originalBpm*speed
+          data.music:setPitch(speed)
+          
+          endRemix = false
         end
-        
-        speedUp = speedUp+0.1
-        bpm = originalBpm*speedUp
-        data.music:setPitch(speedUp)
-        
-        endRemix = false
       elseif randomized then
         if intro then
           data.music:stop()
@@ -608,6 +630,7 @@ function drawGameInputs()
     end
     
     if data.endless then
+      setColorHex("ffffff")
       for i = 1, originalLives do
         y = 0
         if (data.beatCount%4) == i%4 then
@@ -639,6 +662,12 @@ function drawGameInputs()
     
     love.graphics.setColor(0,0,0,(endRemixTimer/(data.options.endFadeOutTime or 100))*255)
     love.graphics.rectangle("fill",0,0,view.width,view.height)
+    
+    if data.lives <= 0 then
+      love.graphics.setColor(0,0,0)
+      love.graphics.setFont(fontBig)
+      love.graphics.printf("GAME OVER\nPRESS ESC TO EXIT",0,view.height/2,view.width-64,"center")
+    end
   else
     setColorHex("000000")
     love.graphics.rectangle("fill",0,0,view.width,view.height)

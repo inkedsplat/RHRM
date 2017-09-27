@@ -1164,6 +1164,7 @@ function initializeData()
     version = version,
     endless = false,
     lives = 3,
+    speedUp = 0.1,
     options = {
       name = "REMIX",
       header = "Rhythm League Notes",

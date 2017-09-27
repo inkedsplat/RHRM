@@ -224,9 +224,10 @@ function loadRemixOptions()
   subcategories = {
     [1] = "general",
     [2] = "remix intro",
-    [3] = "karate man (GBA)",
-    [4] = "clappy trio (WII)",
-    [5] = "lock step",
+    [3] = "endless",
+    [4] = "karate man (GBA)",
+    [5] = "clappy trio (WII)",
+    [6] = "lock step",
   }
   subCount = 1
   subcategory = "general"
@@ -356,12 +357,26 @@ function updateRemixOptions(dt)
         data.options.color2 = i.text
       end
     end
+  elseif subcategory == "endless" then
+    for _,i in pairs(textinputs) do
+      if i.name == "lives" then
+        data.lives = tonumber(i.text)
+      elseif i.name == "speed up factor" then
+        data.speedUp = tonumber(i.text)
+      end
+    end
+    for _,i in pairs(toggleButtons) do
+      if i.name == "endless" then
+        data.endless = i.val
+      end
+    end
   end
 end
 
 --[[
-    createTextInput(view.width/2-256+16,128+24,256,16,"color 1",data.options.color1 or "00d8a8")
-    createTextInput(view.width/2-256+16,128+24*2,256,16,"color 2",data.options.color2 or "00e820")
+    createToggleButton(view.width/2-256+16,128,"endless",data.endless)
+    createTextInput(view.width/2-256+16,128+24,256,16,"lives",tostring(data.lives or 3),true)
+    createTextInput(view.width/2-256+16,128+24*2,256,16,"speed up factor",tostring(data.speedUp or 0.1),true)
 ]]
 
 function drawRemixOptions()
@@ -523,6 +538,10 @@ function createOptionsTextinputs(subcat)
     createTextInput(view.width/2-256+16,128,256,16,"intro style (WIP)",tostring(data.options.introStyle or 1),true)
     createTextInput(view.width/2-256+16,128+24,256,16,"color 1",data.options.color1 or "00d8a8")
     createTextInput(view.width/2-256+16,128+24*2,256,16,"color 2",data.options.color2 or "00e820")
+  elseif subcategory == "endless" then
+    createToggleButton(view.width/2-256+16,128,"endless",data.endless)
+    createTextInput(view.width/2-256+16,128+24,256,16,"lives",tostring(data.lives or 3),true)
+    createTextInput(view.width/2-256+16,128+24*2,256,16,"speed up factor",tostring(data.speedUp or 0.1),true)
   end
 end
 --[[
