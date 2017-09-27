@@ -55,6 +55,11 @@ function love.load()
           cues = {{name = "end remix",x = 0,cueId = "silence"}},
         },
         {
+          name = "LOOP START",
+          length = 64,
+          cues = {{name = "loop start",x = 0,cueId = "silence"}},
+        },
+        {
           name = "count in 4",
           length = 256,
           cues = {
@@ -74,6 +79,16 @@ function love.load()
             {name = "count2",x = 256+64,cueId = "countIn2"},
             {name = "count3",x = 256+128,cueId = "countIn3"},
             {name = "count4",x = 256+128+64,cueId = "countIn4"},
+          },
+        },
+        {
+          name = "count in SP",
+          length = 256,
+          cues = {
+            {name = "count1",x = 0,cueId = "countIn1Sp"},
+            {name = "count2",x = 64,cueId = "countIn2Sp"},
+            {name = "count3",x = 128,cueId = "countIn3Sp"},
+            {name = "count4",x = 128+64,cueId = "countIn4Sp"}
           },
         },
         {
@@ -777,6 +792,21 @@ function love.load()
             {name = "beep",x = 256+64+32,cueId = "MrUpbeatBeep"},
             {name = "beep",x = 256+128+32,cueId = "MrUpbeatBeep"},
             {name = "beep",x = 256+128+64+32,cueId = "MrUpbeatBeep"},
+          }
+        },
+        {
+          name = "count in4",
+          length = 256,
+          cues = {
+            {name = "one",x = 0,cueId = "MrUpbeatOne"},
+            {name = "two",x = 64,cueId = "MrUpbeatTwo"},
+            {name = "three",x = 128,cueId = "MrUpbeatThree"},
+            {name = "four",x = 128+64,cueId = "MrUpbeatFour"},
+            
+            {name = "beep",x = 32,cueId = "MrUpbeatBeep"},
+            {name = "beep",x = 64+32,cueId = "MrUpbeatBeep"},
+            {name = "beep",x = 128+32,cueId = "MrUpbeatBeep"},
+            {name = "beep",x = 128+64+32,cueId = "MrUpbeatBeep"},
           }
         },
         {

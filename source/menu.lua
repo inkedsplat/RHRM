@@ -395,7 +395,12 @@ function drawMenu()
             end
           end
           love.graphics.print("custom textures?: "..(customTextures or "???"),32,128+32*4)
-          love.graphics.print("endless?: "..(tempData.endless or "???"),32,128+32*5)
+          
+          local endlessBool = "No"
+          if tempData.endless then
+            endlessBool = "Yes"
+          end
+          love.graphics.print("endless?: "..(endlessBool or "???"),32,128+32*5)
           
           if tempData.version ~= version then
             setColorHex("ffa649")

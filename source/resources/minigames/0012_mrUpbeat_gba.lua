@@ -45,14 +45,14 @@ function uminigame(dt)
       needle.rot = -12
       needle.targetRot = 180+12
       needle.dir = -1
-      player.nextHit = i.time+((0.5)*(data.bpm/6000))
+      player.nextHit = i.time+((0.5)*(bpm/6000))
       player.targetFlip = -1
     end
     if i.name == "metroL" then
       needle.rot = 180+12
       needle.targetRot = -12
       needle.dir = 1
-      player.nextHit = i.time+((0.5)*(data.bpm/6000))
+      player.nextHit = i.time+((0.5)*(bpm/6000))
       player.targetFlip = 1
     end
     if i.name == "ding" then
@@ -64,7 +64,7 @@ function uminigame(dt)
   end
   --[[NEEDLE]]--
   local spd = 2500
-  spd = spd*(data.bpm/60000)
+  spd = spd*(bpm/60000)
   needle.rot = needle.rot+needle.dir*spd
   
   player.bodyAnim:update(dt)

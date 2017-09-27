@@ -85,6 +85,9 @@ function loadGameInputs(seekTime)
     data.music:seek(seekTime)
   end
   
+  if not data.beatmap.editor then
+    auto = false
+  end
   auto = false
 end
 
@@ -155,6 +158,7 @@ function love.keypressed(key,scancode,isRepeat)
         screen = "editor"
         gameSnd.music[ratingNote]:stop()
         data.music:setPitch(1)
+        data.lives =  originalLives
         if data.music then
           data.music:stop()
         end
@@ -476,25 +480,29 @@ function updateGameInputs(dt)
     if endRemix then
       if data.endless then
         if not endlessEnd then
-          data.beat = math.ceil(data.musicStart)
+          if not loopStart then
+            loopStart = math.ceil(data.musicStart)
+          end
+          data.beat =loopStart
           data.beatCount = data.beat
-          local seekPos = (((math.ceil(data.musicStart)-data.musicStart))*(60000/bpm))/1000
+          local seekPos = (((loopStart-data.musicStart))*(60000/bpm))/1000
           data.music:seek(seekPos)
           print(data.beat,data.music:tell())
           
           for _,i in pairs(data.beatmap.sounds) do 
-            if i.beat >= math.ceil(data.musicStart) then
+            if i.beat >= loopStart then
               i.played = nil
+              i.played2 = nil
             end
           end
           for _,i in pairs(data.beatmap.inputs) do 
-            if i.beat >= math.ceil(data.musicStart) then
+            if i.beat >= loopStart then
               i.played = nil
               i.played2 = nil
             end
           end
           for _,i in pairs(data.beatmap.switches) do 
-            if i.beat >= math.ceil(data.musicStart) then
+            if i.beat >= loopStart then
               i.played = nil
             end
           end
@@ -580,6 +588,10 @@ function updateGameInputs(dt)
       end
       if i.name == "screenshake2" then
         view.shake = view.shake+64
+      end
+      if i.name == "loop start" then
+        loopStart = i.time
+        print("loop start set to "..loopStart)
       end
     end
     
