@@ -175,6 +175,7 @@ function love.load()
     [2] = {
       name = "rhythm tweezers",
       group = "gba",
+      hidden = true,
       img = love.graphics.newImage("/resources/gfx/editor/icons/rhythmepilation.png"),
       blocks = {
         {
@@ -217,6 +218,7 @@ function love.load()
     [3] = {
       name = "Blue birds",
       group = "3ds",
+      hidden = true,
       img = love.graphics.newImage("/resources/gfx/editor/icons/bluebirds.png"),
       blocks = {
         {
@@ -252,6 +254,7 @@ function love.load()
     [4] = {
       name = "Fork lifter",
       group = "wii",
+      hidden = true,
       img = love.graphics.newImage("/resources/gfx/editor/icons/forklifter.png"),
       blocks = {
         {
@@ -276,6 +279,7 @@ function love.load()
     [5] = {
       name = "Clappy Trio",
       group = "wii",
+      hidden = true,
       img = love.graphics.newImage("/resources/gfx/editor/icons/clappytrio.png"),
       blocks = {
         {
@@ -318,6 +322,7 @@ function love.load()
     [6] = {
       name = "Lock step",
       group = "ds",
+      hidden = true,
       img = love.graphics.newImage("/resources/gfx/editor/icons/lockstep.png"),
       blocks = {
         {
@@ -418,6 +423,7 @@ function love.load()
     [7] = {
       name = "screw bots",
       group = "wii",
+      hidden = true,
       img = love.graphics.newImage("/resources/gfx/editor/icons/screwbot.png"),
       blocks = {
         {
@@ -547,6 +553,7 @@ function love.load()
     [9] = {
       name = "cheer readers",
       group = "wii",
+      hidden = true,
       img = love.graphics.newImage("/resources/gfx/editor/icons/cheerReaders.png"),
       blocks = {
         {
@@ -721,6 +728,7 @@ function love.load()
     [12] = {
       name = "mr. upbeat",
       group = "gba",
+      hidden = true,
       img = love.graphics.newImage("/resources/gfx/editor/icons/mrupbeat.png"),
       blocks = {
         {
@@ -888,6 +896,7 @@ function love.load()
     [14] = {
       name = "tap trial (GBA)",
       group = "gba",
+      hidden = true,
       img = love.graphics.newImage("/resources/gfx/editor/icons/tapTrial.png"),
       blocks = {
         {
@@ -939,6 +948,7 @@ function love.load()
     [16] = {
       name = "tap troupe",
       group = "wii",
+      hidden = true,
       img = love.graphics.newImage("/resources/gfx/editor/icons/taptroupe.png"),
       blocks = {
         {
@@ -1064,6 +1074,7 @@ function love.load()
     [17] = {
       name = "fan club",
       group = "3ds",
+      hidden = true,
       img = love.graphics.newImage("/resources/gfx/editor/icons/fanclub.png"),
       blocks = {
         {
