@@ -1,7 +1,7 @@
 function loadGameInputs(seekTime)
   input = {}
-  margin = 0.2
-  bearlyMargin = 0.3
+  margin = 0.15
+  bearlyMargin = 0.4
   hit = 0
   beat = 0
   beatCount = 0
