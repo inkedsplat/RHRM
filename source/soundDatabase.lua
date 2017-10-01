@@ -5,10 +5,10 @@ function initializeCues()
   cue["countIn3"] = function() return newSource("/resources/sfx/game/countIn3.ogg")end
   cue["countIn4"] = function() return newSource("/resources/sfx/game/countIn4.ogg")end
   
-  cue["countIn1Sp"] = function() return newSource("/resources/sfx/editor/oneH.ogg")end
-  cue["countIn2Sp"] = function() return newSource("/resources/sfx/editor/twoH.ogg")end
-  cue["countIn3Sp"] = function() return newSource("/resources/sfx/editor/threeH.ogg")end
-  cue["countIn4Sp"] = function() return newSource("/resources/sfx/editor/fourH.ogg")end
+  cue["countIn1Sp"] = function() return newSource("/resources/sfx/editor/ONEh.ogg")end
+  cue["countIn2Sp"] = function() return newSource("/resources/sfx/editor/TWOh.ogg")end
+  cue["countIn3Sp"] = function() return newSource("/resources/sfx/editor/THREEh.ogg")end
+  cue["countIn4Sp"] = function() return newSource("/resources/sfx/editor/FOURh.ogg")end
   
   cue["cowbell"] = function() return newSource("/resources/sfx/game/cowbell.ogg")end
   

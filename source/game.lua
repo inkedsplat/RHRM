@@ -303,7 +303,7 @@ function updateGameInputs(dt)
       end
     end]]
     
-    if data.lives > 0 then
+    if (data.lives or 3) > 0  then
       data.time = data.time+dt
       local dist = 1
       local time = (60000/bpm)
@@ -480,6 +480,11 @@ function updateGameInputs(dt)
     if endRemix then
       if data.endless then
         if not endlessEnd then
+          
+          speed = speed+data.speedUp
+          bpm = originalBpm*speed
+          data.music:setPitch(speed)
+          
           if not loopStart then
             loopStart = math.ceil(data.musicStart)
           end
@@ -506,10 +511,6 @@ function updateGameInputs(dt)
               i.played = nil
             end
           end
-          
-          speed = speed+data.speedUp
-          bpm = originalBpm*speed
-          data.music:setPitch(speed)
           
           endRemix = false
         end
@@ -675,7 +676,7 @@ function drawGameInputs()
     love.graphics.setColor(0,0,0,(endRemixTimer/(data.options.endFadeOutTime or 100))*255)
     love.graphics.rectangle("fill",0,0,view.width,view.height)
     
-    if data.lives <= 0 then
+    if data.endless and (data.lives or 3) <= 0  then
       love.graphics.setColor(0,0,0)
       love.graphics.setFont(fontBig)
       love.graphics.printf("GAME OVER\nPRESS ESC TO EXIT",0,view.height/2,view.width-64,"center")

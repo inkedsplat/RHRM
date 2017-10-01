@@ -25,7 +25,7 @@ function love.load()
     love.filesystem.createDirectory("/library")
   end
   
-  version = "0.8.0-SNAPSHOT-1"
+  version = "0.8.0-SNAPSHOT-3"
   love.window.setTitle("RHRM - "..version)
   initializeData()
   initializeCues()

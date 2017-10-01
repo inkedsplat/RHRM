@@ -446,9 +446,9 @@ function loadEditor()
   local b = createButton(48*12,0,f,love.graphics.newImage("/resources/gfx/editor/buttons/clear.png"),editor.scheme.block,true,"clear remix")
   b.count = 4
   b.sfx = {
-    [1] = love.audio.newSource("/resources/sfx/editor/oneH.ogg"),
-    [2] = love.audio.newSource("/resources/sfx/editor/twoH.ogg"),
-    [3] = love.audio.newSource("/resources/sfx/editor/threeH.ogg"),
+    [1] = love.audio.newSource("/resources/sfx/editor/ONEh.ogg"),
+    [2] = love.audio.newSource("/resources/sfx/editor/TWOh.ogg"),
+    [3] = love.audio.newSource("/resources/sfx/editor/THREEh.ogg"),
   }
   
   --[[local function f(i)
