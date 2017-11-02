@@ -30,18 +30,6 @@ function love.load()
   initializeData()
   initializeCues()
   
-  
-  --[[
-  MINGAME LIST:
-    0 = MISC
-    1 = KARATE MAN (GBA)
-    2 = RHYTHM EPILATION (GBA)
-    3 = BLUE BIRDS
-    4 = FORK LIFTER
-    5 = CLAPPY TRIO (WII)
-    6 = LOCK STEP
-    7 = SCREW BOTS
-  ]]
   imgUnknownMinigame = love.graphics.newImage("/resources/gfx/editor/icons/unknown.png")
   minigames = {
     [0] = {
